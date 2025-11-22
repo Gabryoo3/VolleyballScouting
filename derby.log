@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Sat Nov 22 16:51:11 UTC 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.17.1.0 - (1913217): instance a816c00e-019a-ac7a-0dfd-00000770fa50 
+on database directory /var/home/gabry/VolleyballScouting/src/main/resources/test with class loader com.intellij.database.remote.jdbc.impl.JdbcClassLoader$JdbcClassLoaderImpl@116a1fd6 
+Loaded from file:/var/home/gabry/.config/JetBrains/IntelliJIdea2025.2/jdbc-drivers/Apache%20Derby/10.17.1.0/org/apache/derby/derby/10.17.1.0/derby-10.17.1.0.jar
+java.vendor=JetBrains s.r.o.
+java.runtime.version=21.0.9+10-b1038.76
+user.dir=/var/home/gabry/VolleyballScouting
+os.name=Linux
+os.arch=amd64
+os.version=6.17.1-300.fc43.x86_64
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''
