@@ -17,7 +17,6 @@ public class VolleyballScoutingApplication{
         return "Hello, Volleyball Scouting!";
     }
 
-
     public static void main(String[] args) {
         SpringApplication.run(VolleyballScoutingApplication.class, args);
     }
