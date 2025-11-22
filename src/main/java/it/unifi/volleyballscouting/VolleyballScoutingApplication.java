@@ -21,5 +21,4 @@ public class VolleyballScoutingApplication{
     public static void main(String[] args) {
         SpringApplication.run(VolleyballScoutingApplication.class, args);
     }
-
 }
