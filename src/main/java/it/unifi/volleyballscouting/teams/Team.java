@@ -1,12 +1,18 @@
 package it.unifi.volleyballscouting.teams;
 
-public class Team {
-    private Address address;
-    private String test;
+import jakarta.persistence.*;
 
+@Entity
+public class Team {
+    @Id
+    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
+    private int id;
+    @ManyToOne
+    private Address address;
     public Address getAddress(){
         return address;
     }
+    protected Team(){}
 
 
 }

@@ -1,11 +1,17 @@
 package it.unifi.volleyballscouting.teams;
 
+
+import jakarta.persistence.*;
+
+@Entity
 public class Player {
 
     public Player(String surname, String name) {
         this.surname = surname;
         this.name = name;
     }
+
+    protected Player(){}
 
     public String getName() {
         return name;
@@ -31,14 +37,6 @@ public class Player {
         this.role = role;
     }
 
-    public Card getCard() {
-        return card;
-    }
-
-    public void setCard(Card card) {
-        this.card = card;
-    }
-
     public int getNumber() {
         return number;
     }
@@ -55,10 +53,15 @@ public class Player {
         this.surname = surname;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
     private String name;
     private String surname;
     private int number;
-    private Card card;
     private String role;
+    @ManyToOne
     private Team team;
+
+
 }
