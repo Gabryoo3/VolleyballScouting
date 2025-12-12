@@ -3,26 +3,37 @@ package it.unifi.volleyballscouting.match;
 import it.unifi.volleyballscouting.teams.Address;
 import it.unifi.volleyballscouting.teams.Team;
 
+import jakarta.persistence.*;
+
+@Entity
 public class Match {
-    private
-    Team team1;
-    Team team2;
+    @Id
+    @GeneratedValue(strategy     = GenerationType.IDENTITY)
+    private int id;
+    @ManyToOne
+    Team teamHome;
+    @ManyToOne
+    Team teamGuest;
+    @ManyToOne
     Referee r1;
+    @ManyToOne
     Referee r2;
+    @ManyToOne
     Address address;
 
-    public Match(Team t1, Team t2) {
-        this.team1 = t1;
-        this.team2 = t2;
-        address=team1.getAddress();
+    public Match(Team home, Team guest) {
+        this.teamHome = home;
+        this.teamGuest = guest;
+        address=teamHome.getAddress();
     }
     //genera get e setter
+    protected Match(){}
 
-    public Team getTeam1() {
-        return team1;
+    public Team getTeamHome() {
+        return teamHome;
     }
-    public Team getTeam2() {
-        return team2;
+    public Team getTeamGuest() {
+        return teamGuest;
     }
     public Referee getR1() {
         return r1;

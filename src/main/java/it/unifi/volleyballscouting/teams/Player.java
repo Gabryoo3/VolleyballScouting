@@ -6,6 +6,19 @@ import jakarta.persistence.*;
 @Entity
 public class Player {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    private String name;
+    private String surname;
+    @Column(nullable = true)
+    private int number;
+    @Column(nullable = true)
+    private String role;
+    @ManyToOne
+    @Column(nullable = true)
+    private Team team;
+
     public Player(String surname, String name) {
         this.surname = surname;
         this.name = name;
@@ -52,16 +65,5 @@ public class Player {
     public void setSurname(String surname) {
         this.surname = surname;
     }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String name;
-    private String surname;
-    private int number;
-    private String role;
-    @ManyToOne
-    private Team team;
-
 
 }

@@ -1,9 +1,8 @@
 package it.unifi.volleyballscouting.teams;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+
+import jakarta.persistence.*;
 
 @Entity
 public class Address {
@@ -21,5 +20,4 @@ public class Address {
         this.city = city;
         this.postalCode = postalCode;
     }
-
 }
