@@ -4,12 +4,26 @@ import it.unifi.volleyballscouting.match.Set;
 import jakarta.persistence.*;
 @Entity
 public class Performance {
+    //attributes
+    @EmbeddedId
+    private PerformanceId id;
 
-    @Id
+    @MapsId("playerId")
     @ManyToOne
-    private Player player;
+    private Player playerId;
+
+    @MapsId("setId")
     @ManyToOne
-    private Set set;
+    private Set setId;
+    private int pointsScored;
 
+    //constructor
+    public Performance(Player player, Set set) {
+        this.playerId = player;
+        this.setId = set;
+        this.pointsScored = 0;
+    }
+    protected Performance() {}
 
+    //methods
 }

@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 
 @Entity
 public class Address {
-
+    //attributes
     @Id
     @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
     private int id;
@@ -14,10 +14,13 @@ public class Address {
     private String city;
     private String postalCode;
 
-    protected Address() {}
+    //constructor
     public Address(String street, String city, String postalCode) {
         this.street = street;
         this.city = city;
         this.postalCode = postalCode;
     }
+    protected Address() {}
+
+    //methods
 }

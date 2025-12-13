@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 
 @Entity
 public class Player {
-
+    //attributes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -16,16 +16,16 @@ public class Player {
     @Column(nullable = true)
     private String role;
     @ManyToOne
-    @Column(nullable = true)
     private Team team;
 
+    //constructor
     public Player(String surname, String name) {
         this.surname = surname;
         this.name = name;
     }
-
     protected Player(){}
 
+    //methods
     public String getName() {
         return name;
     }
