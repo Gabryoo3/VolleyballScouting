@@ -67,7 +67,10 @@
             <optional>true</optional>
         </dependency>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 =======
+=======
+>>>>>>> Stashed changes
         <dependency>
             <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-community-dialects</artifactId>
@@ -85,6 +88,9 @@
             <artifactId>hsqldb</artifactId>
             <scope>runtime</scope>
         </dependency>
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
     </dependencies>
 
