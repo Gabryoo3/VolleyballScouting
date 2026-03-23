@@ -17,7 +17,7 @@ public class VolleyballScoutingApplication{
 
     @GetMapping("/")
     public String home() {
-        return "index.html"; //Uso del ResponseBody restituisce quello specificato nella stringa, senza riporta la pagina
+        return "index"; //Uso del ResponseBody restituisce quello specificato nella stringa, senza riporta la pagina
         //della stringa
     }
     public static void main(String[] args) {
