@@ -1,3 +1,12 @@
-.navbar{
-    background-color: #571389;
+.navbar-custom,.offcanvas-custom{
+    background-color: #ce9f1e;
+}
+.btn-custom{
+    background-color: #3e3e43;
+    color: white;
+}
+
+.btn-custom:hover{
+    background-color:#842029;
+    color: white;
 }
