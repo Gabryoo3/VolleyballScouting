@@ -1,3 +1,7 @@
+html{
+    font-size : 16px;
+}
+
 .navbar-custom,.offcanvas-custom{
     background-color: #ce9f1e;
 }
@@ -9,4 +13,19 @@
 .btn-custom:hover{
     background-color:#842029;
     color: white;
+}
+
+.head-line{
+    h1{
+        font-size: 3rem;
+    }
+    p{
+        font-size: 2rem;
+    }
+}
+.main-page-description {
+    p{
+        font-size: 1.4rem;
+    }
+
 }
