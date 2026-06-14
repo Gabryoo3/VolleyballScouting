@@ -1,4 +1,4 @@
-package it.unifi.volleyballscouting.match;
+package it.unifi.volleyballscouting.model;
 
 import jakarta.persistence.*;
 

@@ -1,6 +1,5 @@
-package it.unifi.volleyballscouting.teams;
+package it.unifi.volleyballscouting.model;
 
-import it.unifi.volleyballscouting.match.Set;
 import jakarta.persistence.*;
 @Entity
 public class Performance {

@@ -1,7 +1,4 @@
-package it.unifi.volleyballscouting.match;
-
-import it.unifi.volleyballscouting.teams.Address;
-import it.unifi.volleyballscouting.teams.Team;
+package it.unifi.volleyballscouting.model;
 
 import jakarta.persistence.*;
 
