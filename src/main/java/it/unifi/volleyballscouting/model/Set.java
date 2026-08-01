@@ -4,11 +4,8 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "vsets")
-public class Set {
+public class Set extends BaseModel{
     //attributes
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     @ManyToOne
     Match match;
     private int setNumber;

@@ -4,11 +4,12 @@ import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.AddressRepository;
 import it.unifi.volleyballscouting.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Dice a Spring che questa classe gestisce richieste web
+@Controller // Dice a Spring che questa classe gestisce richieste web
 @RequestMapping("/api/teams") // Tutti gli indirizzi inizieranno con /api/teams
 public class TeamController {
 
@@ -28,7 +29,7 @@ public class TeamController {
     @GetMapping("/add/{nome}")
     public Team createTeamQuick(@PathVariable String nome) {
         Team nuovoTeam = new Team();
-        nuovoTeam.setNome(nome);
+        nuovoTeam.setName(nome);
         return teamRepository.save(nuovoTeam); // Salva nel DB e ti mostra il risultato
     }
 }

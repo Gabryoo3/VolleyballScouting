@@ -3,11 +3,8 @@ package it.unifi.volleyballscouting.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Match {
+public class Match extends BaseModel{
     //attributes
-    @Id
-    @GeneratedValue(strategy     = GenerationType.IDENTITY)
-    private int id;
     @ManyToOne
     Team teamHome;
     @ManyToOne

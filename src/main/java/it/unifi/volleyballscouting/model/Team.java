@@ -2,31 +2,39 @@ package it.unifi.volleyballscouting.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-public class Team {
+public class Team extends BaseModel{
     //attributes
-    @Id
-    @GeneratedValue(strategy = jakarta.persistence.GenerationType.IDENTITY)
-    private int id;
     @ManyToOne
+    @JoinColumn(name = "address_id")
     private Address address;
     @Column(length = 100)
-    private String nome;
-
+    private String name;
+    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Player> players = new ArrayList<>();
 
     //constructor
-    public Team(Address address){
+    public Team(){}
+    public Team(String name, Address address) {
+        this.name = name;
         this.address=address;
     }
-    public Team(){}
-
     //methods
     public Address getAddress(){
         return address;
     }
     public void setAddress(Address a){address=a;}
-    public String getNome() {return nome;}
-    public void setNome(String n){
-        nome=n;
+    public String getName() {return name;}
+    public void setName(String n){
+        name=n;
+    }
+
+    public void addPlayer(Player player, String role){
+        players.add(player);
+        player.setTeam(this);
+        player.setRole(role);
     }
 }

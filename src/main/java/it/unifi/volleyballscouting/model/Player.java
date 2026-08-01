@@ -3,14 +3,16 @@ package it.unifi.volleyballscouting.model;
 
 import jakarta.persistence.*;
 
+import java.util.Date;
+
 @Entity
-public class Player {
+public class Player extends BaseModel{
     //attributes
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String name;
     private String surname;
+    private String username;
+    @Column(nullable = true)
+    private Date birthdate;
     @Column(nullable = true)
     private int number;
     @Column(nullable = true)

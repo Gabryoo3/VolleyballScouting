@@ -3,24 +3,21 @@ package it.unifi.volleyballscouting.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Referee {
+public class Referee extends BaseModel {
     //attributes
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
     private String name;
     private String surname;
     private String province;
     private int licenseNumber;
     //constructor
+    protected Referee(){}
+
     public Referee(String name, String surname, String province, int licenseNumber) {
         this.name = name;
         this.surname = surname;
         this.province = province;
         this.licenseNumber = licenseNumber;
     }
-    protected Referee(){}
-
     //methods
     public String getName() {
         return name;
