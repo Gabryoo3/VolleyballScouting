@@ -4,7 +4,10 @@ import it.unifi.volleyballscouting.model.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface TeamRepository extends JpaRepository<Team, Long> {
-    // Esempio: trova una squadra tramite il nome
+    List<Team> findByNameContainingIgnoreCase(String teamName);
+    List<Team> findByAddressCityContainingIgnoreCase(String city);
 }

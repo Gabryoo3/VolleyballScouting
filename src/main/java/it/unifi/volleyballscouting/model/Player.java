@@ -18,6 +18,7 @@ public class Player extends BaseModel{
     @Column(nullable = true)
     private String role;
     @ManyToOne
+    @JoinColumn(name = "team_id")
     private Team team;
 
     //constructor
@@ -66,6 +67,15 @@ public class Player extends BaseModel{
 
     public void setSurname(String surname) {
         this.surname = surname;
+    }
+
+    public void updateInfo(String newRole, Integer newNumber) {
+        if (newRole != null && !newRole.isBlank()) {
+            this.role = newRole;
+        }
+        if (newNumber != null) {
+            this.number = newNumber;
+        }
     }
 
 }

@@ -1,7 +1,6 @@
 package it.unifi.volleyballscouting.controller;
 
 import it.unifi.volleyballscouting.model.Team;
-import it.unifi.volleyballscouting.repository.AddressRepository;
 import it.unifi.volleyballscouting.repository.TeamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,8 +14,6 @@ public class TeamController {
 
     @Autowired
     private TeamRepository teamRepository;
-    @Autowired
-    private AddressRepository addressRepository;
 
     // 1. GET: Leggere tutte le squadre
     // Provalo su: http://localhost:8080/api/teams

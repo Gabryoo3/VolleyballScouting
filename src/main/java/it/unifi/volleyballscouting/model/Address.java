@@ -3,7 +3,7 @@ package it.unifi.volleyballscouting.model;
 import jakarta.persistence.*;
 
 @Entity
-public class Address extends BaseModel {
+public class Address extends BaseModel{
 
     //attributes
     private String street; //don't add "via" or "corso"

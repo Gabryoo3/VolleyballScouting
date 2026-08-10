@@ -6,6 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MatchRepository extends JpaRepository<Match, Long> {
-    // Qui puoi aggiungere ricerche personalizzate, ad esempio:
-    // List<Match> findByReferee(String referee);
+
 }
