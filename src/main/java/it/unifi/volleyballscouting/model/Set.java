@@ -3,23 +3,85 @@ package it.unifi.volleyballscouting.model;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "vsets")
+@Table(name = "vsets", uniqueConstraints = {
+    @UniqueConstraint(
+        name = "uk_match_set_number",
+        columnNames = {"match_id", "setNumber"}
+    )
+})
 public class Set extends BaseModel{
     //attributes
     @ManyToOne
-    Match match;
+    @JoinColumn(name = "match_id")
+    private Match match;
     private int setNumber;
-    private int team1Points;
-    private int team2Points;
+    private int teamHomePoints = 0;
+    private int teamGuestPoints = 0;
 
     //constructor
+    protected Set() {}
+
     public Set(Match match, int setNumber) {
         this.match = match;
         this.setNumber = setNumber;
-        this.team1Points = 0;
-        this.team2Points = 0;
     }
-    protected Set() {}
-
     //methods
+
+    public Match getMatch() {
+        return match;
+    }
+
+    public void setMatch(Match match) {
+        this.match = match;
+    }
+
+    public int getTeamGuestPoints() {
+        return teamGuestPoints;
+    }
+
+    public void addTeamGuestPoints(){
+        this.teamGuestPoints++;
+    }
+
+    public void setTeamGuestPoints(int teamGuestPoints) {
+        this.teamGuestPoints = teamGuestPoints;
+    }
+
+    public int getSetNumber() {
+        return setNumber;
+    }
+
+    public void setSetNumber(int setNumber) {
+        this.setNumber = setNumber;
+    }
+
+    public int getTeamHomePoints() {
+        return teamHomePoints;
+    }
+
+    public void addTeamHomePoints(){
+        this.teamHomePoints++;
+    }
+
+    public void setTeamHomePoints(int teamHomePoints) {
+        this.teamHomePoints = teamHomePoints;
+    }
+
+    @Transient
+    public Team getLeading(){
+        if(teamHomePoints > teamGuestPoints) return match.getTeamHome();
+        else if(teamGuestPoints > teamHomePoints) return match.getTeamGuest();
+        return null;
+    }
+    @Transient
+    public boolean isFinished(){
+        int maxPoints = (setNumber == 5) ? 15 : 25;
+        int diff = Math.abs(teamHomePoints - teamGuestPoints);
+        return (teamHomePoints >= maxPoints || teamGuestPoints >= maxPoints) && diff >=2;
+    }
+
+    @Transient
+    public int getTotalPoints(){
+        return teamHomePoints + teamGuestPoints;
+    }
 }

@@ -25,8 +25,8 @@ public class Match extends BaseModel{
     @JoinColumn(name = "address_id")
     private Address address;
     private LocalDateTime matchDateTime;
-    private Integer homescore = 0;
-    private Integer guestscore = 0;
+    private Integer homeScore = 0;
+    private Integer guestScore = 0;
     private List<Set> sets = new ArrayList<>();
     protected Match(){}
 
@@ -64,13 +64,26 @@ public class Match extends BaseModel{
 
     public void setMatchDateTime(LocalDateTime matchDateTime) {this.matchDateTime = matchDateTime;}
 
-    public Integer getHomescore() {return homescore;}
+    public Integer getHomeScore() {return homeScore;}
 
-    public void setHomescore(Integer homescore) {this.homescore = homescore;}
+    public void setHomeScore(Integer homeScore) {this.homeScore = homeScore;}
 
-    public Integer getGuestscore() {return guestscore;}
+    public Integer getGuestScore() {return guestScore;}
 
-    public void setGuestscore(Integer guestscore) {this.guestscore = guestscore;}
+    public void setGuestScore(Integer guestScore) {this.guestScore = guestScore;}
 
     public List<Set> getSets() {return sets;}
+
+    @Transient
+        public Team getWinner(){
+        if(homeScore > guestScore)
+            return teamHome;
+        else if (homeScore < guestScore)
+            return teamGuest;
+        return null;
+    }
+    @Transient
+    public boolean isFinished(){
+        return homeScore == 3 || guestScore == 3;
+    }
 }
