@@ -16,22 +16,6 @@ public class PerformanceId implements Serializable {
         this.setId = setId;
     }
 
-    public Long getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(Long playerId) {
-        this.playerId = playerId;
-    }
-
-    public Long getSetId() {
-        return setId;
-    }
-
-    public void setSetId(Long setId) {
-        this.setId = setId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -84,4 +84,16 @@ public class Set extends BaseModel{
     public int getTotalPoints(){
         return teamHomePoints + teamGuestPoints;
     }
+
+    @Transient
+    public String getDisplayName(){
+        if(match != null && match.getTeamHome() != null & match.getTeamGuest() != null){
+            return String.format("Set %d (%s vd %s)",setNumber, match.getTeamHome().getName(), match.getTeamGuest().getName());
+        }
+        return "Set " + setNumber;
+    }
+    @Override
+    public String toString(){
+        return getDisplayName();
+    }
 }
