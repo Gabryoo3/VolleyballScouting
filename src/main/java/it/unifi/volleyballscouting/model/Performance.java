@@ -11,12 +11,12 @@ public class Performance {
     @MapsId("playerId")
     @ManyToOne(optional = false)
     @JoinColumn(name = "player_id")
-    private Player playerId;
+    private Player player;
 
     @MapsId("setId")
     @ManyToOne(optional = false)
     @JoinColumn(name = "set_id")
-    private Set setId;
+    private Set set;
 
     private int aces = 0;
     private int serveErrors = 0;
@@ -35,8 +35,8 @@ public class Performance {
 
     //constructor
     public Performance(Player player, Set set) {
-        this.playerId = player;
-        this.setId = set;
+        this.player = player;
+        this.set = set;
 
         if (player != null && set != null && player.getId() != null && set.getId() != null)
             this.pId = new PerformanceId(player.getId(), set.getId());
@@ -56,17 +56,17 @@ public class Performance {
 
     //getters-setters
 
-    public PerformanceId getId() {return id;}
+    public PerformanceId getId() {return pId;}
 
-    public void setId(PerformanceId id) {this.id = id;}
+    public void set(PerformanceId id) {this.pId = id;}
 
-    public Player getPlayerId() {return playerId;}
+    public Player getplayer() {return player;}
 
-    public void setPlayerId(Player playerId) {this.playerId = playerId;}
+    public void setPlayer(Player player) {this.player = player;}
 
-    public Set getSetId() {return setId;}
+    public Set getset() {return set;}
 
-    public void setSetId(Set setId) {this.setId = setId;}
+    public void setSet(Set set) {this.set = set;}
 
     public int getAces() {return aces;}
 

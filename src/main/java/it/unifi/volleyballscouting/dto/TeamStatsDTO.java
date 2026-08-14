@@ -1,14 +1,14 @@
 package it.unifi.volleyballscouting.dto;
 
-import it.unifi.volleyballscouting.model.Player;
+import it.unifi.volleyballscouting.model.Team;
 
 import java.io.Serializable;
 
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Performance}
  */
-public class PlayerStatsDTO implements Serializable {
-    private final long playerId;
+public class TeamStatsDTO implements Serializable {
+    private final long teamId;
     private final long totalAces;
     private final long totalServeErrors;
     private final long totalAttacksGood;
@@ -19,15 +19,14 @@ public class PlayerStatsDTO implements Serializable {
     private final long totalReceiveBad;
     private final long totalPointsScored;
     private final long totalErrors;
-    private final long totalSetsPlayed;
 
-    public PlayerStatsDTO(Long playerId, long totalAces,
-                          long totalServeErrors, long totalAttacksGood,
-                          long totalAttacksBad, long totalBlocksGood,
-                          long totalBlocksBad, long totalReceiveGood,
-                          long totalReceiveBad, long totalPointsScored,
-                          long totalErrors, long totalSetsPlayed) {
-        this.playerId = playerId;
+    public TeamStatsDTO(long teamId,
+                        long totalAces, long totalServeErrors,
+                        long totalAttacksGood, long totalAttacksBad,
+                        long totalBlocksGood, long totalBlocksBad,
+                        long totalReceiveGood, long TotalReceiveBad,
+                        long totalPointsScored, long totalErrors) {
+        this.teamId = teamId;
         this.totalAces = totalAces;
         this.totalServeErrors = totalServeErrors;
         this.totalAttacksGood = totalAttacksGood;
@@ -35,15 +34,12 @@ public class PlayerStatsDTO implements Serializable {
         this.totalBlocksGood = totalBlocksGood;
         this.totalBlocksBad = totalBlocksBad;
         this.totalReceiveGood = totalReceiveGood;
-        this.totalReceiveBad = totalReceiveBad;
+        this.totalReceiveBad = TotalReceiveBad;
         this.totalPointsScored = totalPointsScored;
         this.totalErrors = totalErrors;
-        this.totalSetsPlayed = totalSetsPlayed;
     }
 
-    public long getPlayerId() {
-        return playerId;
-    }
+    public long getTeamId() {return teamId;}
 
     public long getTotalAces() {
         return totalAces;
@@ -53,9 +49,7 @@ public class PlayerStatsDTO implements Serializable {
         return totalServeErrors;
     }
 
-    public long getTotalAttacksGood() {
-        return totalAttacksGood;
-    }
+    public long getTotalAttacksGood() {return totalAttacksGood;}
 
     public long getTotalAttacksBad() {
         return totalAttacksBad;
@@ -65,11 +59,9 @@ public class PlayerStatsDTO implements Serializable {
         return totalBlocksGood;
     }
 
-    public long getTotalBlocksBad() {
-        return totalBlocksBad;
-    }
+    public long getTotalBlocksBad() {return totalBlocksBad;}
 
-    public long getTotalReceiveGood(){ return totalReceiveGood;}
+    public long getTotalReceiveGood() {return totalReceiveGood;}
 
     public long getTotalReceiveBad() {return totalReceiveBad;}
 
@@ -81,12 +73,10 @@ public class PlayerStatsDTO implements Serializable {
         return totalErrors;
     }
 
-    public long getTotalSetsPlayed(){return totalSetsPlayed;}
-
     private double successPercentage(long good, long bad) {
         long totalAttempts = good + bad;
         if (totalAttempts == 0) return 0.0;
-        return ((double) good / totalAttempts) * 100;
+        return Math.round((double) good / totalAttempts) * 100;
     }
 
     public double getAttackSuccessPercentage() {
@@ -100,4 +90,5 @@ public class PlayerStatsDTO implements Serializable {
     public double getReceiveSuccessPercentage() {
         return successPercentage(totalReceiveGood, totalReceiveBad);
     }
+
 }
