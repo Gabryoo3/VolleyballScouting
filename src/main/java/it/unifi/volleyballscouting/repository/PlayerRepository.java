@@ -1,6 +1,7 @@
 package it.unifi.volleyballscouting.repository;
 
 import it.unifi.volleyballscouting.model.Player;
+import it.unifi.volleyballscouting.model.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,6 +19,9 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     //Local searches
     List<Player> findByTeamIdAndSurnameContainingIgnoreCase(Long teamID, String surname);
     List<Player> findByTeamIdAndRole(Long teamID, String role);
-    List<Player> findByTeamIdAndNumber(Long teamID, int Number);
+    Player findByTeamIdAndNumber(Long teamID, int number);
+    List<Player> findByTeamIdIsNull();
+    List<Player> findByTeamIdIsNullAndRole(String role);
+    List<Integer> findNumberByTeamId(Long teamId);
 
 }

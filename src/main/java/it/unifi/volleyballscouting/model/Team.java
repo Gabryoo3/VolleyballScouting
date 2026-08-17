@@ -14,14 +14,16 @@ public class Team extends BaseModel{
 
     @Column(length = 100)
     private String name;
-    @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Player> players = new ArrayList<>();
+    @OneToOne
+    @JoinColumn(name = "coach_id")
+    private Coach coach;
 
     //constructor
     public Team(){}
-    public Team(String name, Address address) {
+    public Team(String name, Address address, Coach coach) {
         this.name = name;
         this.address=address;
+        this.coach = coach;
     }
     //methods
     public Address getAddress(){
@@ -31,14 +33,8 @@ public class Team extends BaseModel{
     public String getName() {return name;}
     public void setName(String n){name=n;}
 
-    public void addPlayer(Player player, String role){
-        players.add(player);
-        player.setTeam(this);
-        player.setRole(role);
-    }
-    public void removePlayer(Player player){
-        player.setTeam(null);
-        player.setRole(null);
-        players.remove(player);
-    }
+    public Coach getCoach() {return coach;}
+
+    public void setCoach(Coach coach) {this.coach = coach;}
+
 }

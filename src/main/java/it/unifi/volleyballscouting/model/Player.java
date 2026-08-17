@@ -1,6 +1,7 @@
 package it.unifi.volleyballscouting.model;
 
 
+import it.unifi.volleyballscouting.dto.PlayerFormDto;
 import jakarta.persistence.*;
 
 import java.util.Date;
@@ -17,14 +18,23 @@ public class Player extends BaseModel{
     private int number;
     @Column(nullable = true)
     private String role;
+    @Column(nullable = true)
+    private String phone;
+    @Column(nullable = true)
+    private String email;
     @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
 
+
     //constructor
-    public Player(String surname, String name) {
+    public Player(String surname, String name, String username, Date birthdate, int number, String role) {
         this.surname = surname;
         this.name = name;
+        this.username = username;
+        this.birthdate = birthdate;
+        this.number = number;
+        this.role = role;
     }
     protected Player(){}
 
@@ -69,13 +79,33 @@ public class Player extends BaseModel{
         this.surname = surname;
     }
 
-    public void updateInfo(String newRole, Integer newNumber) {
-        if (newRole != null && !newRole.isBlank()) {
-            this.role = newRole;
-        }
-        if (newNumber != null) {
-            this.number = newNumber;
-        }
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {this.username = username;}
+
+    public Date getBirthdate() {return birthdate;}
+
+    public void setBirthdate(Date birthdate) {this.birthdate = birthdate;}
+
+    public String getPhone() {return phone;}
+
+    public void setPhone(String phone) {this.phone = phone;}
+
+    public String getEmail() {return email;}
+
+    public void setEmail(String email) {this.email = email;}
+
+    public void updateFromDto(PlayerFormDto form){
+        this.name = form.name();
+        this.surname = form.surname();
+        this.username = form.username();
+        this.birthdate = form.birthdate();
+        this.number = form.number();
+        this.role = form.role();
+        this.phone = form.phone();
+        this.email = form.email();
     }
 
 }
