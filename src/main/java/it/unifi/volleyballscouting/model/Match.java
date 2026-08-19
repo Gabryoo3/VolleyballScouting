@@ -36,6 +36,7 @@ public class Match extends BaseModel{
         this.teamGuest = guest;
         this.address=teamHome.getAddress();
         this.matchDateTime = matchDateTime;
+        setCreatedAt(LocalDateTime.now());
     }
 
     //methods

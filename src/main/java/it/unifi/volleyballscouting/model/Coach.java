@@ -4,15 +4,26 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-public class Coach extends BaseModel{
+public class Coach extends BaseModel implements UserDetails {
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String surname;
+    @Column(nullable = false)
     private String username;
-    @Column(nullable = true)
+    @Column(nullable = false)
+    private String password;
+    @Column
     private Date birthdate;
     private String phone;
     private String email;
@@ -26,6 +37,7 @@ public class Coach extends BaseModel{
         this.surname = surname;
         this.username = username;
         this.team = team;
+        setCreatedAt(LocalDateTime.now());
     }
 
     public String getName() {return name;}
@@ -36,6 +48,16 @@ public class Coach extends BaseModel{
 
     public void setSurname(String surname) {this.surname = surname;}
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_COACH"));
+    }
+
+    @Override
+    public String getPassword() {
+        return "";
+    }
+    @Override
     public String getUsername() {return username;}
 
     public void setUsername(String username) {this.username = username;}
@@ -55,4 +77,26 @@ public class Coach extends BaseModel{
     public Team getTeam() {return team;}
 
     public void setTeam(Team team) {this.team = team;}
+
+    //----FOR SECURITY-----
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
 }

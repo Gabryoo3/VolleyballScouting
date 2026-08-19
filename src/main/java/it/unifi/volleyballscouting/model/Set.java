@@ -2,6 +2,8 @@ package it.unifi.volleyballscouting.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "vsets", uniqueConstraints = {
     @UniqueConstraint(
@@ -24,6 +26,7 @@ public class Set extends BaseModel{
     public Set(Match match, int setNumber) {
         this.match = match;
         this.setNumber = setNumber;
+        setCreatedAt(LocalDateTime.now());
     }
     //methods
 

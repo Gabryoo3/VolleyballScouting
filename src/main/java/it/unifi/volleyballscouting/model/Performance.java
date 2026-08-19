@@ -1,9 +1,12 @@
 package it.unifi.volleyballscouting.model;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "performance")
-public class Performance {
+public class Performance{
     //attributes
     @EmbeddedId
     private PerformanceId pId;
@@ -37,7 +40,6 @@ public class Performance {
     public Performance(Player player, Set set) {
         this.player = player;
         this.set = set;
-
         if (player != null && set != null && player.getId() != null && set.getId() != null)
             this.pId = new PerformanceId(player.getId(), set.getId());
     }
@@ -45,7 +47,7 @@ public class Performance {
     //methods
 
     //live adding
-    public void addAce() {this.aces++};
+    public void addAce() {this.aces++;}
     public void addServeError() { this.serveErrors++; }
     public void addAttackGood() { this.attacksGood++; }
     public void addAttackBad() { this.attacksBad++; }

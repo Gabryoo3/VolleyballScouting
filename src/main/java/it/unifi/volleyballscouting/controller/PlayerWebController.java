@@ -1,4 +1,5 @@
 package it.unifi.volleyballscouting.controller;
+import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
@@ -10,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
 import it.unifi.volleyballscouting.dto.PlayerFormDto;
-import java.util.ArrayList;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
@@ -27,24 +28,51 @@ public class PlayerWebController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        prepareFormModel(model, new PlayerFormDto(null, null, null, null, null, null, null, null));
+        prepareFormModel(model, PlayerFormDto.empty());
         return "players/form";
     }
     @PostMapping("/create")
-    public String createPlayer(@Valid @ModelAttribute("playerForm") PlayerFormDto form, BindingResult br, Model model) {
+    public String createPlayer(@Valid @ModelAttribute("playerForm") PlayerFormDto form, BindingResult br, Model model, RedirectAttributes redirectAttributes) {
 
         if(br.hasErrors()) {
             prepareFormModel(model, form);
             return "players/form";
         }
         Team t = coachService.getCoachTeam();
-        if (playerService.isNumberAlreadyTaken(t.getId(), form.number())){
+        if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), null)){
             br.rejectValue("number", "duplicate", "Questo numero è già presente in squadra");
             prepareFormModel(model, form);
             return "players/form";
         }
-        playerService.save(form, t);
+        String tempPassword = playerService.save(form, t);
+        redirectAttributes.addFlashAttribute("tempPassword", tempPassword);
+        redirectAttributes.addFlashAttribute("successMessage", "Giocatore creato con successo!");
         return "redirect:/players";
+    }
+    @GetMapping("/{playerId}/edit")
+    public String showEditForm(@PathVariable Long playerId, Model model){
+        Player p = playerService.findById(playerId);
+        prepareFormModel(model, PlayerFormDto.fromEntity(p));
+        return "players/form";
+    }
+    @PostMapping("/{playerId}/update")
+    public String editPlayer(@PathVariable Long playerId,
+                             @Valid @ModelAttribute("playerForm")
+                             PlayerFormDto form,
+                             BindingResult br,
+                             Model model){
+        if(br.hasErrors()) {
+            prepareFormModel(model, form);
+            return "players/form";
+        }
+        Team t = coachService.getCoachTeam();
+        if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), playerId)){
+            br.rejectValue("number", "duplicate", "Questo numero è già presente in squadra");
+            prepareFormModel(model, form);
+            return "players/form";
+        }
+        playerService.updatePlayer(playerId, form);
+        return "redirect:/players/" + playerId;
     }
     // GET: show list of players
     @GetMapping("/list")
@@ -57,7 +85,7 @@ public class PlayerWebController {
 
         String cleanSurname = (surname != null && !surname.isBlank()) ? surname : null;
         String cleanRole = (role != null && !role.isBlank()) ? role : null;
-        List<Player> players = new ArrayList<>();
+        List<Player> players;
 
         if (teamId != null) {
             if (number != null) {
@@ -86,9 +114,10 @@ public class PlayerWebController {
         return "players/list";
     }
 
-    @GetMapping("/{playerId}")
+    @GetMapping("/details/{playerId}")
     public String showPlayerDetails(@PathVariable Long playerId, Model model){
         Player player = playerService.findById(playerId);
+        //TODO: add Performances via the service
         model.addAttribute("player", player);
         return "players/detail";
     }

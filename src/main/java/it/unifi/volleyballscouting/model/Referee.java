@@ -2,6 +2,8 @@ package it.unifi.volleyballscouting.model;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 public class Referee extends BaseModel {
     //attributes
@@ -17,6 +19,7 @@ public class Referee extends BaseModel {
         this.surname = surname;
         this.province = province;
         this.licenseNumber = licenseNumber;
+        setCreatedAt(LocalDateTime.now());
     }
     //methods
     public String getName() {

@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
@@ -22,6 +23,8 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     Player findByTeamIdAndNumber(Long teamID, int number);
     List<Player> findByTeamIdIsNull();
     List<Player> findByTeamIdIsNullAndRole(String role);
-    List<Integer> findNumberByTeamId(Long teamId);
+    Optional<Player> findByUsername(String username);
+    boolean existsByTeamIdAndNumber(Long teamId, Integer number);
+    boolean existsByTeamIdAndNumberAndIdNot(Long teamId, Integer number, Long playerId);
 
 }

@@ -4,21 +4,26 @@ import it.unifi.volleyballscouting.dto.PlayerFormDto;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.PlayerRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional(readOnly = true)
 public class PlayerService {
 
+    private final PasswordEncoder passwordEncoder;
+
     public record AssignmentResult(Long playerId, boolean hasNumberConflict, Integer number){}
 
     private final PlayerRepository playerRepository;
 
-    public PlayerService(PlayerRepository repo){
+    public PlayerService(PlayerRepository repo, PasswordEncoder passwordEncoder){
         this.playerRepository = repo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Player> findAll(){
@@ -65,32 +70,38 @@ public class PlayerService {
         return playerRepository.findByTeamIdIsNullAndRole(role);
     }
 
-    public List<Integer> listTeamPlayersNumbers(Long teamId){
-        return playerRepository.findNumberByTeamId(teamId);
-    }
-
     @Transactional
-    public Player save(PlayerFormDto form, Team team){
-        Player player = new Player(form.surname(), form.name(), form.username(), form.birthdate(), form.number(), form.role());
+    public String save(PlayerFormDto form, Team team){
+        String tempPassword = UUID.randomUUID().toString().substring(0,8);
+        String encodedPassword = passwordEncoder.encode(tempPassword);
+        Player player = new Player(form.surname(), form.name(), form.username(), encodedPassword, form.birthdate(), form.number(), form.role());
         player.setTeam(team);
-        return playerRepository.save(player);
+        playerRepository.save(player);
+        return tempPassword;
     }
 
     @Transactional
     public AssignmentResult addPlayerToTeam(Long playerId, Team t){
         Player p = findById(playerId);
-        p.setTeam(t);
-        boolean conflict = isNumberAlreadyTaken(t.getId(), p.getNumber());
+        boolean conflict = isNumberAlreadyTaken(t.getId(), p.getNumber(), playerId);
         p.setTeam(t);
         return new AssignmentResult(playerId, conflict, p.getNumber());
     }
-    public Player updatePlayer(Long playerId, PlayerFormDto form){
+
+    @Transactional
+    public void updatePlayer(Long playerId, PlayerFormDto form){
         Player p = findById(playerId);
+        p.updateFromDto(form);
     }
 
-    public boolean isNumberAlreadyTaken(Long teamId, int number){
-        List<Integer> teamNumbers = listTeamPlayersNumbers(teamId);
-        return teamNumbers.contains(number);
+    public boolean isNumberAlreadyTaken(Long teamId, Integer number, Long playerId){
+        if(teamId == null || number == null) {
+            return false;
+        }
+        if (playerId == null){
+            return playerRepository.existsByTeamIdAndNumber(teamId, number);
+        }
+        return playerRepository.existsByTeamIdAndNumberAndIdNot(teamId, number, playerId);
     }
 }
 

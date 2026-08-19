@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.dto.AddressFormDto;
 import jakarta.persistence.*;
 
 @Entity
@@ -8,15 +9,15 @@ public class Address extends BaseModel{
     //attributes
     private String street; //don't add "via" or "corso"
     private String city;
-    private String postalCode;
+    private String zipCode;
 
     protected Address() {}
 
     //constructor
-    public Address(String street, String city, String postalCode) {
+    public Address(String street, String city, String zipCode) {
         this.street = street;
         this.city = city;
-        this.postalCode = postalCode;
+        this.zipCode = zipCode;
     }
     //methods
 
@@ -37,13 +38,20 @@ public class Address extends BaseModel{
         this.city = city;
     }
 
-    public String getPostalCode() {
-        return postalCode;
+    public String getZipCode() {
+        return zipCode;
     }
 
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
+    public void setZipCode(String postalCode) {
+        this.zipCode = postalCode;
     }
 
+    public void updateFromDto(AddressFormDto form){
+        if (form != null){
+            this.street = form.street();
+            this.city = form.city();
+            this.zipCode = form.zipCode();
+        }
+    }
 
 }

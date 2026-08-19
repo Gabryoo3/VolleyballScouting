@@ -3,38 +3,49 @@ package it.unifi.volleyballscouting.model;
 
 import it.unifi.volleyballscouting.dto.PlayerFormDto;
 import jakarta.persistence.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 @Entity
-public class Player extends BaseModel{
+public class Player extends BaseModel implements UserDetails {
     //attributes
+    @Column(nullable = false)
     private String name;
+    @Column(nullable = false)
     private String surname;
+    @Column(nullable = false)
     private String username;
-    @Column(nullable = true)
+    @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
     private Date birthdate;
-    @Column(nullable = true)
-    private int number;
-    @Column(nullable = true)
-    private String role;
-    @Column(nullable = true)
+    private Integer number;
+    @Enumerated(EnumType.STRING)
+    private PlayerRole role;
     private String phone;
-    @Column(nullable = true)
     private String email;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
 
 
     //constructor
-    public Player(String surname, String name, String username, Date birthdate, int number, String role) {
+    public Player(String surname, String name, String username, String password, Date birthdate, Integer number, PlayerRole role) {
         this.surname = surname;
         this.name = name;
         this.username = username;
+        this.password = password;
         this.birthdate = birthdate;
         this.number = number;
         this.role = role;
+        setCreatedAt(LocalDateTime.now());
     }
     protected Player(){}
 
@@ -55,19 +66,19 @@ public class Player extends BaseModel{
         this.team = team;
     }
 
-    public String getRole() {
+    public PlayerRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(PlayerRole role) {
         this.role = role;
     }
 
-    public int getNumber() {
+    public Integer getNumber() {
         return number;
     }
 
-    public void setNumber(int number) {
+    public void setNumber(Integer number) {
         this.number = number;
     }
 
@@ -79,6 +90,20 @@ public class Player extends BaseModel{
         this.surname = surname;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_PLAYER"));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public String setPassword(String password){
+        this.password = password;
+    }
+    @Override
     public String getUsername() {
         return username;
     }
@@ -106,6 +131,27 @@ public class Player extends BaseModel{
         this.role = form.role();
         this.phone = form.phone();
         this.email = form.email();
+    }
+
+    //-----SECURITY-------
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 
 }
