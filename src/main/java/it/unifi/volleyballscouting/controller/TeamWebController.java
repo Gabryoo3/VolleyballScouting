@@ -12,6 +12,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/teams")
@@ -44,14 +45,14 @@ public class TeamWebController {
         return "redirect:/teams";
     }
     @GetMapping("/{teamId}/edit")
-    public String showEditForm(@PathVariable Long teamId, Model model){
+    public String showEditForm(@PathVariable UUID teamId, Model model){
         Team t = teamService.findById(teamId);
         prepareFormModel(model,TeamFormDto.fromEntity(t));
         return "teams/form";
     }
     @PostMapping("/{teamId}/update")
     public String editTeam(
-            @PathVariable Long teamId,
+            @PathVariable UUID teamId,
             @Valid @ModelAttribute("teamForm")
             TeamFormDto form,
             BindingResult br,
@@ -86,7 +87,7 @@ public class TeamWebController {
     }
 
     @GetMapping("/details/{teamId}")
-    public String showTeamDetails(@PathVariable Long teamId, Model model){
+    public String showTeamDetails(@PathVariable UUID teamId, Model model){
         Team team = teamService.findById(teamId);
         //TODO: add Performances via the service
         model.addAttribute("team", team);

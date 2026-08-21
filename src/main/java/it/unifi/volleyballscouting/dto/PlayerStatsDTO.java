@@ -3,12 +3,13 @@ package it.unifi.volleyballscouting.dto;
 import it.unifi.volleyballscouting.model.Player;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Performance}
  */
 public record PlayerStatsDTO(
-        long playerId,
+        UUID playerId,
         long totalAces,
         long totalServeErrors,
         long totalAttacksGood,
@@ -38,7 +39,7 @@ public record PlayerStatsDTO(
         return successPercentage(totalReceiveGood, totalReceiveBad);
     }
 
-    public static PlayerStatsDTO empty(Long playerId){
+    public static PlayerStatsDTO empty(UUID playerId){
         return new PlayerStatsDTO(playerId, 0,0,0,0,0,
                 0,0,0,0,0,0);
     }

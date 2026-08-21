@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
+
 @Service
 @Transactional(readOnly = true)
 public class TeamService {
@@ -21,7 +23,7 @@ public class TeamService {
 
     public List<Team> findAll(){ return teamRepo.findAll();}
 
-    public Team findById(Long id){
+    public Team findById(UUID id){
         return teamRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Team specificato non trovato"));
     }
 
@@ -47,7 +49,7 @@ public class TeamService {
         return teamRepo.save(team);
     }
     @Transactional
-    public void updateTeam(Long teamId, TeamFormDto form){
+    public void updateTeam(UUID teamId, TeamFormDto form){
         Team t = findById(teamId);
         t.updateFromDto(form);
     }

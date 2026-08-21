@@ -19,7 +19,7 @@ public record AddressFormDto(
         String zipCode) implements Serializable {
 
         public static AddressFormDto empty(){
-                return new AddressFormDto(null, null, null);
+                return new AddressFormDto("", "", "");
         }
 
         public static AddressFormDto fromEntity(Team t){

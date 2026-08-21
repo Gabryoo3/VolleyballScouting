@@ -3,9 +3,13 @@ import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
+import it.unifi.volleyballscouting.repository.CoachRepository;
+import it.unifi.volleyballscouting.repository.PlayerRepository;
+import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.CoachService;
 import it.unifi.volleyballscouting.service.PlayerService;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +17,7 @@ import org.springframework.ui.Model;
 import it.unifi.volleyballscouting.dto.PlayerFormDto;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/players")
@@ -20,10 +25,14 @@ public class PlayerWebController {
 
     private final PlayerService playerService;
     private final CoachService coachService;
+    private final CoachRepository coachRepository;
+    private final PlayerRepository playerRepository;
 
-    public PlayerWebController(PlayerService ps, CoachService cs){
+    public PlayerWebController(PlayerService ps, CoachService cs, CoachRepository cr, PlayerRepository pr){
         this.playerService = ps;
         this.coachService = cs;
+        this.coachRepository = cr;
+        this.playerRepository = pr;
     }
 
     @GetMapping("/new")
@@ -32,13 +41,21 @@ public class PlayerWebController {
         return "players/form";
     }
     @PostMapping("/create")
-    public String createPlayer(@Valid @ModelAttribute("playerForm") PlayerFormDto form, BindingResult br, Model model, RedirectAttributes redirectAttributes) {
+    public String createPlayer(@AuthenticationPrincipal AppUserDetails userDetails,
+                            @Valid @ModelAttribute("playerForm") PlayerFormDto form, BindingResult br, Model model,
+                            RedirectAttributes redirectAttributes) {
 
         if(br.hasErrors()) {
             prepareFormModel(model, form);
             return "players/form";
         }
-        Team t = coachService.getCoachTeam();
+        if(coachRepository.findByUsername(form.username()).isPresent() ||
+        playerRepository.findByUsername(form.username()).isPresent()){
+            br.rejectValue("username", "duplicate", "L'username è già in uso");
+            prepareFormModel(model, form);
+            return "players/form";
+        }
+        Team t = coachService.getCoachTeam(userDetails.getId());
         if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), null)){
             br.rejectValue("number", "duplicate", "Questo numero è già presente in squadra");
             prepareFormModel(model, form);
@@ -50,22 +67,23 @@ public class PlayerWebController {
         return "redirect:/players";
     }
     @GetMapping("/{playerId}/edit")
-    public String showEditForm(@PathVariable Long playerId, Model model){
+    public String showEditForm(@PathVariable UUID playerId, Model model){
         Player p = playerService.findById(playerId);
         prepareFormModel(model, PlayerFormDto.fromEntity(p));
         return "players/form";
     }
     @PostMapping("/{playerId}/update")
-    public String editPlayer(@PathVariable Long playerId,
-                             @Valid @ModelAttribute("playerForm")
-                             PlayerFormDto form,
-                             BindingResult br,
-                             Model model){
+    public String editPlayer(@AuthenticationPrincipal AppUserDetails userDetails,
+                            @PathVariable UUID playerId,
+                            @Valid @ModelAttribute("playerForm")
+                            PlayerFormDto form,
+                            BindingResult br,
+                            Model model){
         if(br.hasErrors()) {
             prepareFormModel(model, form);
             return "players/form";
         }
-        Team t = coachService.getCoachTeam();
+        Team t = coachService.getCoachTeam(userDetails.getId());
         if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), playerId)){
             br.rejectValue("number", "duplicate", "Questo numero è già presente in squadra");
             prepareFormModel(model, form);
@@ -77,7 +95,7 @@ public class PlayerWebController {
     // GET: show list of players
     @GetMapping("/list")
     public String listPlayers(
-            @RequestParam(required = false) Long teamId,
+            @RequestParam(required = false) UUID teamId,
             @RequestParam(required = false) String surname,
             @RequestParam(required = false) String role,
             @RequestParam(required = false) Integer number,
@@ -115,7 +133,7 @@ public class PlayerWebController {
     }
 
     @GetMapping("/details/{playerId}")
-    public String showPlayerDetails(@PathVariable Long playerId, Model model){
+    public String showPlayerDetails(@PathVariable UUID playerId, Model model){
         Player player = playerService.findById(playerId);
         //TODO: add Performances via the service
         model.addAttribute("player", player);

@@ -8,9 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.UUID;
 
-public interface SetRepository extends JpaRepository<Set, Long> {
-    List<Set> findSetsByMatchIdOrderBySetNumberAsc(Long MatchId);
+public interface SetRepository extends JpaRepository<Set, UUID> {
+    List<Set> findSetsByMatchIdOrderBySetNumberAsc(UUID MatchId);
     //find bad sets, where the team makes under a certain threshold
     @Query("SELECT s FROM Set s WHERE "+
             "(s.match.teamHome = :team AND s.teamHomePoints < :scoreTreshold) OR "+

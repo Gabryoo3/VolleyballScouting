@@ -17,7 +17,7 @@ public class PlayerService {
 
     private final PasswordEncoder passwordEncoder;
 
-    public record AssignmentResult(Long playerId, boolean hasNumberConflict, Integer number){}
+    public record AssignmentResult(UUID playerId, boolean hasNumberConflict, Integer number){}
 
     private final PlayerRepository playerRepository;
 
@@ -30,11 +30,11 @@ public class PlayerService {
         return playerRepository.findAll();
     }
 
-    public Player findById(Long id){
+    public Player findById(UUID id){
         return playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Giocatore specificato non trovato"));
     }
 
-    public List<Player> findByTeamId(Long teamId){
+    public List<Player> findByTeamId(UUID teamId){
         return playerRepository.findByTeamId(teamId);
     }
 
@@ -50,15 +50,15 @@ public class PlayerService {
         return playerRepository.findByRole(role);
     }
 
-    public List<Player> findByTeamIdAndSurname(Long teamId, String surname){
+    public List<Player> findByTeamIdAndSurname(UUID teamId, String surname){
         return playerRepository.findByTeamIdAndSurnameContainingIgnoreCase(teamId, surname);
     }
 
-    public List<Player> findByTeamIdAndRole(Long teamId, String role){
+    public List<Player> findByTeamIdAndRole(UUID teamId, String role){
         return playerRepository.findByTeamIdAndRole(teamId, role);
     }
 
-    public Player findByTeamIdAndNumber(Long teamId, int num){
+    public Player findByTeamIdAndNumber(UUID teamId, int num){
         return playerRepository.findByTeamIdAndNumber(teamId, num);
     }
 
@@ -81,7 +81,7 @@ public class PlayerService {
     }
 
     @Transactional
-    public AssignmentResult addPlayerToTeam(Long playerId, Team t){
+    public AssignmentResult addPlayerToTeam(UUID playerId, Team t){
         Player p = findById(playerId);
         boolean conflict = isNumberAlreadyTaken(t.getId(), p.getNumber(), playerId);
         p.setTeam(t);
@@ -89,12 +89,12 @@ public class PlayerService {
     }
 
     @Transactional
-    public void updatePlayer(Long playerId, PlayerFormDto form){
+    public void updatePlayer(UUID playerId, PlayerFormDto form){
         Player p = findById(playerId);
         p.updateFromDto(form);
     }
 
-    public boolean isNumberAlreadyTaken(Long teamId, Integer number, Long playerId){
+    public boolean isNumberAlreadyTaken(UUID teamId, Integer number, UUID playerId){
         if(teamId == null || number == null) {
             return false;
         }

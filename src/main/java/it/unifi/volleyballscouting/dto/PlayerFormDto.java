@@ -2,9 +2,11 @@ package it.unifi.volleyballscouting.dto;
 
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
+import it.unifi.volleyballscouting.validation.OnCreate;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+
 
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Player}
@@ -15,9 +17,9 @@ public record PlayerFormDto(
         @NotBlank(message = "Il cognome è necessario")
         String surname,
         @NotBlank(message = "Il nome utente è necessario")
-        String username,
+        String username, //password viene generata al momento solo per il primo accesso
         @NotNull(message = "La data di nascita è necessaria")
-        Date birthdate,
+        LocalDate birthdate,
         @NotNull(message = "Il numero del giocatore è necessario")
         @Min(value = 1, message = "Il numero deve essere almeno 1")
         @Max(value = 99, message = "Il numero deve essere massimo 99")
@@ -41,6 +43,6 @@ public record PlayerFormDto(
     }
 
     public static PlayerFormDto empty(){
-        return new PlayerFormDto(null,null,null,null,null,null,null,null);
+        return new PlayerFormDto("","","",null,null,null,"","");
     }
 }

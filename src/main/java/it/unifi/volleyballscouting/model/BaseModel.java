@@ -3,18 +3,20 @@ package it.unifi.volleyballscouting.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 @MappedSuperclass
 public class BaseModel {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
     private LocalDateTime createdAt;
 
-    public Long getId(){
+    public UUID getId(){
         return id;
     }
 
-    public void setId(Long id){
+    public void setId(UUID id){
         this.id = id;
     }
 

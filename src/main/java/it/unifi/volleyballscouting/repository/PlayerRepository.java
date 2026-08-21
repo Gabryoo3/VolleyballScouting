@@ -9,22 +9,23 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface PlayerRepository extends JpaRepository<Player, Long> {
+public interface PlayerRepository extends JpaRepository<Player, UUID> {
     //Global searches
     List<Player> findBySurnameContainingIgnoreCase(String surname);
     List<Player> findByNumber(int number);
     List<Player> findByRole(String role);
-    List<Player> findByTeamId (Long teamId);
+    List<Player> findByTeamId (UUID teamId);
     //Local searches
-    List<Player> findByTeamIdAndSurnameContainingIgnoreCase(Long teamID, String surname);
-    List<Player> findByTeamIdAndRole(Long teamID, String role);
-    Player findByTeamIdAndNumber(Long teamID, int number);
+    List<Player> findByTeamIdAndSurnameContainingIgnoreCase(UUID teamID, String surname);
+    List<Player> findByTeamIdAndRole(UUID teamID, String role);
+    Player findByTeamIdAndNumber(UUID teamID, int number);
     List<Player> findByTeamIdIsNull();
     List<Player> findByTeamIdIsNullAndRole(String role);
     Optional<Player> findByUsername(String username);
-    boolean existsByTeamIdAndNumber(Long teamId, Integer number);
-    boolean existsByTeamIdAndNumberAndIdNot(Long teamId, Integer number, Long playerId);
+    boolean existsByTeamIdAndNumber(UUID teamId, Integer number);
+    boolean existsByTeamIdAndNumberAndIdNot(UUID teamId, Integer number, UUID playerId);
 
 }

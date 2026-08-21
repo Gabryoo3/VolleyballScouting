@@ -4,27 +4,23 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+
 
 @Entity
-public class Coach extends BaseModel implements UserDetails {
+public class Coach extends BaseModel{
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private String surname;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
     private String password;
-    @Column
-    private Date birthdate;
+    @Column (nullable = false)
+    private LocalDate birthdate;
     private String phone;
     private String email;
     @ManyToOne
@@ -32,10 +28,12 @@ public class Coach extends BaseModel implements UserDetails {
     private Team team;
 
     protected Coach (){}
-    public Coach(String name, String surname, String username, Team team) {
+    public Coach(String name, String surname, String username, String password, LocalDate birthdate, Team team) {
         this.name = name;
         this.surname = surname;
         this.username = username;
+        this.password = password;
+        this.birthdate = birthdate;
         this.team = team;
         setCreatedAt(LocalDateTime.now());
     }
@@ -48,23 +46,19 @@ public class Coach extends BaseModel implements UserDetails {
 
     public void setSurname(String surname) {this.surname = surname;}
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("ROLE_COACH"));
+    public String getPassword() {
+        return password;
     }
 
-    @Override
-    public String getPassword() {
-        return "";
-    }
-    @Override
+    public void setPassword(String password) {this.password = password;}
+
     public String getUsername() {return username;}
 
     public void setUsername(String username) {this.username = username;}
 
-    public Date getBirthdate() {return birthdate;}
+    public LocalDate getBirthdate() {return birthdate;}
 
-    public void setBirthdate(Date birthdate) {this.birthdate = birthdate;}
+    public void setBirthdate(LocalDate birthdate) {this.birthdate = birthdate;}
 
     public String getPhone() {return phone;}
 
@@ -77,26 +71,4 @@ public class Coach extends BaseModel implements UserDetails {
     public Team getTeam() {return team;}
 
     public void setTeam(Team team) {this.team = team;}
-
-    //----FOR SECURITY-----
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
 }

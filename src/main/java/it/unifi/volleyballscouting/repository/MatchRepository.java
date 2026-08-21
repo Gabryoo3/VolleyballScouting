@@ -10,9 +10,10 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface MatchRepository extends JpaRepository<Match, Long> {
+public interface MatchRepository extends JpaRepository<Match, UUID> {
     // find by date time
     List<Match> findByMatchDateTimeBetween (LocalDateTime start, LocalDateTime end);
     List<Match> findByMatchDateTimeAfterOrderByMatchDateTimeAsc(LocalDateTime now);

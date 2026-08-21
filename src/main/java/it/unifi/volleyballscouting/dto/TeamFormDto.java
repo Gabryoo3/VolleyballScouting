@@ -21,7 +21,7 @@ public record TeamFormDto(
         ) implements Serializable {
 
         public static TeamFormDto empty(){
-                return new TeamFormDto(null, AddressFormDto.empty());
+                return new TeamFormDto("", AddressFormDto.empty());
         }
 
         public static TeamFormDto fromEntity(Team t){
