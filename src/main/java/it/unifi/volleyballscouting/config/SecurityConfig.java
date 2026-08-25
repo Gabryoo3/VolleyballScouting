@@ -1,6 +1,5 @@
 package it.unifi.volleyballscouting.config;
 
-import it.unifi.volleyballscouting.service.AppUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;

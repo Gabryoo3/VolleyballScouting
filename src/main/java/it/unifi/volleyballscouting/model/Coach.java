@@ -1,9 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -23,7 +20,7 @@ public class Coach extends BaseModel{
     private LocalDate birthdate;
     private String phone;
     private String email;
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "team_id")
     private Team team;
 

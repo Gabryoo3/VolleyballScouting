@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 @Entity
 public class Team extends BaseModel{
     //attributes
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 

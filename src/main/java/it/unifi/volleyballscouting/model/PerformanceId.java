@@ -3,15 +3,16 @@ package it.unifi.volleyballscouting.model;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 @Embeddable
 public class PerformanceId implements Serializable {
-    private Long playerId;
-    private Long setId;
+    private UUID playerId;
+    private UUID setId;
 
     public PerformanceId() {}
 
-    public PerformanceId(Long playerId, Long setId) {
+    public PerformanceId(UUID playerId, UUID setId) {
         this.playerId = playerId;
         this.setId = setId;
     }
@@ -19,8 +20,7 @@ public class PerformanceId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof PerformanceId)) return false;
-        PerformanceId that = (PerformanceId) o;
+        if (!(o instanceof PerformanceId that)) return false;
         return Objects.equals(playerId, that.playerId) && Objects.equals(setId, that.setId);
     }
 
