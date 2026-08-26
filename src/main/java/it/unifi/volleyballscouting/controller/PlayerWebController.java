@@ -56,7 +56,7 @@ public class PlayerWebController {
         if(coachRepository.findByUsername(form.username()).isPresent() ||
         playerRepository.findByUsername(form.username()).isPresent()){
             br.rejectValue("username", "duplicate", "L'username è già in uso");
-            prepareFormModel(model, form);
+            prepareFormModel(model, form, "/players/create" );
             return "players/form";
         }
         Team t = coachService.getCoachTeam(userDetails.getId());
@@ -68,7 +68,6 @@ public class PlayerWebController {
         String tempPassword = playerService.save(form, t);
         redirectAttributes.addFlashAttribute("tempPassword", tempPassword);
         redirectAttributes.addFlashAttribute("successMessage", "Giocatore creato con successo!");
-        // FIX: prima era "redirect:/players" (nessun handler su /players) -> ora /players/list
         return "redirect:/players/list";
     }
     @GetMapping("/{playerId}/edit")
@@ -95,7 +94,6 @@ public class PlayerWebController {
             return "players/form";
         }
         playerService.updatePlayer(playerId, form);
-        // FIX: prima era "redirect:/players/" + playerId (nessun handler) -> ora /players/details/{id}
         return "redirect:/players/details/" + playerId;
     }
     // GET: show list of players
@@ -118,7 +116,7 @@ public class PlayerWebController {
             } else if (cleanSurname != null) {
                 players = playerService.findByTeamIdAndSurname(teamId, cleanSurname);
             } else if (cleanRole != null) {
-                players = playerService.findByTeamIdAndRole(teamId, cleanRole);
+                players = playerService.findByTeamIdAndRole(teamId, PlayerRole.valueOf(cleanRole));
             } else {
                 players = playerService.findByTeamId(teamId);
             }
@@ -126,7 +124,7 @@ public class PlayerWebController {
         else if (cleanSurname != null) {
             players = playerService.findBySurname(cleanSurname);
         } else if (cleanRole != null) {
-            players = playerService.findByRole(cleanRole);
+            players = playerService.findByRole(PlayerRole.valueOf(cleanRole));
         } else if (number != null) {
             players = playerService.findByNumber(number);
         }
@@ -152,7 +150,7 @@ public class PlayerWebController {
         String cleanRole = (role != null && !role.isBlank()) ? role : null;
         List<Player> players;
         if(cleanRole != null){
-            players = playerService.findByTeamIdIsNullAndRole(cleanRole);
+            players = playerService.findByTeamIdIsNullAndRole(PlayerRole.valueOf(cleanRole));
         }else{
             players = playerService.findByTeamIdIsNull();
         }

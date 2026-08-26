@@ -5,7 +5,7 @@ import it.unifi.volleyballscouting.model.PlayerRole;
 import jakarta.validation.constraints.*;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Player}
@@ -19,7 +19,7 @@ public record PlayerFormDto(
         String username,
         @NotNull(message = "La data di nascita è necessaria")
         @DateTimeFormat(pattern = "yyyy-MM-dd")
-        Date birthdate,
+        LocalDate birthdate,
         @NotNull(message = "Il numero del giocatore è necessario")
         @Min(value = 1, message = "Il numero deve essere almeno 1")
         @Max(value = 99, message = "Il numero deve essere massimo 99")

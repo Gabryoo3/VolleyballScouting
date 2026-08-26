@@ -2,6 +2,7 @@ package it.unifi.volleyballscouting.service;
 
 import it.unifi.volleyballscouting.dto.PlayerFormDto;
 import it.unifi.volleyballscouting.model.Player;
+import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.PlayerRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -46,7 +47,7 @@ public class PlayerService {
         return playerRepository.findByNumber(num);
     }
 
-    public List<Player> findByRole(String role){
+    public List<Player> findByRole(PlayerRole role){
         return playerRepository.findByRole(role);
     }
 
@@ -54,7 +55,7 @@ public class PlayerService {
         return playerRepository.findByTeamIdAndSurnameContainingIgnoreCase(teamId, surname);
     }
 
-    public List<Player> findByTeamIdAndRole(UUID teamId, String role){
+    public List<Player> findByTeamIdAndRole(UUID teamId, PlayerRole role){
         return playerRepository.findByTeamIdAndRole(teamId, role);
     }
 
@@ -66,7 +67,7 @@ public class PlayerService {
         return playerRepository.findByTeamIdIsNull();
     }
 
-    public List<Player> findByTeamIdIsNullAndRole(String role){
+    public List<Player> findByTeamIdIsNullAndRole(PlayerRole role){
         return playerRepository.findByTeamIdIsNullAndRole(role);
     }
 
