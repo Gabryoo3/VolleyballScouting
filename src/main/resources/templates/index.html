@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1>Volleyball Scouting</h1>
+    <p class="subtitle">Sistema di raccolta dati e analisi del rendimento nelle partite di pallavolo.</p>
+    <div class="card">
+        <p>Benvenuto. Puoi consultare gli elenchi pubblici oppure accedere come allenatore
+            per gestire squadre e giocatori.</p>
+        <div class="home-links">
+            <a class="tile" th:href="@{/players/list}">Elenco Giocatori
+                <span>Consulta tutti i giocatori</span></a>
+            <a class="tile" th:href="@{/teams}">Elenco Squadre
+                <span>Consulta le squadre</span></a>
+            <a class="tile" sec:authorize="!isAuthenticated()" th:href="@{/login}">Accedi
+                <span>Area allenatore / giocatore</span></a>
+            <a class="tile" sec:authorize="isAuthenticated()" th:href="@{/home}">Vai alla Home
+                <span>La tua area personale</span></a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

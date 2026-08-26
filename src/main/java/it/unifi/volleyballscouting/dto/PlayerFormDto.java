@@ -2,11 +2,10 @@ package it.unifi.volleyballscouting.dto;
 
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
-import it.unifi.volleyballscouting.validation.OnCreate;
 import jakarta.validation.constraints.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import java.io.Serializable;
-import java.time.LocalDate;
-
+import java.util.Date;
 
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Player}
@@ -17,14 +16,17 @@ public record PlayerFormDto(
         @NotBlank(message = "Il cognome è necessario")
         String surname,
         @NotBlank(message = "Il nome utente è necessario")
-        String username, //password viene generata al momento solo per il primo accesso
+        String username,
         @NotNull(message = "La data di nascita è necessaria")
-        LocalDate birthdate,
+        @DateTimeFormat(pattern = "yyyy-MM-dd")
+        Date birthdate,
         @NotNull(message = "Il numero del giocatore è necessario")
         @Min(value = 1, message = "Il numero deve essere almeno 1")
         @Max(value = 99, message = "Il numero deve essere massimo 99")
         Integer number,
-        @NotBlank(message = "Il ruolo del giocatore è necessario")
+        // FIX: prima era @NotBlank, che vale solo per le stringhe e su un enum
+        // provoca UnexpectedTypeException a runtime. Su un enum si usa @NotNull.
+        @NotNull(message = "Il ruolo del giocatore è necessario")
         PlayerRole role,
         String phone,
         @Email(message = "L'email non è valida")
@@ -43,6 +45,6 @@ public record PlayerFormDto(
     }
 
     public static PlayerFormDto empty(){
-        return new PlayerFormDto("","","",null,null,null,"","");
+        return new PlayerFormDto(null,null,null,null,null,null,null,null);
     }
 }

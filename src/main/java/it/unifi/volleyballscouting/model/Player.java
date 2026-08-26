@@ -3,23 +3,28 @@ package it.unifi.volleyballscouting.model;
 
 import it.unifi.volleyballscouting.dto.PlayerFormDto;
 import jakarta.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.Date;
+import java.util.List;
 
 @Entity
-public class Player extends BaseModel {
+public class Player extends BaseModel implements UserDetails {
     //attributes
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
     private String surname;
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
-    private LocalDate birthdate;
+    private Date birthdate;
     private Integer number;
     @Enumerated(EnumType.STRING)
     private PlayerRole role;
@@ -31,7 +36,7 @@ public class Player extends BaseModel {
 
 
     //constructor
-    public Player(String surname, String name, String username, String password, LocalDate birthdate, Integer number, PlayerRole role) {
+    public Player(String surname, String name, String username, String password, Date birthdate, Integer number, PlayerRole role) {
         this.surname = surname;
         this.name = name;
         this.username = username;
@@ -84,23 +89,30 @@ public class Player extends BaseModel {
         this.surname = surname;
     }
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_PLAYER"));
+    }
+
+    @Override
     public String getPassword() {
         return password;
     }
 
+    // FIX: prima il metodo era dichiarato "public String setPassword(...)" senza return -> errore di compilazione.
     public void setPassword(String password){
         this.password = password;
     }
-
+    @Override
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {this.username = username;}
 
-    public LocalDate getBirthdate() {return birthdate;}
+    public Date getBirthdate() {return birthdate;}
 
-    public void setBirthdate(LocalDate birthdate) {this.birthdate = birthdate;}
+    public void setBirthdate(Date birthdate) {this.birthdate = birthdate;}
 
     public String getPhone() {return phone;}
 
@@ -119,6 +131,27 @@ public class Player extends BaseModel {
         this.role = form.role();
         this.phone = form.phone();
         this.email = form.email();
+    }
+
+    //-----SECURITY-------
+    @Override
+    public boolean isAccountNonExpired() {
+        return UserDetails.super.isAccountNonExpired();
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return UserDetails.super.isAccountNonLocked();
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return UserDetails.super.isCredentialsNonExpired();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return UserDetails.super.isEnabled();
     }
 
 }

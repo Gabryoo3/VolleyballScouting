@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Giocatori - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1>Giocatori</h1>
+    <p class="subtitle">Elenco dei giocatori e ricerca.</p>
+
+    <div th:if="${successMessage}" class="alert success">
+        <span th:text="${successMessage}">Operazione riuscita</span>
+        <span th:if="${tempPassword}"> Password temporanea: <b th:text="${tempPassword}">xxxx</b></span>
+    </div>
+
+    <div class="card">
+        <form method="get" th:action="@{/players/list}" class="filters">
+            <div class="fg">
+                <label for="surname">Cognome</label>
+                <input type="text" id="surname" name="surname"
+                       th:value="${param.surname != null ? param.surname[0] : ''}">
+            </div>
+            <div class="fg">
+                <label for="role">Ruolo</label>
+                <select id="role" name="role">
+                    <option value="">Tutti</option>
+                    <option th:each="r : ${roles}" th:value="${r.name()}" th:text="${r.displayName}">Ruolo</option>
+                </select>
+            </div>
+            <div class="fg">
+                <label for="number">Numero</label>
+                <input type="number" id="number" name="number" min="1" max="99"
+                       th:value="${param.number != null ? param.number[0] : ''}">
+            </div>
+            <button class="btn" type="submit">Cerca</button>
+            <a class="btn secondary" th:href="@{/players/list}">Reset</a>
+        </form>
+
+        <p sec:authorize="hasRole('COACH')" style="margin:16px 0 0;">
+            <a class="btn" th:href="@{/players/new}">+ Aggiungi Giocatore</a>
+        </p>
+    </div>
+
+    <div class="card" th:if="${players.isEmpty()}">
+        <div class="empty">Nessun giocatore trovato.</div>
+    </div>
+
+    <table th:unless="${players.isEmpty()}">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Cognome</th>
+            <th>Nome</th>
+            <th>Ruolo</th>
+            <th>Squadra</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${players}">
+            <td th:text="${p.number}">0</td>
+            <td th:text="${p.surname}">Cognome</td>
+            <td th:text="${p.name}">Nome</td>
+            <td><span class="badge" th:text="${p.role != null ? p.role.displayName : '—'}">Ruolo</span></td>
+            <td th:text="${p.team != null ? p.team.name : '—'}">Squadra</td>
+            <td>
+                <a class="btn small secondary" th:href="@{'/players/details/' + ${p.id}}">Dettagli</a>
+                <a sec:authorize="hasRole('COACH')" class="btn small" th:href="@{'/players/' + ${p.id} + '/edit'}">Modifica</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

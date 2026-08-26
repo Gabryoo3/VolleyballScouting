@@ -26,7 +26,7 @@ public class TeamWebController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        model.addAttribute("teamForm", TeamFormDto.empty());
+        prepareFormModel(model, TeamFormDto.empty(), "/teams/create");
         return "teams/form";
     }
     @PostMapping("/create")
@@ -38,7 +38,7 @@ public class TeamWebController {
             Model model
     ){
         if (br.hasErrors()) {
-            prepareFormModel(model, form);
+            prepareFormModel(model, form, "/teams/create");
             return "teams/form";
         }
         teamService.save(form, coach);
@@ -47,7 +47,7 @@ public class TeamWebController {
     @GetMapping("/{teamId}/edit")
     public String showEditForm(@PathVariable UUID teamId, Model model){
         Team t = teamService.findById(teamId);
-        prepareFormModel(model,TeamFormDto.fromEntity(t));
+        prepareFormModel(model, TeamFormDto.fromEntity(t), "/teams/" + teamId + "/update");
         return "teams/form";
     }
     @PostMapping("/{teamId}/update")
@@ -58,11 +58,12 @@ public class TeamWebController {
             BindingResult br,
             Model model){
         if(br.hasErrors()){
-            prepareFormModel(model, form);
+            prepareFormModel(model, form, "/teams/" + teamId + "/update");
             return "teams/form";
         }
         teamService.updateTeam(teamId, form);
-        return "redirect:/teams" + teamId;
+        // FIX: prima era "redirect:/teams" + teamId (mancava lo "/") -> ora /teams/details/{id}
+        return "redirect:/teams/details/" + teamId;
     }
 
     @GetMapping String listTeams(
@@ -94,8 +95,9 @@ public class TeamWebController {
         return "teams/detail";
     }
 
-    private void prepareFormModel(Model model, TeamFormDto form){
+    private void prepareFormModel(Model model, TeamFormDto form, String formAction){
         model.addAttribute("teamForm", form);
+        model.addAttribute("formAction", formAction);
     }
 
 }

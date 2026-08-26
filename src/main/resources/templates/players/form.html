@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Giocatore - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1>Scheda Giocatore</h1>
+    <p class="subtitle">Compila i campi e conferma.</p>
+
+    <div class="card">
+        <form th:action="@{${formAction}}" method="post" th:object="${playerForm}" class="stack">
+
+            <div th:if="${#fields.hasAnyErrors()}" class="alert error">
+                <ul style="margin:0;padding-left:18px;">
+                    <li th:each="e : ${#fields.allErrors()}" th:text="${e}">errore</li>
+                </ul>
+            </div>
+
+            <label for="name">Nome</label>
+            <input type="text" id="name" name="name" th:value="${playerForm.name()}">
+
+            <label for="surname">Cognome</label>
+            <input type="text" id="surname" name="surname" th:value="${playerForm.surname()}">
+
+            <label for="username">Nome utente</label>
+            <input type="text" id="username" name="username" th:value="${playerForm.username()}">
+
+            <label for="birthdate">Data di nascita</label>
+            <input type="date" id="birthdate" name="birthdate"
+                   th:value="${playerForm.birthdate() != null ? #dates.format(playerForm.birthdate(),'yyyy-MM-dd') : ''}">
+
+            <label for="number">Numero di maglia</label>
+            <input type="number" id="number" name="number" min="1" max="99" th:value="${playerForm.number()}">
+
+            <label for="role">Ruolo</label>
+            <select id="role" name="role">
+                <option value="">-- seleziona --</option>
+                <option th:each="r : ${roles}"
+                        th:value="${r.name()}"
+                        th:text="${r.displayName}"
+                        th:selected="${playerForm.role() != null and playerForm.role().name() == r.name()}">Ruolo</option>
+            </select>
+
+            <label for="phone">Telefono</label>
+            <input type="text" id="phone" name="phone" th:value="${playerForm.phone()}">
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" th:value="${playerForm.email()}">
+
+            <div class="form-actions">
+                <button class="btn" type="submit">Conferma</button>
+                <a class="btn secondary" th:href="@{/players/list}">Annulla</a>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>
