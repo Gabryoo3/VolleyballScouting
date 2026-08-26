@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.config;
 
-import it.unifi.volleyballscouting.service.AppUserDetailService;
+import it.unifi.volleyballscouting.security.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,9 +14,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final AppUserDetailService userDetailService;
+    private final AppUserDetailsService userDetailService;
 
-    public SecurityConfig(AppUserDetailService uds){
+    public SecurityConfig(AppUserDetailsService uds){
         this.userDetailService = uds;
     }
     @Bean
