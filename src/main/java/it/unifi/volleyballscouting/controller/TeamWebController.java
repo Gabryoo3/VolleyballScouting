@@ -3,6 +3,7 @@ package it.unifi.volleyballscouting.controller;
 import it.unifi.volleyballscouting.dto.TeamFormDto;
 import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
+import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,14 +35,14 @@ public class TeamWebController {
             @Valid @ModelAttribute("teamForm")
             TeamFormDto form,
             BindingResult br,
-            @AuthenticationPrincipal Coach coach,
+            @AuthenticationPrincipal AppUserDetails userDetails,
             Model model
     ){
         if (br.hasErrors()) {
             prepareFormModel(model, form, "/teams/create");
             return "teams/form";
         }
-        teamService.save(form, coach);
+        teamService.save(form, userDetails.getId());
         return "redirect:/teams";
     }
     @GetMapping("/{teamId}/edit")

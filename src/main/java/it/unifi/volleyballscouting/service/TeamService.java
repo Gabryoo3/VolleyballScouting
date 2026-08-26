@@ -39,14 +39,17 @@ public class TeamService {
         return teamRepo.findByNameContainingIgnoreCaseAndAddressCity(name, city);
     }
     @Transactional
-    public Team save (TeamFormDto form, Coach coach){
+    public Team save (TeamFormDto form, UUID coachId){
+        Coach coach = coachService.findById(coachId);
         Address ad = new Address(
                 form.address().street(),
                 form.address().city(),
                 form.address().zipCode()
         );
         Team team = new Team (form.name(), ad, coach);
-        return teamRepo.save(team);
+        Team saved = teamRepo.save(team);
+        coach.setTeam(saved);
+        return saved;
     }
     @Transactional
     public void updateTeam(UUID teamId, TeamFormDto form){
