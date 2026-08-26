@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Giocatori svincolati - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1>Giocatori svincolati</h1>
+    <p class="subtitle">Giocatori non associati a nessuna squadra.</p>
+
+    <div class="card">
+        <form method="get" th:action="@{/players/free}" class="filters">
+            <div class="fg">
+                <label for="role">Ruolo</label>
+                <select id="role" name="role">
+                    <option value="">Tutti</option>
+                    <option th:each="r : ${roles}" th:value="${r.name()}" th:text="${r.displayName}">Ruolo</option>
+                </select>
+            </div>
+            <button class="btn" type="submit">Cerca</button>
+            <a class="btn secondary" th:href="@{/players/free}">Reset</a>
+        </form>
+    </div>
+
+    <div class="card" th:if="${players.isEmpty()}">
+        <div class="empty">Nessun giocatore svincolato.</div>
+    </div>
+
+    <table th:unless="${players.isEmpty()}">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Cognome</th>
+            <th>Nome</th>
+            <th>Ruolo</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${players}">
+            <td th:text="${p.number}">0</td>
+            <td th:text="${p.surname}">Cognome</td>
+            <td th:text="${p.name}">Nome</td>
+            <td><span class="badge" th:text="${p.role != null ? p.role.displayName : '—'}">Ruolo</span></td>
+            <td>
+                <a class="btn small secondary" th:href="@{'/players/details/' + ${p.id}}">Dettagli</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

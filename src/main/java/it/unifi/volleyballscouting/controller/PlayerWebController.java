@@ -28,31 +28,32 @@ public class PlayerWebController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        prepareFormModel(model, PlayerFormDto.empty());
+        prepareFormModel(model, PlayerFormDto.empty(), "/players/create");
         return "players/form";
     }
     @PostMapping("/create")
     public String createPlayer(@Valid @ModelAttribute("playerForm") PlayerFormDto form, BindingResult br, Model model, RedirectAttributes redirectAttributes) {
 
         if(br.hasErrors()) {
-            prepareFormModel(model, form);
+            prepareFormModel(model, form, "/players/create");
             return "players/form";
         }
         Team t = coachService.getCoachTeam();
         if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), null)){
             br.rejectValue("number", "duplicate", "Questo numero è già presente in squadra");
-            prepareFormModel(model, form);
+            prepareFormModel(model, form, "/players/create");
             return "players/form";
         }
         String tempPassword = playerService.save(form, t);
         redirectAttributes.addFlashAttribute("tempPassword", tempPassword);
         redirectAttributes.addFlashAttribute("successMessage", "Giocatore creato con successo!");
-        return "redirect:/players";
+        // FIX: prima era "redirect:/players" (nessun handler su /players) -> ora /players/list
+        return "redirect:/players/list";
     }
     @GetMapping("/{playerId}/edit")
     public String showEditForm(@PathVariable Long playerId, Model model){
         Player p = playerService.findById(playerId);
-        prepareFormModel(model, PlayerFormDto.fromEntity(p));
+        prepareFormModel(model, PlayerFormDto.fromEntity(p), "/players/" + playerId + "/update");
         return "players/form";
     }
     @PostMapping("/{playerId}/update")
@@ -62,17 +63,18 @@ public class PlayerWebController {
                              BindingResult br,
                              Model model){
         if(br.hasErrors()) {
-            prepareFormModel(model, form);
+            prepareFormModel(model, form, "/players/" + playerId + "/update");
             return "players/form";
         }
         Team t = coachService.getCoachTeam();
         if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), playerId)){
             br.rejectValue("number", "duplicate", "Questo numero è già presente in squadra");
-            prepareFormModel(model, form);
+            prepareFormModel(model, form, "/players/" + playerId + "/update");
             return "players/form";
         }
         playerService.updatePlayer(playerId, form);
-        return "redirect:/players/" + playerId;
+        // FIX: prima era "redirect:/players/" + playerId (nessun handler) -> ora /players/details/{id}
+        return "redirect:/players/details/" + playerId;
     }
     // GET: show list of players
     @GetMapping("/list")
@@ -111,6 +113,7 @@ public class PlayerWebController {
         }
 
         model.addAttribute("players", players);
+        model.addAttribute("roles", PlayerRole.values());
         return "players/list";
     }
 
@@ -131,12 +134,14 @@ public class PlayerWebController {
             players = playerService.findByTeamIdIsNull();
         }
         model.addAttribute("players", players);
+        model.addAttribute("roles", PlayerRole.values());
         return "players/NoTeamList";
     }
 
-    private void prepareFormModel(Model model, PlayerFormDto form){
+    private void prepareFormModel(Model model, PlayerFormDto form, String formAction){
         model.addAttribute("playerForm", form);
         model.addAttribute("roles", PlayerRole.values());
+        model.addAttribute("formAction", formAction);
     }
 
 }

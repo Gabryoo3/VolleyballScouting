@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Accedi - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <div class="login-wrap card">
+        <h1>Accedi</h1>
+        <p class="subtitle">Inserisci le tue credenziali.</p>
+
+        <div th:if="${param.error}" class="alert error">Nome utente o password non validi.</div>
+        <div th:if="${param.logout}" class="alert info">Logout effettuato correttamente.</div>
+
+        <form th:action="@{/login}" method="post" class="stack">
+            <label for="username">Nome utente</label>
+            <input type="text" id="username" name="username" autofocus required>
+
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required>
+
+            <div class="form-actions">
+                <button class="btn" type="submit">Entra</button>
+                <a class="btn secondary" th:href="@{/}">Annulla</a>
+            </div>
+        </form>
+        <p class="muted" style="margin-top:18px;font-size:.85rem;">
+            Account demo &rarr; <b>coach</b> / <b>coach123</b>
+        </p>
+    </div>
+</main>
+</body>
+</html>

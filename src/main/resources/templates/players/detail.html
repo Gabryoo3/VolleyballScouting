@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Dettaglio Giocatore - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1 th:text="${player.name} + ' ' + ${player.surname}">Nome Cognome</h1>
+    <p class="subtitle">Scheda anagrafica del giocatore.</p>
+
+    <div class="card">
+        <dl class="info">
+            <dt>Numero di maglia</dt><dd th:text="${player.number}">0</dd>
+            <dt>Ruolo</dt><dd th:text="${player.role != null ? player.role.displayName : '—'}">Ruolo</dd>
+            <dt>Nome utente</dt><dd th:text="${player.username}">username</dd>
+            <dt>Data di nascita</dt>
+            <dd th:text="${player.birthdate != null ? #dates.format(player.birthdate,'dd/MM/yyyy') : '—'}">--</dd>
+            <dt>Squadra</dt><dd th:text="${player.team != null ? player.team.name : 'Svincolato'}">Squadra</dd>
+            <dt>Telefono</dt><dd th:text="${player.phone != null ? player.phone : '—'}">—</dd>
+            <dt>Email</dt><dd th:text="${player.email != null ? player.email : '—'}">—</dd>
+        </dl>
+
+        <div class="actions-row">
+            <a class="btn secondary" th:href="@{/players/list}">&larr; Torna all'elenco</a>
+            <a sec:authorize="hasRole('COACH')" class="btn" th:href="@{'/players/' + ${player.id} + '/edit'}">Modifica</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

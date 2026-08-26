@@ -27,6 +27,10 @@ public class Match extends BaseModel{
     private LocalDateTime matchDateTime;
     private Integer homeScore = 0;
     private Integer guestScore = 0;
+    // FIX: la collezione di Set (entità) era priva di annotazione di relazione:
+    // Hibernate la trattava come "basic collection" -> MappingException.
+    // Relazione 1-a-molti con Set, che possiede la FK match_id (lato proprietario).
+    @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Set> sets = new ArrayList<>();
     protected Match(){}
 

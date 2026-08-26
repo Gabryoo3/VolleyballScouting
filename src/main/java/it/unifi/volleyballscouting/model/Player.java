@@ -3,7 +3,6 @@ package it.unifi.volleyballscouting.model;
 
 import it.unifi.volleyballscouting.dto.PlayerFormDto;
 import jakarta.persistence.*;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -100,7 +99,8 @@ public class Player extends BaseModel implements UserDetails {
         return password;
     }
 
-    public String setPassword(String password){
+    // FIX: prima il metodo era dichiarato "public String setPassword(...)" senza return -> errore di compilazione.
+    public void setPassword(String password){
         this.password = password;
     }
     @Override

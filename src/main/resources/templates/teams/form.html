@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Squadra - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1>Scheda Squadra</h1>
+    <p class="subtitle">Inserisci il nome e l'indirizzo della squadra.</p>
+
+    <div class="card">
+        <form th:action="@{${formAction}}" method="post" th:object="${teamForm}" class="stack">
+
+            <div th:if="${#fields.hasAnyErrors()}" class="alert error">
+                <ul style="margin:0;padding-left:18px;">
+                    <li th:each="e : ${#fields.allErrors()}" th:text="${e}">errore</li>
+                </ul>
+            </div>
+
+            <label for="name">Nome squadra</label>
+            <input type="text" id="name" name="name" th:value="${teamForm.name()}">
+
+            <h2 style="margin-top:22px;font-size:1.05rem;">Indirizzo</h2>
+
+            <label for="street">Via</label>
+            <input type="text" id="street" name="address.street"
+                   th:value="${teamForm.address() != null ? teamForm.address().street() : ''}">
+
+            <label for="city">Città</label>
+            <input type="text" id="city" name="address.city"
+                   th:value="${teamForm.address() != null ? teamForm.address().city() : ''}">
+
+            <label for="zipCode">Codice postale</label>
+            <input type="text" id="zipCode" name="address.zipCode" maxlength="5"
+                   th:value="${teamForm.address() != null ? teamForm.address().zipCode() : ''}">
+
+            <div class="form-actions">
+                <button class="btn" type="submit">Conferma</button>
+                <a class="btn secondary" th:href="@{/teams}">Annulla</a>
+            </div>
+        </form>
+    </div>
+</main>
+</body>
+</html>

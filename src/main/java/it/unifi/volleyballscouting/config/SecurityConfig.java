@@ -3,6 +3,7 @@ package it.unifi.volleyballscouting.config;
 import it.unifi.volleyballscouting.service.AppUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,18 +22,31 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                // Console H2 (solo per sviluppo/test del database)
+                .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/players/list").permitAll()
+                // Elenchi pubblici delle squadre consultabili anche dall'ospite (UC-06)
+                .requestMatchers(HttpMethod.GET, "/teams", "/teams/details/**").permitAll()
                 //pages that need roles to be accessed
-                .requestMatchers("/players/new", "players/create").hasRole("COACH")
-                .requestMatchers("/players/*/edit").authenticated()
-                .requestMatchers("/teams/new").hasRole("COACH")
+                // FIX: prima "players/create" era senza "/" iniziale e non veniva mai applicato
+                .requestMatchers("/players/new", "/players/create").hasRole("COACH")
+                .requestMatchers("/players/*/edit", "/players/*/update").hasRole("COACH")
+                .requestMatchers("/teams/new", "/teams/create").hasRole("COACH")
+                .requestMatchers("/teams/*/edit", "/teams/*/update").hasRole("COACH")
                 .anyRequest().authenticated()
         ).formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/home")
+                .defaultSuccessUrl("/home", true)
+                .permitAll()
         ).logout(logout -> logout
-                .logoutSuccessUrl("/"));
+                .logoutSuccessUrl("/").permitAll());
+
+        // Necessario perché la console H2 viene servita dentro un <iframe>
+        http.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
+        // La console H2 non invia il token CSRF: la si esclude (solo per sviluppo)
+        http.csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"));
+
         return http.build();
     }
     @Bean

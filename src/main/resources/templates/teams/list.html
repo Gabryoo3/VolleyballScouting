@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Squadre - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1>Squadre</h1>
+    <p class="subtitle">Elenco delle squadre e ricerca.</p>
+
+    <div class="card">
+        <form method="get" th:action="@{/teams}" class="filters">
+            <div class="fg">
+                <label for="name">Nome</label>
+                <input type="text" id="name" name="name"
+                       th:value="${param.name != null ? param.name[0] : ''}">
+            </div>
+            <div class="fg">
+                <label for="city">Città</label>
+                <input type="text" id="city" name="city"
+                       th:value="${param.city != null ? param.city[0] : ''}">
+            </div>
+            <button class="btn" type="submit">Cerca</button>
+            <a class="btn secondary" th:href="@{/teams}">Reset</a>
+        </form>
+
+        <p sec:authorize="hasRole('COACH')" style="margin:16px 0 0;">
+            <a class="btn" th:href="@{/teams/new}">+ Aggiungi Squadra</a>
+        </p>
+    </div>
+
+    <div class="card" th:if="${teams.isEmpty()}">
+        <div class="empty">Nessuna squadra trovata.</div>
+    </div>
+
+    <table th:unless="${teams.isEmpty()}">
+        <thead>
+        <tr>
+            <th>Nome</th>
+            <th>Città</th>
+            <th>Allenatore</th>
+            <th>Azioni</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${teams}">
+            <td th:text="${t.name}">Squadra</td>
+            <td th:text="${t.address != null ? t.address.city : '—'}">Città</td>
+            <td th:text="${t.coach != null ? (t.coach.name + ' ' + t.coach.surname) : '—'}">Allenatore</td>
+            <td>
+                <a class="btn small secondary" th:href="@{'/teams/details/' + ${t.id}}">Dettagli</a>
+                <a sec:authorize="hasRole('COACH')" class="btn small" th:href="@{'/teams/' + ${t.id} + '/edit'}">Modifica</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

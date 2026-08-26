@@ -53,10 +53,17 @@ public class Coach extends BaseModel implements UserDetails {
         return List.of(new SimpleGrantedAuthority("ROLE_COACH"));
     }
 
+    // FIX: prima restituiva "" (stringa vuota): con questo valore Spring Security
+    // non poteva MAI autenticare un allenatore. Ora restituisce la password reale.
     @Override
     public String getPassword() {
-        return "";
+        return password;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String getUsername() {return username;}
 

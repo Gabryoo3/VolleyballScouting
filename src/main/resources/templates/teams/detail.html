@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Dettaglio Squadra - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1 th:text="${team.name}">Nome squadra</h1>
+    <p class="subtitle">Scheda della squadra.</p>
+
+    <div class="card">
+        <dl class="info">
+            <dt>Nome</dt><dd th:text="${team.name}">Nome</dd>
+            <dt>Allenatore</dt>
+            <dd th:text="${team.coach != null ? (team.coach.name + ' ' + team.coach.surname) : '—'}">Allenatore</dd>
+            <dt>Via</dt><dd th:text="${team.address != null ? team.address.street : '—'}">Via</dd>
+            <dt>Città</dt><dd th:text="${team.address != null ? team.address.city : '—'}">Città</dd>
+            <dt>Codice postale</dt><dd th:text="${team.address != null ? team.address.zipCode : '—'}">CAP</dd>
+        </dl>
+
+        <div class="actions-row">
+            <a class="btn secondary" th:href="@{/teams}">&larr; Torna all'elenco</a>
+            <a class="btn secondary" th:href="@{/players/list(teamId=${team.id})}">Giocatori della squadra</a>
+            <a sec:authorize="hasRole('COACH')" class="btn" th:href="@{'/teams/' + ${team.id} + '/edit'}">Modifica</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

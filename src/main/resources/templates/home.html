@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Home - Volleyball Scouting')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<main>
+    <h1>Home</h1>
+    <p class="subtitle">Bentornato, <span th:text="${username}">utente</span>.</p>
+
+    <div class="card">
+        <h2>Cosa vuoi fare?</h2>
+        <div class="home-links">
+            <a class="tile" th:href="@{/players/list}">Giocatori
+                <span>Elenco e ricerca</span></a>
+            <a class="tile" th:href="@{/teams}">Squadre
+                <span>Elenco e ricerca</span></a>
+            <a class="tile" th:href="@{/players/free}">Giocatori svincolati
+                <span>Senza squadra</span></a>
+            <a class="tile" sec:authorize="hasRole('COACH')" th:href="@{/players/new}">Aggiungi Giocatore
+                <span>Nuovo giocatore in rosa</span></a>
+            <a class="tile" sec:authorize="hasRole('COACH')" th:href="@{/teams/new}">Aggiungi Squadra
+                <span>Crea una nuova squadra</span></a>
+        </div>
+    </div>
+</main>
+</body>
+</html>
