@@ -39,7 +39,7 @@ public record TeamStatsDTO (
         return successPercentage(totalReceiveGood, totalReceiveBad);
     }
 
-    public TeamStatsDTO empty(UUID teamId){
+    public static TeamStatsDTO empty(UUID teamId){
         return new TeamStatsDTO(teamId,0,0,0,0,
                 0,0,0,0,0,0);
     }

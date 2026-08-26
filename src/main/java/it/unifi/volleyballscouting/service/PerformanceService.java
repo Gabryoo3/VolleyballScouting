@@ -5,6 +5,7 @@ import it.unifi.volleyballscouting.dto.TeamStatsDTO;
 import it.unifi.volleyballscouting.model.*;
 import it.unifi.volleyballscouting.query.PerformanceQuery;
 import it.unifi.volleyballscouting.repository.PerformanceRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,24 +27,24 @@ public class PerformanceService {
 
     //Aggregated Queries
 
-    public Optional<PlayerStatsDTO> getPlayerCareerStats(Player player){
-        return perfRepo.getPlayerCareerStats(player);
+    public PlayerStatsDTO getPlayerCareerStats(Player player){
+        return perfRepo.getPlayerCareerStats(player).orElseGet(() -> PlayerStatsDTO.empty(player.getId()));
     }
 
-    public Optional<PlayerStatsDTO> getPlayerMatchStats(Player player, Match match){
-        return perfRepo.getPlayerMatchStats(player, match);
+    public PlayerStatsDTO getPlayerMatchStats(Player player, Match match){
+        return perfRepo.getPlayerMatchStats(player, match).orElseGet(() -> PlayerStatsDTO.empty(player.getId()));
     }
 
-    public Optional <Performance> getPlayerSetPerformance(Player player, Set set){
-        return perfRepo.findByPlayerIdAndSetId(player.getId(), set.getId());
+    public Performance getPlayerSetPerformance(Player player, Set set){
+        return perfRepo.findByPlayerIdAndSetId(player.getId(), set.getId()).orElseThrow(() -> new EntityNotFoundException("Il giocatore non ha giocato nel set selezionato"));
     }
 
-    public Optional<TeamStatsDTO> getTeamMatchStats(Team team, Match match){
-        return perfRepo.getTeamMatchStats(team , match);
+    public TeamStatsDTO getTeamMatchStats(Team team, Match match){
+        return perfRepo.getTeamMatchStats(team , match).orElseGet(() -> TeamStatsDTO.empty(team.getId()));
     }
 
-    public Optional<TeamStatsDTO> getTeamStats(Team team){
-        return perfRepo.getTeamGlobalStats(team);
+    public TeamStatsDTO getTeamStats(Team team){
+        return perfRepo.getTeamGlobalStats(team).orElseGet(() -> TeamStatsDTO.empty(team.getId()));
     }
 
     public List<TeamStatsDTO> getBothTeamMatchStats(Match match){

@@ -10,6 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface PerformanceRepository extends JpaRepository<Performance, PerformanceId>, JpaSpecificationExecutor<Performance> {
 
@@ -87,6 +88,6 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
             "WHERE p.player.team = :team " +
             "GROUP BY p.player.team.id")
     Optional<TeamStatsDTO> getTeamGlobalStats(@Param("team") Team team);
-    Optional<Performance> findByPlayerIdAndSetId(Long playerId, Long setId);
+    Optional<Performance> findByPlayerIdAndSetId(UUID playerId, UUID setId);
 
 }

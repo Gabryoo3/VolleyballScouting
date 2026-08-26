@@ -15,12 +15,8 @@ public class Match extends BaseModel{
     @ManyToOne(optional = false)
     @JoinColumn(name = "guest_team_id", nullable = false)
     private Team teamGuest;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "first_referee_id", nullable = false)
-    private Referee r1;
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "second_referee_id", nullable = false)
-    private Referee r2;
+    private String r1;
+    private String r2;
     @ManyToOne
     @JoinColumn(name = "address_id")
     private Address address;
@@ -49,13 +45,13 @@ public class Match extends BaseModel{
 
     public void setTeamGuest(Team teamGuest) {this.teamGuest = teamGuest;}
 
-    public Referee getR1() {return r1;}
+    public String getR1() {return r1;}
 
-    public void setR1(Referee r1) {this.r1 = r1;}
+    public void setR1(String r1) {this.r1 = r1;}
 
-    public Referee getR2() {return r2;}
+    public String getR2() {return r2;}
 
-    public void setR2(Referee r2) {this.r2 = r2;}
+    public void setR2(String r2) {this.r2 = r2;}
 
     public Address getAddress() {return address;}
 

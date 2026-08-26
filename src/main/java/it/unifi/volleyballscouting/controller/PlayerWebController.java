@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.controller;
 import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
+import it.unifi.volleyballscouting.model.Performance;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
@@ -7,6 +8,7 @@ import it.unifi.volleyballscouting.repository.CoachRepository;
 import it.unifi.volleyballscouting.repository.PlayerRepository;
 import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.CoachService;
+import it.unifi.volleyballscouting.service.PerformanceService;
 import it.unifi.volleyballscouting.service.PlayerService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,12 +29,14 @@ public class PlayerWebController {
     private final CoachService coachService;
     private final CoachRepository coachRepository;
     private final PlayerRepository playerRepository;
+    private final PerformanceService performanceService;
 
-    public PlayerWebController(PlayerService ps, CoachService cs, CoachRepository cr, PlayerRepository pr){
+    public PlayerWebController(PlayerService ps, CoachService cs, CoachRepository cr, PlayerRepository pr, PerformanceService performanceService){
         this.playerService = ps;
         this.coachService = cs;
         this.coachRepository = cr;
         this.playerRepository = pr;
+        this.performanceService = performanceService;
     }
 
     @GetMapping("/new")
@@ -135,8 +139,9 @@ public class PlayerWebController {
     @GetMapping("/details/{playerId}")
     public String showPlayerDetails(@PathVariable UUID playerId, Model model){
         Player player = playerService.findById(playerId);
-        //TODO: add Performances via the service
+        PlayerStatsDTO stats = performanceService.getPlayerCareerStats(player);
         model.addAttribute("player", player);
+        model.addAttribute("stats", stats);
         return "players/detail";
     }
     @GetMapping("/free")
