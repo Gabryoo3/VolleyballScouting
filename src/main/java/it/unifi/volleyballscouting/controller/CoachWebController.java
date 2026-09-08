@@ -67,6 +67,8 @@ public class CoachWebController {
             return "coaches/form";
         }
         //TODO: complete CoachService with the needed methods, like save
+
+        return "no";
     }
 
 

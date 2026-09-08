@@ -14,8 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * ATTENZIONE: dati di prova, SOLO PER SVILUPPO/TEST.
@@ -57,7 +57,7 @@ public class DataSeeder implements CommandLineRunner {
         Address address = new Address("Via dello Sport 10", "Firenze", "50100");
         addressRepository.save(address);
 
-        Coach coach = new Coach("Mario", "Rossi", "coach", null);
+        Coach coach = new Coach("Mario", "Rossi", "coach", "coach123", LocalDate.of(1970,1,1));
         coach.setPassword(passwordEncoder.encode("coach123"));
         coach.setEmail("coach@demo.it");
         coachRepository.save(coach);
@@ -68,15 +68,13 @@ public class DataSeeder implements CommandLineRunner {
         coach.setTeam(team);
         coachRepository.save(coach);
 
-        savePlayer("Bianchi", "Luca", "lbianchi", 4, PlayerRole.ALZATORE, team, 1998);
-        savePlayer("Verdi", "Paolo", "pverdi", 12, PlayerRole.SCHIACCIATORE_OPPOSTO, team, 2000);
+        savePlayer("Bianchi", "Luca", "lbianchi", 4, PlayerRole.ALZATORE, team);
+        savePlayer("Verdi", "Paolo", "pverdi", 12, PlayerRole.SCHIACCIATORE_OPPOSTO, team);
     }
 
     private void savePlayer(String surname, String name, String username, int number,
-                            PlayerRole role, Team team, int birthYear) {
-        Calendar cal = Calendar.getInstance();
-        cal.set(birthYear, Calendar.JANUARY, 1, 0, 0, 0);
-        Date birthdate = cal.getTime();
+                            PlayerRole role, Team team) {
+        LocalDate birthdate = LocalDate.of(1970, 1, 1);
 
         Player player = new Player(surname, name, username,
                 passwordEncoder.encode("player123"), birthdate, number, role);
