@@ -98,5 +98,4 @@ public class Coach extends BaseModel {
         this.team = team;
     }
 
-
 }
