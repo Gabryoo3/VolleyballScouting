@@ -59,22 +59,21 @@ public class DataSeeder implements CommandLineRunner {
         }
         if (coachRepository.findByUsername("coach").isEmpty()) {
 
-        Address address = new Address("Via dello Sport 10", "Firenze", "50100");
+            Address address = new Address("Via dello Sport 10", "Firenze", "50100");
 
-        Coach coach = new Coach("Mario", "Rossi", "coach", null);
-        coach.setPassword(passwordEncoder.encode("coach123"));
-        coach.setEmail("coach@demo.it");
-        coachRepository.save(coach);
+            Coach coach = new Coach("Mario", "Rossi", "coach", passwordEncoder.encode("coach123"), LocalDate.EPOCH);
+            coach.setEmail("coach@demo.it");
+            coachRepository.save(coach);
 
-        Team team = new Team("Firenze Volley", address, coach);
-        teamRepository.save(team);
+            Team team = new Team("Firenze Volley", address, coach);
+            teamRepository.save(team);
 
-        coach.setTeam(team);
-        coachRepository.save(coach);
+            coach.setTeam(team);
+            coachRepository.save(coach);
 
-        savePlayer("Bianchi", "Luca", "lbianchi", 4, PlayerRole.ALZATORE, team, 1998);
-        savePlayer("Verdi", "Paolo", "pverdi", 12, PlayerRole.SCHIACCIATORE_OPPOSTO, team, 2000);
-    }
+            savePlayer("Bianchi", "Luca", "lbianchi", 4, PlayerRole.ALZATORE, team, 1998);
+            savePlayer("Verdi", "Paolo", "pverdi", 12, PlayerRole.SCHIACCIATORE_OPPOSTO, team, 2000);
+        }
     }
 
     private void savePlayer(String surname, String name, String username, int number,

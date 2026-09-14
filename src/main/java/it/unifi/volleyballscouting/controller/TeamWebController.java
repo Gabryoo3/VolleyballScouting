@@ -1,9 +1,11 @@
 package it.unifi.volleyballscouting.controller;
 
 import it.unifi.volleyballscouting.dto.TeamFormDto;
+import it.unifi.volleyballscouting.dto.TeamStatsDTO;
 import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.security.AppUserDetails;
+import it.unifi.volleyballscouting.service.PerformanceService;
 import it.unifi.volleyballscouting.service.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,9 +22,11 @@ import java.util.UUID;
 public class TeamWebController {
 
     private final TeamService teamService;
+    private final PerformanceService performanceService;
 
-    public TeamWebController(TeamService ts){
+    public TeamWebController(TeamService ts, PerformanceService performanceService){
         this.teamService = ts;
+        this.performanceService = performanceService;
     }
 
     @GetMapping("/new")
@@ -63,7 +67,6 @@ public class TeamWebController {
             return "teams/form";
         }
         teamService.updateTeam(teamId, form);
-        // FIX: prima era "redirect:/teams" + teamId (mancava lo "/") -> ora /teams/details/{id}
         return "redirect:/teams/details/" + teamId;
     }
 
@@ -91,8 +94,9 @@ public class TeamWebController {
     @GetMapping("/details/{teamId}")
     public String showTeamDetails(@PathVariable UUID teamId, Model model){
         Team team = teamService.findById(teamId);
-        //TODO: add Performances via the service
+        TeamStatsDTO stats = performanceService.getTeamStats(team);
         model.addAttribute("team", team);
+        model.addAttribute("stats", stats);
         return "teams/detail";
     }
 
@@ -100,5 +104,4 @@ public class TeamWebController {
         model.addAttribute("teamForm", form);
         model.addAttribute("formAction", formAction);
     }
-
 }

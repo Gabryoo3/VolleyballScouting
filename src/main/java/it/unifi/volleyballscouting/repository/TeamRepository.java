@@ -9,6 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface TeamRepository extends JpaRepository<Team, UUID> {
+
     List<Team> findByNameContainingIgnoreCase(String teamName);
     List<Team> findByAddressCityContainingIgnoreCase(String city);
     List<Team> findByNameContainingIgnoreCaseAndAddressCity(String teamName, String city);
