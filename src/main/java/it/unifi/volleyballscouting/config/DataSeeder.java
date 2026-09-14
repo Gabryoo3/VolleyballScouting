@@ -1,21 +1,17 @@
 package it.unifi.volleyballscouting.config;
 
-import it.unifi.volleyballscouting.model.Address;
-import it.unifi.volleyballscouting.model.Coach;
-import it.unifi.volleyballscouting.model.Player;
-import it.unifi.volleyballscouting.model.PlayerRole;
-import it.unifi.volleyballscouting.model.Team;
-import it.unifi.volleyballscouting.repository.AddressRepository;
+import it.unifi.volleyballscouting.model.*;
+import it.unifi.volleyballscouting.repository.AdminRepository;
 import it.unifi.volleyballscouting.repository.CoachRepository;
 import it.unifi.volleyballscouting.repository.PlayerRepository;
 import it.unifi.volleyballscouting.repository.TeamRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Calendar;
 
 /**
  * ATTENZIONE: dati di prova, SOLO PER SVILUPPO/TEST.
@@ -31,33 +27,41 @@ public class DataSeeder implements CommandLineRunner {
 
     private final CoachRepository coachRepository;
     private final TeamRepository teamRepository;
-    private final AddressRepository addressRepository;
     private final PlayerRepository playerRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AdminRepository adminRepository;
+    private final String adminUsername;
+    private final String adminPassword;
 
     public DataSeeder(CoachRepository coachRepository,
                       TeamRepository teamRepository,
-                      AddressRepository addressRepository,
                       PlayerRepository playerRepository,
-                      PasswordEncoder passwordEncoder) {
+                      PasswordEncoder passwordEncoder,
+                      AdminRepository adminRepository,
+                      @Value("${app.admin.username}") String adminUsername,
+                      @Value("${app.admin.password}") String adminPassword
+                      ) {
         this.coachRepository = coachRepository;
         this.teamRepository = teamRepository;
-        this.addressRepository = addressRepository;
         this.playerRepository = playerRepository;
         this.passwordEncoder = passwordEncoder;
+        this.adminRepository = adminRepository;
+        this.adminUsername = adminUsername;
+        this.adminPassword = adminPassword;
     }
 
     @Override
     @Transactional
     public void run(String... args) {
-        if (coachRepository.findByUsername("coach").isPresent()) {
-            return; // l'allenatore demo esiste già: non duplico nulla
+        if (adminRepository.findByUsername(adminUsername).isEmpty()){
+            Admin admin = new Admin("Brambilla", "Fumagalli", adminUsername, passwordEncoder.encode(adminPassword));
+            adminRepository.save(admin);
         }
+        if (coachRepository.findByUsername("coach").isEmpty()) {
 
         Address address = new Address("Via dello Sport 10", "Firenze", "50100");
-        addressRepository.save(address);
 
-        Coach coach = new Coach("Mario", "Rossi", "coach", "coach123", LocalDate.of(1970,1,1));
+        Coach coach = new Coach("Mario", "Rossi", "coach", null);
         coach.setPassword(passwordEncoder.encode("coach123"));
         coach.setEmail("coach@demo.it");
         coachRepository.save(coach);
@@ -68,14 +72,14 @@ public class DataSeeder implements CommandLineRunner {
         coach.setTeam(team);
         coachRepository.save(coach);
 
-        savePlayer("Bianchi", "Luca", "lbianchi", 4, PlayerRole.ALZATORE, team);
-        savePlayer("Verdi", "Paolo", "pverdi", 12, PlayerRole.SCHIACCIATORE_OPPOSTO, team);
+        savePlayer("Bianchi", "Luca", "lbianchi", 4, PlayerRole.ALZATORE, team, 1998);
+        savePlayer("Verdi", "Paolo", "pverdi", 12, PlayerRole.SCHIACCIATORE_OPPOSTO, team, 2000);
+    }
     }
 
     private void savePlayer(String surname, String name, String username, int number,
-                            PlayerRole role, Team team) {
-        LocalDate birthdate = LocalDate.of(1970, 1, 1);
-
+                            PlayerRole role, Team team, int birthYear) {
+        LocalDate birthdate = LocalDate.of(birthYear, 1, 1);
         Player player = new Player(surname, name, username,
                 passwordEncoder.encode("player123"), birthdate, number, role);
         player.setTeam(team);

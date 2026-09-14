@@ -26,12 +26,11 @@ public class Coach extends BaseModel {
     protected Coach() {
     }
 
-    public Coach(String name, String surname, String username, String password,LocalDate birthdate) {
+    public Coach(String name, String surname, String username, String password) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.password = password;
-        this.birthdate = birthdate;
         setCreatedAt(LocalDateTime.now());
     }
 
@@ -99,5 +98,9 @@ public class Coach extends BaseModel {
         this.team = team;
     }
 
+    public void assignTeam(Team team){
+        this.setTeam(team);
+        team.setCoach(this);
+    }
 
 }

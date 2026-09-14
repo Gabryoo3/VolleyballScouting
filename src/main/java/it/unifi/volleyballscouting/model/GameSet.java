@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
         columnNames = {"match_id", "setNumber"}
     )
 })
-public class Set extends BaseModel{
+public class GameSet extends BaseModel{
     //attributes
     @ManyToOne
     @JoinColumn(name = "match_id")
@@ -21,9 +21,9 @@ public class Set extends BaseModel{
     private int teamGuestPoints = 0;
 
     //constructor
-    protected Set() {}
+    protected GameSet() {}
 
-    public Set(Match match, int setNumber) {
+    public GameSet(Match match, int setNumber) {
         this.match = match;
         this.setNumber = setNumber;
         setCreatedAt(LocalDateTime.now());
@@ -90,8 +90,8 @@ public class Set extends BaseModel{
 
     @Transient
     public String getDisplayName(){
-        if(match != null && match.getTeamHome() != null & match.getTeamGuest() != null){
-            return String.format("Set %d (%s vd %s)",setNumber, match.getTeamHome().getName(), match.getTeamGuest().getName());
+        if(match != null && match.getTeamHome() != null && match.getTeamGuest() != null){
+            return String.format("Set %d (%s vs %s)",setNumber, match.getTeamHome().getName(), match.getTeamGuest().getName());
         }
         return "Set " + setNumber;
     }

@@ -2,8 +2,6 @@ package it.unifi.volleyballscouting.model;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "performance")
 public class Performance{
@@ -19,7 +17,7 @@ public class Performance{
     @MapsId("setId")
     @ManyToOne(optional = false)
     @JoinColumn(name = "set_id")
-    private Set set;
+    private GameSet gameSet;
 
     private int aces = 0;
     private int serveErrors = 0;
@@ -37,11 +35,11 @@ public class Performance{
     protected Performance() {}
 
     //constructor
-    public Performance(Player player, Set set) {
+    public Performance(Player player, GameSet gameSet) {
         this.player = player;
-        this.set = set;
-        if (player != null && set != null && player.getId() != null && set.getId() != null)
-            this.pId = new PerformanceId(player.getId(), set.getId());
+        this.gameSet = gameSet;
+        if (player != null && gameSet != null && player.getId() != null && gameSet.getId() != null)
+            this.pId = new PerformanceId(player.getId(), gameSet.getId());
     }
 
     //methods
@@ -62,13 +60,13 @@ public class Performance{
 
     public void set(PerformanceId id) {this.pId = id;}
 
-    public Player getplayer() {return player;}
+    public Player getPlayer() {return player;}
 
     public void setPlayer(Player player) {this.player = player;}
 
-    public Set getset() {return set;}
+    public GameSet getSet() {return gameSet;}
 
-    public void setSet(Set set) {this.set = set;}
+    public void setSet(GameSet gameSet) {this.gameSet = gameSet;}
 
     public int getAces() {return aces;}
 

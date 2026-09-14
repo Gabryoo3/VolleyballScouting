@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 public class PerformanceQuery {
     private final Player player;
     private final Team team;
-    private final Set set;
+    private final GameSet gameSet;
     private final Match match;
     private final Integer minAces;
     private final Integer minServeErrors;
@@ -23,7 +23,7 @@ public class PerformanceQuery {
     private PerformanceQuery(Builder b){
         this.player = b.player;
         this.team = b.team;
-        this.set = b.set;
+        this.gameSet = b.gameSet;
         this.match = b.match;
         this.minAces = b.minAces;
         this.minServeErrors = b.minServeErrors;
@@ -39,7 +39,7 @@ public class PerformanceQuery {
         return Stream.of(
                 Optional.ofNullable(player).map(PerformanceSpecifications::forPlayer),
                 Optional.ofNullable(team).map(PerformanceSpecifications::forTeam),
-                Optional.ofNullable(set).map(PerformanceSpecifications::forSet),
+                Optional.ofNullable(gameSet).map(PerformanceSpecifications::forSet),
                 Optional.ofNullable(match).map(PerformanceSpecifications::forMatch),
                 Optional.ofNullable(minAces).map(PerformanceSpecifications::minAces),
                 Optional.ofNullable(minServeErrors).map(PerformanceSpecifications::minServeErrors),
@@ -58,7 +58,7 @@ public class PerformanceQuery {
     public static class Builder{
         private Player player;
         private Team team;
-        private Set set;
+        private GameSet gameSet;
         private Match match;
         private Integer minAces;
         private Integer minServeErrors;
@@ -71,7 +71,7 @@ public class PerformanceQuery {
 
         public Builder player(Player player){ this.player = player; return this; }
         public Builder team(Team team){ this.team = team; return this; }
-        public Builder set(Set set){ this.set = set; return this; }
+        public Builder set(GameSet gameSet){ this.gameSet = gameSet; return this; }
         public Builder match(Match match){ this.match = match; return this; }
         public Builder minAces(Integer min){ this.minAces = min; return this; }
         public Builder minServeErrors(Integer min){ this.minServeErrors = min; return this; }
@@ -83,7 +83,7 @@ public class PerformanceQuery {
         public Builder minReceivesBad(Integer min){ this.minReceivesBad = min; return this; }
 
         public PerformanceQuery build(){
-            if (player == null && set == null && match == null && team == null)
+            if (player == null && gameSet == null && match == null && team == null)
                 throw new IllegalArgumentException("Almeno un filtro è richiesto");
             return new PerformanceQuery(this);
         }

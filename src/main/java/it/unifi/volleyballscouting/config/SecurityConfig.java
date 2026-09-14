@@ -4,6 +4,8 @@ import it.unifi.volleyballscouting.security.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
+import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -31,6 +33,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/teams", "/teams/details/**").permitAll()
                 //pages that need roles to be accessed
                 // FIX: prima "players/create" era senza "/" iniziale e non veniva mai applicato
+                .requestMatchers("/matches/new", "/matches/*/edit", "/matches/*/update").hasRole("ADMIN")
+                .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/players/new", "/players/create").hasRole("COACH")
                 .requestMatchers("/players/*/edit", "/players/*/update").hasRole("COACH")
                 .requestMatchers("/teams/new", "/teams/create").hasRole("COACH")
@@ -53,5 +57,10 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public static RoleHierarchy roleHierarchy(){
+        return RoleHierarchyImpl.fromHierarchy("ROLE_ADMIN > ROLE_COACH");
     }
 }

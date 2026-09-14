@@ -14,8 +14,8 @@ public class PerformanceSpecifications {
     public static Specification<Performance> forTeam (Team team){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("player").get("team"), team));
     }
-    public static Specification<Performance> forSet(Set set){
-        return (((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("set"), set)));
+    public static Specification<Performance> forSet(GameSet gameSet){
+        return (((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("set"), gameSet)));
     }
     public static Specification<Performance> forMatch(Match match){
         return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("set").get("match"), match));

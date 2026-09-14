@@ -7,14 +7,12 @@ import java.time.LocalDateTime;
 @Entity
 public class Team extends BaseModel{
     //attributes
-    @ManyToOne
-    @JoinColumn(name = "address_id", referencedColumnName = "id")
+    @Embedded
     private Address address;
 
     @Column(length = 100, unique = true, nullable = false)
     private String name;
-    @OneToOne
-    @JoinColumn(name = "coach_id")
+    @OneToOne(mappedBy = "team")
     private Coach coach;
 
     //constructor
@@ -35,7 +33,15 @@ public class Team extends BaseModel{
 
     public Coach getCoach() {return coach;}
 
-    public void setCoach(Coach coach) {this.coach = coach;}
+    public void setCoach(Coach coach) {
+        this.coach = coach;
+    }
+
+    public void assignCoach(Coach coach){
+        this.setCoach(coach);
+        coach.setTeam(this);
+    }
+
 
     public void updateFromDto(TeamFormDto form){
         this.name = form.name();
