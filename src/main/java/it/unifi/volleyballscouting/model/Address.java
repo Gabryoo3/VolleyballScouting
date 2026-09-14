@@ -3,8 +3,11 @@ package it.unifi.volleyballscouting.model;
 import it.unifi.volleyballscouting.dto.AddressFormDto;
 import jakarta.persistence.*;
 
-@Entity
-public class Address extends BaseModel{
+import java.io.Serializable;
+import java.util.Objects;
+
+@Embeddable
+public class Address implements Serializable {
 
     //attributes
     private String street; //don't add "via" or "corso"
@@ -54,4 +57,15 @@ public class Address extends BaseModel{
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Address address = (Address) o;
+        return Objects.equals(street, address.street) && Objects.equals(city, address.city) && Objects.equals(zipCode, address.zipCode);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(street, city, zipCode);
+    }
 }

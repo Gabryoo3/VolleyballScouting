@@ -9,7 +9,6 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PerformanceService {
@@ -35,8 +34,8 @@ public class PerformanceService {
         return perfRepo.getPlayerMatchStats(player, match).orElseGet(() -> PlayerStatsDTO.empty(player.getId()));
     }
 
-    public Performance getPlayerSetPerformance(Player player, Set set){
-        return perfRepo.findByPlayerIdAndSetId(player.getId(), set.getId()).orElseThrow(() -> new EntityNotFoundException("Il giocatore non ha giocato nel set selezionato"));
+    public Performance getPlayerSetPerformance(Player player, GameSet gameSet){
+        return perfRepo.findByPlayerIdAndSetId(player.getId(), gameSet.getId()).orElseThrow(() -> new EntityNotFoundException("Il giocatore non ha giocato nel set selezionato"));
     }
 
     public TeamStatsDTO getTeamMatchStats(Team team, Match match){

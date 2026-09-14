@@ -17,8 +17,7 @@ public class Match extends BaseModel{
     private Team teamGuest;
     private String r1;
     private String r2;
-    @ManyToOne
-    @JoinColumn(name = "address_id")
+    @Embedded
     private Address address;
     private LocalDateTime matchDateTime;
     private Integer homeScore = 0;
@@ -27,14 +26,15 @@ public class Match extends BaseModel{
     // Hibernate la trattava come "basic collection" -> MappingException.
     // Relazione 1-a-molti con Set, che possiede la FK match_id (lato proprietario).
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Set> sets = new ArrayList<>();
+    private List<GameSet> gameSets = new ArrayList<>();
     protected Match(){}
 
     //constructor
     public Match(Team home, Team guest, LocalDateTime matchDateTime) {
         this.teamHome = home;
         this.teamGuest = guest;
-        this.address=teamHome.getAddress();
+        Address tempAddr = teamHome.getAddress();
+        this.address = tempAddr;
         this.matchDateTime = matchDateTime;
         setCreatedAt(LocalDateTime.now());
     }
@@ -73,7 +73,7 @@ public class Match extends BaseModel{
 
     public void setGuestScore(Integer guestScore) {this.guestScore = guestScore;}
 
-    public List<Set> getSets() {return sets;}
+    public List<GameSet> getSets() {return gameSets;}
 
     @Transient
         public Team getWinner(){

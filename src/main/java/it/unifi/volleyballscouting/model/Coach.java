@@ -98,4 +98,9 @@ public class Coach extends BaseModel {
         this.team = team;
     }
 
+    public void assignTeam(Team team){
+        this.setTeam(team);
+        team.setCoach(this);
+    }
+
 }
