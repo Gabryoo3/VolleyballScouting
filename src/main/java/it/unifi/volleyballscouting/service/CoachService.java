@@ -21,7 +21,6 @@ public class CoachService {
     public Coach findById(UUID id){
         return coachRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Allenatore non trovato"));
     }
-
     public Team getCoachTeam(UUID coachId){
         Coach c = coachRepository.findById(coachId).orElseThrow(() -> new IllegalArgumentException("Coach non trovato"));
         return c.getTeam();

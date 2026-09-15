@@ -19,18 +19,11 @@ public class Performance{
     @JoinColumn(name = "set_id")
     private GameSet gameSet;
 
-    private int aces = 0;
-    private int serveErrors = 0;
-
-    private int attacksGood = 0;
-    private int attacksBad = 0;
-
-    private int blocksGood = 0;
-    private int blocksBad = 0;
-
-    private int receiveGood = 0;
-    private int receiveBad = 0;
-
+    private int attackPoint = 0, attackInPlay = 0, attackError = 0;
+    private int servePoint = 0, serveInPlay = 0, serveError = 0;
+    private int blockPoint = 0, blockInPlay = 0, blockError = 0;
+    private int receiveGood = 0, receiveError = 0;
+    private int digGood = 0, digError = 0;
 
     protected Performance() {}
 
@@ -45,68 +38,65 @@ public class Performance{
     //methods
 
     //live adding
-    public void addAce() {this.aces++;}
-    public void addServeError() { this.serveErrors++; }
-    public void addAttackGood() { this.attacksGood++; }
-    public void addAttackBad() { this.attacksBad++; }
-    public void addBlockGood() { this.blocksGood++; }
-    public void addBlockBad() { this.blocksBad++; }
+    public void addDigGood()     { this.digGood++; }
+    public void addDigError()    { this.digError++; }
+    public void addAttackPoint() { this.attackPoint++; }
+    public void addAttackInPlay(){ this.attackInPlay++; }
+    public void addAttackError() { this.attackError++; }
+    public void addServePoint()  { this.servePoint++; }
+    public void addServeInPlay() { this.serveInPlay++; }
+    public void addServeError()  { this.serveError++; }
+    public void addBlockPoint()  { this.blockPoint++; }
+    public void addBlockInPlay() { this.blockInPlay++; }
+    public void addBlockError()  { this.blockError++; }
     public void addReceiveGood() { this.receiveGood++; }
-    public void addReceiveBad() { this.receiveBad++; }
+    public void addReceiveError(){ this.receiveError++; }
 
     //getters-setters
+    public PerformanceId getId() { return pId; }
+    public Player getPlayer() { return player; }
+    public void setPlayer(Player player) { this.player = player; }
+    public GameSet getGameSet() { return gameSet; }
+    public void setGameSet(GameSet gameSet) { this.gameSet = gameSet; }
 
-    public PerformanceId getId() {return pId;}
+    public int getAttackPoint() {return attackPoint;}
+    public void setAttackPoint(int attackPoint) {this.attackPoint = attackPoint;}
+    public int getAttackInPlay() {return attackInPlay;}
+    public void setAttackInPlay(int attackInPlay) {this.attackInPlay = attackInPlay;}
+    public int getAttackError() {return attackError;}
+    public void setAttackError(int attackError) {this.attackError = attackError;}
 
-    public void set(PerformanceId id) {this.pId = id;}
+    public int getServePoint() {return servePoint;}
+    public void setServePoint(int servePoint) {this.servePoint = servePoint;}
+    public int getServeInPlay() {return serveInPlay;}
+    public void setServeInPlay(int serveInPlay) {this.serveInPlay = serveInPlay;}
+    public int getServeError() {return serveError;}
+    public void setServeError(int serveError) {this.serveError = serveError;}
 
-    public Player getPlayer() {return player;}
-
-    public void setPlayer(Player player) {this.player = player;}
-
-    public GameSet getSet() {return gameSet;}
-
-    public void setSet(GameSet gameSet) {this.gameSet = gameSet;}
-
-    public int getAces() {return aces;}
-
-    public void setAces(int aces) {this.aces = aces;}
-
-    public int getServeErrors() {return serveErrors;}
-
-    public void setServeErrors(int serveErrors) {this.serveErrors = serveErrors;}
-
-    public int getAttacksGood() {return attacksGood;}
-
-    public void setAttacksGood(int attacksGood) {this.attacksGood = attacksGood;}
-
-    public int getAttacksBad() {return attacksBad;}
-
-    public void setAttacksBad(int attacksBad) {this.attacksBad = attacksBad;}
-
-    public int getBlocksGood() {return blocksGood;}
-
-    public void setBlocksGood(int blocksGood) {this.blocksGood = blocksGood;}
-
-    public int getBlocksBad() {return blocksBad;}
-
-    public void setBlocksBad(int blocksBad) {this.blocksBad = blocksBad;}
+    public int getBlockPoint() {return blockPoint;}
+    public void setBlockPoint(int blockPoint) {this.blockPoint = blockPoint;}
+    public int getBlockInPlay() {return blockInPlay;}
+    public void setBlockInPlay(int blockInPlay) {this.blockInPlay = blockInPlay;}
+    public int getBlockError() {return blockError;}
+    public void setBlockError(int blockError) {this.blockError = blockError;}
 
     public int getReceiveGood() {return receiveGood;}
-
     public void setReceiveGood(int receiveGood) {this.receiveGood = receiveGood;}
+    public int getReceiveError() {return receiveError;}
+    public void setReceiveError(int receiveError) {this.receiveError = receiveError;}
 
-    public int getReceiveBad() {return receiveBad;}
-
-    public void setReceiveBad(int receiveBad) {this.receiveBad = receiveBad;}
+    public int getDigGood() {return digGood;}
+    public void setDigGood(int digGood) {this.digGood = digGood;}
+    public int getDigError() {return digError;}
+    public void setDigError(int digError) {this.digError = digError;}
 
     //Transients
     @Transient
     public int getTotalPointsScored(){
-        return aces+attacksGood+blocksGood;
+        return attackPoint + servePoint + blockPoint;
     }
     @Transient
     public int getTotalErrors(){
-        return serveErrors+ attacksBad + blocksBad + receiveBad;
+        return attackError + serveError + blockError + receiveError + digError;
     }
 }

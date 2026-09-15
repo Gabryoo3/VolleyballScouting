@@ -35,7 +35,7 @@ public class PerformanceService {
     }
 
     public Performance getPlayerSetPerformance(Player player, GameSet gameSet){
-        return perfRepo.findByPlayerIdAndSetId(player.getId(), gameSet.getId()).orElseThrow(() -> new EntityNotFoundException("Il giocatore non ha giocato nel set selezionato"));
+        return perfRepo.findByPlayerIdAndGameSetId(player.getId(), gameSet.getId()).orElseThrow(() -> new EntityNotFoundException("Il giocatore non ha giocato nel set selezionato"));
     }
 
     public TeamStatsDTO getTeamMatchStats(Team team, Match match){

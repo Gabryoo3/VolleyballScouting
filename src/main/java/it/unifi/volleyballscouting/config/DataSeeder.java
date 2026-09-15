@@ -61,9 +61,9 @@ public class DataSeeder implements CommandLineRunner {
 
         Address address = new Address("Via dello Sport 10", "Firenze", "50100");
 
-        Coach coach = new Coach("Mario", "Rossi", "coach", null);
-        coach.setPassword(passwordEncoder.encode("coach123"));
+        Coach coach = new Coach("Mario", "Rossi", "coach", passwordEncoder.encode("coach123"));
         coach.setEmail("coach@demo.it");
+        coach.setBirthdate(LocalDate.EPOCH);
         coachRepository.save(coach);
 
         Team team = new Team("Firenze Volley", address, coach);

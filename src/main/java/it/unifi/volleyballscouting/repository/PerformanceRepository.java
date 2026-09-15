@@ -14,80 +14,77 @@ import java.util.UUID;
 
 public interface PerformanceRepository extends JpaRepository<Performance, PerformanceId>, JpaSpecificationExecutor<Performance> {
 
-    //Global stats for player
+    // Statistiche globali del giocatore
     @Query("SELECT new it.unifi.volleyballscouting.dto.PlayerStatsDTO(" +
             "p.player.id, " +
-            "SUM(p.aces), " +
-            "SUM(p.serveErrors), " +
-            "SUM(p.attacksGood), " +
-            "SUM(p.attacksBad), " +
-            "SUM(p.blocksGood), " +
-            "SUM(p.blocksBad), " +
-            "SUM(p.receiveGood)," +
-            "SUM (p.receiveBad)," +
-            "SUM(p.aces + p.attacksGood + p.blocksGood), " + // Points Scored
-            "SUM(p.serveErrors + p.attacksBad + p.blocksBad + p.receiveBad), " + // Errors
-            "COUNT(p.player.id)) " + // Counts sets played by counting player IDs
+            "SUM(p.digGood), SUM(p.digError), " +
+            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
+            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
+            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
+            "SUM(p.receiveGood), SUM(p.receiveError), " +
+            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
+            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), " +
+            "COUNT(p.player.id)) " +
             "FROM Performance p WHERE p.player = :player " +
             "GROUP BY p.player.id")
     Optional<PlayerStatsDTO> getPlayerCareerStats(@Param("player") Player player);
-    //Match stats for player
+
+    // Statistiche del giocatore in una partita
     @Query("SELECT new it.unifi.volleyballscouting.dto.PlayerStatsDTO(" +
             "p.player.id, " +
-            "SUM(p.aces), " +
-            "SUM(p.serveErrors), " +
-            "SUM(p.attacksGood), " +
-            "SUM(p.attacksBad), " +
-            "SUM(p.blocksGood), " +
-            "SUM(p.blocksBad), " +
-            "SUM(p.receiveGood)," +
-            "SUM (p.receiveBad)," +
-            "SUM(p.aces + p.attacksGood + p.blocksGood), " +
-            "SUM(p.serveErrors + p.attacksBad + p.blocksBad + p.receiveBad), " +
+            "SUM(p.digGood), SUM(p.digError), " +
+            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
+            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
+            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
+            "SUM(p.receiveGood), SUM(p.receiveError), " +
+            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
+            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), " +
             "COUNT(p.player.id)) " +
-            "FROM Performance p " +
-            "WHERE p.player = :player AND p.set.match = :match " +
+            "FROM Performance p WHERE p.player = :player AND p.gameSet.match = :match " +
             "GROUP BY p.player.id")
     Optional<PlayerStatsDTO> getPlayerMatchStats(@Param("player") Player player, @Param("match") Match match);
-    //Match stats for Team
+
+    // Statistiche di una squadra in una partita
     @Query("SELECT new it.unifi.volleyballscouting.dto.TeamStatsDTO(" +
             "p.player.team.id, " +
-            "SUM(p.aces), SUM(p.serveErrors), " +
-            "SUM(p.attacksGood), SUM(p.attacksBad), " +
-            "SUM(p.blocksGood), SUM(p.blocksBad), " +
-            "SUM(p.receiveGood), SUM(p.receiveBad), " +
-            "SUM(p.aces + p.attacksGood + p.blocksGood), " +
-            "SUM(p.serveErrors + p.attacksBad + p.blocksBad + p.receiveBad))" +
-            "FROM Performance p " +
-            "WHERE p.player.team = :team AND p.set.match = :match " +
+            "SUM(p.digGood), SUM(p.digError), " +
+            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
+            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
+            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
+            "SUM(p.receiveGood), SUM(p.receiveError), " +
+            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
+            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError)) " +
+            "FROM Performance p WHERE p.player.team = :team AND p.gameSet.match = :match " +
             "GROUP BY p.player.team.id")
     Optional<TeamStatsDTO> getTeamMatchStats(@Param("team") Team team, @Param("match") Match match);
-    //Match stats for both Teams
+
+    // Statistiche di entrambe le squadre in una partita
     @Query("SELECT new it.unifi.volleyballscouting.dto.TeamStatsDTO(" +
             "p.player.team.id, " +
-            "SUM(p.aces), SUM(p.serveErrors), " +
-            "SUM(p.attacksGood), SUM(p.attacksBad), " +
-            "SUM(p.blocksGood), SUM(p.blocksBad), " +
-            "SUM(p.receiveGood), SUM(p.receiveBad), " +
-            "SUM(p.aces + p.attacksGood + p.blocksGood)," +
-            "SUM(p.serveErrors + p.attacksBad + p.blocksBad + p.receiveBad))" +
-            "FROM Performance p " +
-            "WHERE p.set.match = :match " +
+            "SUM(p.digGood), SUM(p.digError), " +
+            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
+            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
+            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
+            "SUM(p.receiveGood), SUM(p.receiveError), " +
+            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
+            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError)) " +
+            "FROM Performance p WHERE p.gameSet.match = :match " +
             "GROUP BY p.player.team.id")
     List<TeamStatsDTO> getBothTeamsStatsForMatch(@Param("match") Match match);
-    //Global stats for Team
+
+    // Statistiche globali di una squadra
     @Query("SELECT new it.unifi.volleyballscouting.dto.TeamStatsDTO(" +
             "p.player.team.id, " +
-            "SUM(p.aces), SUM(p.serveErrors), " +
-            "SUM(p.attacksGood), SUM(p.attacksBad), " +
-            "SUM(p.blocksGood), SUM(p.blocksBad), " +
-            "SUM(p.receiveGood), SUM(p.receiveBad)," +
-            "SUM(p.aces + p.attacksGood + p.blocksGood), " +
-            "SUM(p.serveErrors + p.attacksBad + p.receiveBad + p.blocksBad)) "+
-            "FROM Performance p " +
-            "WHERE p.player.team = :team " +
+            "SUM(p.digGood), SUM(p.digError), " +
+            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
+            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
+            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
+            "SUM(p.receiveGood), SUM(p.receiveError), " +
+            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
+            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError)) " +
+            "FROM Performance p WHERE p.player.team = :team " +
             "GROUP BY p.player.team.id")
     Optional<TeamStatsDTO> getTeamGlobalStats(@Param("team") Team team);
-    Optional<Performance> findByPlayerIdAndSetId(UUID playerId, UUID setId);
 
+    Optional<Performance> findByPlayerIdAndGameSetId(UUID playerId, UUID gameSetId);
 }

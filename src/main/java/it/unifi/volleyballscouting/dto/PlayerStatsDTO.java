@@ -10,37 +10,37 @@ import java.util.UUID;
  */
 public record PlayerStatsDTO(
         UUID playerId,
-        long totalAces,
-        long totalServeErrors,
-        long totalAttacksGood,
-        long totalAttacksBad,
-        long totalBlocksGood,
-        long totalBlocksBad,
+        long totalDigGood,
+        long totalDigError,
+        long totalAttackPoint,
+        long totalAttackInPlay,
+        long totalAttackError,
+        long totalServePoint,
+        long totalServeInPlay,
+        long totalServeError,
+        long totalBlockPoint,
+        long totalBlockInPlay,
+        long totalBlockError,
         long totalReceiveGood,
-        long totalReceiveBad,
+        long totalReceiveError,
         long totalPointsScored,
         long totalErrors,
         long totalSetsPlayed
 ) implements Serializable {
-    private double successPercentage(long good, long bad) {
-        long totalAttempts = good + bad;
-        if (totalAttempts == 0) return 0.0;
-        return ((double) good / totalAttempts) * 100;
-    }
-    public double getAttackSuccessPercentage() {
-        return successPercentage(totalAttacksGood, totalAttacksBad);
+    private double percent(long part, long total) {
+        if (total == 0) return 0.0;
+        return (double) part / total * 100;
     }
 
-    public double getBlockSuccessPercentage() {
-        return successPercentage(totalBlocksGood, totalBlocksBad);
-    }
+    public double getAttackSuccessPercentage()  { return percent(totalAttackPoint, totalAttackPoint + totalAttackInPlay + totalAttackError); }
+    public double getServeSuccessPercentage()   { return percent(totalServePoint, totalServePoint + totalServeInPlay + totalServeError); }
+    public double getBlockSuccessPercentage()   { return percent(totalBlockPoint, totalBlockPoint + totalBlockInPlay + totalBlockError); }
+    public double getReceivePositivePercentage(){ return percent(totalReceiveGood, totalReceiveGood + totalReceiveError); }
+    public double getDigPositivePercentage()    { return percent(totalDigGood, totalDigGood + totalDigError); }
 
-    public double getReceiveSuccessPercentage() {
-        return successPercentage(totalReceiveGood, totalReceiveBad);
-    }
 
     public static PlayerStatsDTO empty(UUID playerId){
-        return new PlayerStatsDTO(playerId, 0,0,0,0,0,
-                0,0,0,0,0,0);
+        return new PlayerStatsDTO(playerId, 0,0,0,0,0, 0,0,
+                0, 0,0,0,0,0,0,0,0);
     }
 }
