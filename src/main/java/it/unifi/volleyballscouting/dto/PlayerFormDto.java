@@ -30,7 +30,8 @@ public record PlayerFormDto(
         PlayerRole role,
         String phone,
         @Email(message = "L'email non è valida")
-        String email) implements Serializable {
+        String email
+) implements Serializable {
     public static PlayerFormDto fromEntity(Player p){
         return new PlayerFormDto(
                 p.getName(),

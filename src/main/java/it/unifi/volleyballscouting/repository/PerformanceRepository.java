@@ -17,13 +17,13 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
     // Statistiche globali del giocatore
     @Query("SELECT new it.unifi.volleyballscouting.dto.PlayerStatsDTO(" +
             "p.player.id, " +
-            "SUM(p.digGood), SUM(p.digError), " +
-            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
-            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
-            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
-            "SUM(p.receiveGood), SUM(p.receiveError), " +
-            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
-            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), " +
+            "COALESCE(SUM(p.digGood), 0L), COALESCE(SUM(p.digError), 0L), " +
+            "COALESCE(SUM(p.attackPoint), 0L), COALESCE(SUM(p.attackInPlay), 0L), COALESCE(SUM(p.attackError), 0L), " +
+            "COALESCE(SUM(p.servePoint), 0L), COALESCE(SUM(p.serveInPlay), 0L), COALESCE(SUM(p.serveError), 0L), " +
+            "COALESCE(SUM(p.blockPoint), 0L), COALESCE(SUM(p.blockInPlay), 0L), COALESCE(SUM(p.blockError), 0L), " +
+            "COALESCE(SUM(p.receiveGood), 0L), COALESCE(SUM(p.receiveError), 0L), " +
+            "COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
+            "COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L), " +
             "COUNT(p.player.id)) " +
             "FROM Performance p WHERE p.player = :player " +
             "GROUP BY p.player.id")
@@ -32,13 +32,13 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
     // Statistiche del giocatore in una partita
     @Query("SELECT new it.unifi.volleyballscouting.dto.PlayerStatsDTO(" +
             "p.player.id, " +
-            "SUM(p.digGood), SUM(p.digError), " +
-            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
-            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
-            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
-            "SUM(p.receiveGood), SUM(p.receiveError), " +
-            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
-            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), " +
+            "COALESCE(SUM(p.digGood), 0L), COALESCE(SUM(p.digError), 0L), " +
+            "COALESCE(SUM(p.attackPoint), 0L), COALESCE(SUM(p.attackInPlay), 0L), COALESCE(SUM(p.attackError), 0L), " +
+            "COALESCE(SUM(p.servePoint), 0L), COALESCE(SUM(p.serveInPlay), 0L), COALESCE(SUM(p.serveError), 0L), " +
+            "COALESCE(SUM(p.blockPoint), 0L), COALESCE(SUM(p.blockInPlay), 0L), COALESCE(SUM(p.blockError), 0L), " +
+            "COALESCE(SUM(p.receiveGood), 0L), COALESCE(SUM(p.receiveError), 0L), " +
+            "COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
+            "COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L), " +
             "COUNT(p.player.id)) " +
             "FROM Performance p WHERE p.player = :player AND p.gameSet.match = :match " +
             "GROUP BY p.player.id")
@@ -47,13 +47,13 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
     // Statistiche di una squadra in una partita
     @Query("SELECT new it.unifi.volleyballscouting.dto.TeamStatsDTO(" +
             "p.player.team.id, " +
-            "SUM(p.digGood), SUM(p.digError), " +
-            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
-            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
-            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
-            "SUM(p.receiveGood), SUM(p.receiveError), " +
-            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
-            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError)) " +
+            "COALESCE(SUM(p.digGood), 0L), COALESCE(SUM(p.digError), 0L), " +
+            "COALESCE(SUM(p.attackPoint), 0L), COALESCE(SUM(p.attackInPlay), 0L), COALESCE(SUM(p.attackError), 0L), " +
+            "COALESCE(SUM(p.servePoint), 0L), COALESCE(SUM(p.serveInPlay), 0L), COALESCE(SUM(p.serveError), 0L), " +
+            "COALESCE(SUM(p.blockPoint), 0L), COALESCE(SUM(p.blockInPlay), 0L), COALESCE(SUM(p.blockError), 0L), " +
+            "COALESCE(SUM(p.receiveGood), 0L), COALESCE(SUM(p.receiveError), 0L), " +
+            "COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
+            "COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L)) " +
             "FROM Performance p WHERE p.player.team = :team AND p.gameSet.match = :match " +
             "GROUP BY p.player.team.id")
     Optional<TeamStatsDTO> getTeamMatchStats(@Param("team") Team team, @Param("match") Match match);
@@ -61,13 +61,13 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
     // Statistiche di entrambe le squadre in una partita
     @Query("SELECT new it.unifi.volleyballscouting.dto.TeamStatsDTO(" +
             "p.player.team.id, " +
-            "SUM(p.digGood), SUM(p.digError), " +
-            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
-            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
-            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
-            "SUM(p.receiveGood), SUM(p.receiveError), " +
-            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
-            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError)) " +
+            "COALESCE(SUM(p.digGood), 0L), COALESCE(SUM(p.digError), 0L), " +
+            "COALESCE(SUM(p.attackPoint), 0L), COALESCE(SUM(p.attackInPlay), 0L), COALESCE(SUM(p.attackError), 0L), " +
+            "COALESCE(SUM(p.servePoint), 0L), COALESCE(SUM(p.serveInPlay), 0L), COALESCE(SUM(p.serveError), 0L), " +
+            "COALESCE(SUM(p.blockPoint), 0L), COALESCE(SUM(p.blockInPlay), 0L), COALESCE(SUM(p.blockError), 0L), " +
+            "COALESCE(SUM(p.receiveGood), 0L), COALESCE(SUM(p.receiveError), 0L), " +
+            "COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
+            "COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L)) " +
             "FROM Performance p WHERE p.gameSet.match = :match " +
             "GROUP BY p.player.team.id")
     List<TeamStatsDTO> getBothTeamsStatsForMatch(@Param("match") Match match);
@@ -75,13 +75,13 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
     // Statistiche globali di una squadra
     @Query("SELECT new it.unifi.volleyballscouting.dto.TeamStatsDTO(" +
             "p.player.team.id, " +
-            "SUM(p.digGood), SUM(p.digError), " +
-            "SUM(p.attackPoint), SUM(p.attackInPlay), SUM(p.attackError), " +
-            "SUM(p.servePoint), SUM(p.serveInPlay), SUM(p.serveError), " +
-            "SUM(p.blockPoint), SUM(p.blockInPlay), SUM(p.blockError), " +
-            "SUM(p.receiveGood), SUM(p.receiveError), " +
-            "SUM(p.attackPoint + p.servePoint + p.blockPoint), " +
-            "SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError)) " +
+            "COALESCE(SUM(p.digGood), 0L), COALESCE(SUM(p.digError), 0L), " +
+            "COALESCE(SUM(p.attackPoint), 0L), COALESCE(SUM(p.attackInPlay), 0L), COALESCE(SUM(p.attackError), 0L), " +
+            "COALESCE(SUM(p.servePoint), 0L), COALESCE(SUM(p.serveInPlay), 0L), COALESCE(SUM(p.serveError), 0L), " +
+            "COALESCE(SUM(p.blockPoint), 0L), COALESCE(SUM(p.blockInPlay), 0L), COALESCE(SUM(p.blockError), 0L), " +
+            "COALESCE(SUM(p.receiveGood), 0L), COALESCE(SUM(p.receiveError), 0L), " +
+            "COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
+            "COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L)) " +
             "FROM Performance p WHERE p.player.team = :team " +
             "GROUP BY p.player.team.id")
     Optional<TeamStatsDTO> getTeamGlobalStats(@Param("team") Team team);

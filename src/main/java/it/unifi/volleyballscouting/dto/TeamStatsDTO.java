@@ -29,7 +29,7 @@ public record TeamStatsDTO (
 
     private double percent(long part, long total) {
         if (total == 0) return 0.0;
-        return Math.round((double) part / total) * 100;
+        return (double) part / total * 100;
     }
     public double getAttackSuccessPercentage()  { return percent(totalAttackPoint, totalAttackPoint + totalAttackInPlay + totalAttackError); }
     public double getServeSuccessPercentage()   { return percent(totalServePoint, totalServePoint + totalServeInPlay + totalServeError); }

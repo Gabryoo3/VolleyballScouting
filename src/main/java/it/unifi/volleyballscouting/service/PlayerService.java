@@ -77,6 +77,8 @@ public class PlayerService {
         String encodedPassword = passwordEncoder.encode(tempPassword);
         Player player = new Player(form.surname(), form.name(), form.username(), encodedPassword, form.birthdate(), form.number(), form.role());
         player.setTeam(team);
+        player.setPhone(form.phone());
+        player.setEmail(form.email());
         playerRepository.save(player);
         return tempPassword;
     }

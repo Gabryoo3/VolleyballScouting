@@ -32,3 +32,11 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Database H2 locale
+/Database/*.db
+/Database/*.trace.db
+DB.script
+DB.log
+DB.properties
+DB.tmp/

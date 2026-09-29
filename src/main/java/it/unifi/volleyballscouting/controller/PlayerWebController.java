@@ -60,7 +60,13 @@ public class PlayerWebController {
             return "players/form";
         }
         Team t = coachService.getCoachTeam(userDetails.getId());
-        if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), null)){
+        if (t == null) {
+            br.reject("noTeam", "Devi prima creare o essere associato a una squadra per aggiungere giocatori.");
+            prepareFormModel(model, form, "/players/create");
+            return "players/form";
+        }
+
+        if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), null)) {
             br.rejectValue("number", "duplicate", "Questo numero è già presente in squadra");
             prepareFormModel(model, form, "/players/create");
             return "players/form";
@@ -88,7 +94,13 @@ public class PlayerWebController {
             return "players/form";
         }
         Team t = coachService.getCoachTeam(userDetails.getId());
-        if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), playerId)){
+        if (t == null) {
+            br.reject("noTeam", "Devi prima creare o essere associato a una squadra per modificare i giocatori.");
+            prepareFormModel(model, form, "/players/" + playerId + "/update");
+            return "players/form";
+        }
+
+        if (form.number() != null && playerService.isNumberAlreadyTaken(t.getId(), form.number(), playerId)) {
             br.rejectValue("number", "duplicate", "Questo numero è già presente in squadra");
             prepareFormModel(model, form, "/players/" + playerId + "/update");
             return "players/form";
