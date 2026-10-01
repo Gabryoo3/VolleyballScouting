@@ -13,6 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
 
@@ -49,13 +50,17 @@ public class TeamWebController {
         return "redirect:/teams";
     }
     @GetMapping("/{teamId}/edit")
-    public String showEditForm(@PathVariable UUID teamId, Model model){
+    public String showEditForm(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable UUID teamId, Model model){
         Team t = teamService.findById(teamId);
+        if (t.getCoach() == null || !t.getCoach().getId().equals(userDetails.getId())){
+            throw new org.springframework.security.access.AccessDeniedException("Non puoi modificare una squadra che non alleni");
+        }
         prepareFormModel(model, TeamFormDTO.fromEntity(t), "/teams/" + teamId + "/update");
         return "teams/form";
     }
     @PostMapping("/{teamId}/update")
     public String editTeam(
+            @AuthenticationPrincipal AppUserDetails userDetails,
             @PathVariable UUID teamId,
             @Valid @ModelAttribute("teamForm")
             TeamFormDTO form,
@@ -64,6 +69,10 @@ public class TeamWebController {
         if(br.hasErrors()){
             prepareFormModel(model, form, "/teams/" + teamId + "/update");
             return "teams/form";
+        }
+        Team t = teamService.findById(teamId);
+        if (t.getCoach() == null || !t.getCoach().getId().equals(userDetails.getId())){
+            throw new org.springframework.security.access.AccessDeniedException("Non puoi modificare una squadra che non alleni");
         }
         teamService.updateTeam(teamId, form);
         return "redirect:/teams/details/" + teamId;

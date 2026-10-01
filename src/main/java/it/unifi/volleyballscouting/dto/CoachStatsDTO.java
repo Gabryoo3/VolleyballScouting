@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.dto;
 
+
 import java.io.Serializable;
 import java.util.UUID;
 

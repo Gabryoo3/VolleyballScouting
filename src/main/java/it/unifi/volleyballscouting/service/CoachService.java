@@ -40,6 +40,7 @@ public class CoachService {
 
     public CoachStatsDTO getCoachStats(Coach coach){
         Team t = coach.getTeam();
+        if (t == null) return CoachStatsDTO.empty(coach.getId());
         long wins = matchRepository.countWins(t);
         long loses = matchRepository.countLoses(t);
         return new CoachStatsDTO(coach.getId(), wins, loses, wins+loses);

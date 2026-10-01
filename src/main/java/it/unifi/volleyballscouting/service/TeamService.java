@@ -41,6 +41,9 @@ public class TeamService {
     @Transactional
     public Team save (TeamFormDTO form, UUID coachId){
         Coach coach = coachService.findById(coachId);
+        if (coach.getTeam() != null){
+            throw new IllegalStateException("Questo allenatore ha già una squadra");
+        }
         Address ad = new Address(
                 form.address().street(),
                 form.address().city(),
@@ -48,7 +51,7 @@ public class TeamService {
         );
         Team team = new Team (form.name(), ad, coach);
         Team saved = teamRepo.save(team);
-        coach.setTeam(saved);
+        coach.assignTeam(saved);
         return saved;
     }
     @Transactional
