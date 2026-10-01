@@ -1,4 +1,6 @@
 package it.unifi.volleyballscouting.validation;
 
-public interface OnUpdate {
+import jakarta.validation.groups.Default;
+
+public interface OnUpdate extends Default {
 }

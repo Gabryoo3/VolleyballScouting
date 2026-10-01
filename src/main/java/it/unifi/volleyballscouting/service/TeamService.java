@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.TeamFormDto;
+import it.unifi.volleyballscouting.dto.TeamFormDTO;
 import it.unifi.volleyballscouting.model.Address;
 import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
@@ -39,7 +39,7 @@ public class TeamService {
         return teamRepo.findByNameContainingIgnoreCaseAndAddressCity(name, city);
     }
     @Transactional
-    public Team save (TeamFormDto form, UUID coachId){
+    public Team save (TeamFormDTO form, UUID coachId){
         Coach coach = coachService.findById(coachId);
         Address ad = new Address(
                 form.address().street(),
@@ -52,7 +52,7 @@ public class TeamService {
         return saved;
     }
     @Transactional
-    public void updateTeam(UUID teamId, TeamFormDto form){
+    public void updateTeam(UUID teamId, TeamFormDTO form){
         Team t = findById(teamId);
         t.updateFromDto(form);
     }

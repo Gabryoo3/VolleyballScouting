@@ -25,7 +25,7 @@ public record PlayerStatsDTO(
     private double successPercentage(long good, long bad) {
         long totalAttempts = good + bad;
         if (totalAttempts == 0) return 0.0;
-        return ((double) good / totalAttempts) * 100;
+        return Math.round(((double) good / totalAttempts) * 1000)/10.0;
     }
     public double getAttackSuccessPercentage() {
         return successPercentage(totalAttacksGood, totalAttacksBad);

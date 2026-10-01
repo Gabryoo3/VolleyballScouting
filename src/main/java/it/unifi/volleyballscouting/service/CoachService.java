@@ -1,30 +1,29 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.CoachFormDto;
-import it.unifi.volleyballscouting.dto.TeamStatsDTO;
+import it.unifi.volleyballscouting.dto.CoachFormDTO;
+import it.unifi.volleyballscouting.dto.CoachStatsDTO;
 import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.CoachRepository;
-import it.unifi.volleyballscouting.repository.TeamRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
+import it.unifi.volleyballscouting.repository.MatchRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-
+@Transactional(readOnly = true)
 @Service
 public class CoachService {
     private final CoachRepository coachRepository;
+    private final MatchRepository matchRepository;
 
     private final PasswordEncoder passwordEncoder;
 
-    public CoachService(CoachRepository repo, PasswordEncoder ps){
+    public CoachService(CoachRepository repo, PasswordEncoder ps, MatchRepository mr){
         this.coachRepository = repo;
         this.passwordEncoder = ps;
+        this.matchRepository = mr;
     }
 
     public List<Coach> findAll() { return coachRepository.findAll();}
@@ -35,12 +34,19 @@ public class CoachService {
     }
 
     public Team getCoachTeam(UUID coachId){
-        Coach c = coachRepository.findById(coachId).orElseThrow(() -> new IllegalArgumentException("Coach non trovato"));
+        Coach c = coachRepository.findById(coachId).orElseThrow(() -> new IllegalArgumentException("Allenatore non trovato"));
         return c.getTeam();
     }
 
+    public CoachStatsDTO getCoachStats(Coach coach){
+        Team t = coach.getTeam();
+        long wins = matchRepository.countWins(t);
+        long loses = matchRepository.countLoses(t);
+        return new CoachStatsDTO(coach.getId(), wins, loses, wins+loses);
+    }
+
     @Transactional
-    public void save(CoachFormDto form){
+    public void save(CoachFormDTO form){
         String encodedPassword = passwordEncoder.encode(form.password());
         Coach coach = new Coach(form.name(), form.surname(), form.username(), encodedPassword, form.birthdate());
         coach.setPhone(form.phone());
@@ -55,7 +61,7 @@ public class CoachService {
     }
 
     @Transactional
-    public void updateCoach(UUID coachId, CoachFormDto form){
+    public void updateCoach(UUID coachId, CoachFormDTO form){
         Coach c = findById(coachId);
         c.updateFromDto(form);
     }

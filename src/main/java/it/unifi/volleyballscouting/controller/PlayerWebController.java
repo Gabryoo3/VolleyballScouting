@@ -1,6 +1,5 @@
 package it.unifi.volleyballscouting.controller;
 import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
-import it.unifi.volleyballscouting.model.Performance;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
@@ -16,7 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import it.unifi.volleyballscouting.dto.PlayerFormDto;
+import it.unifi.volleyballscouting.dto.PlayerFormDTO;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.UUID;
@@ -41,13 +40,13 @@ public class PlayerWebController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        prepareFormModel(model, PlayerFormDto.empty(), "/players/create");
+        prepareFormModel(model, PlayerFormDTO.empty(), "/players/create");
         return "players/form";
     }
     @PostMapping("/create")
     public String createPlayer(@AuthenticationPrincipal AppUserDetails userDetails,
-                            @Valid @ModelAttribute("playerForm") PlayerFormDto form, BindingResult br, Model model,
-                            RedirectAttributes redirectAttributes) {
+                               @Valid @ModelAttribute("playerForm") PlayerFormDTO form, BindingResult br, Model model,
+                               RedirectAttributes redirectAttributes) {
 
         if(br.hasErrors()) {
             prepareFormModel(model, form, "/players/create");
@@ -73,14 +72,14 @@ public class PlayerWebController {
     @GetMapping("/{playerId}/edit")
     public String showEditForm(@PathVariable UUID playerId, Model model){
         Player p = playerService.findById(playerId);
-        prepareFormModel(model, PlayerFormDto.fromEntity(p), "/players/" + playerId + "/update");
+        prepareFormModel(model, PlayerFormDTO.fromEntity(p), "/players/" + playerId + "/update");
         return "players/form";
     }
     @PostMapping("/{playerId}/update")
     public String editPlayer(@AuthenticationPrincipal AppUserDetails userDetails,
                             @PathVariable UUID playerId,
                             @Valid @ModelAttribute("playerForm")
-                            PlayerFormDto form,
+                                 PlayerFormDTO form,
                             BindingResult br,
                             Model model){
         if(br.hasErrors()) {
@@ -159,7 +158,7 @@ public class PlayerWebController {
         return "players/NoTeamList";
     }
 
-    private void prepareFormModel(Model model, PlayerFormDto form, String formAction){
+    private void prepareFormModel(Model model, PlayerFormDTO form, String formAction){
         model.addAttribute("playerForm", form);
         model.addAttribute("roles", PlayerRole.values());
         model.addAttribute("formAction", formAction);

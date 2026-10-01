@@ -72,7 +72,7 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
             "SUM(p.aces + p.attacksGood + p.blocksGood)," +
             "SUM(p.serveErrors + p.attacksBad + p.blocksBad + p.receiveBad))" +
             "FROM Performance p " +
-            "WHERE p.set.match = :match " +
+            "WHERE p.gameSet.match = :match " +
             "GROUP BY p.player.team.id")
     List<TeamStatsDTO> getBothTeamsStatsForMatch(@Param("match") Match match);
     //Global stats for Team

@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
-import it.unifi.volleyballscouting.dto.AddressFormDto;
+import it.unifi.volleyballscouting.dto.AddressFormDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -49,7 +49,7 @@ public class Address implements Serializable {
         this.zipCode = postalCode;
     }
 
-    public void updateFromDto(AddressFormDto form){
+    public void updateFromDto(AddressFormDTO form){
         if (form != null){
             this.street = form.street();
             this.city = form.city();
