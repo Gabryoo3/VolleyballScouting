@@ -35,6 +35,8 @@ public class CoachService {
 
     public Team getCoachTeam(UUID coachId){
         Coach c = coachRepository.findById(coachId).orElseThrow(() -> new IllegalArgumentException("Allenatore non trovato"));
+        if (c.getTeam() == null)
+            throw new NullPointerException("L'allenatore non ha ancora un team");
         return c.getTeam();
     }
 

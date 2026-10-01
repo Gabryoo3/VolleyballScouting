@@ -113,7 +113,7 @@ public class CoachWebController {
         CoachStatsDTO stats = coachService.getCoachStats(coach);
         model.addAttribute("coach", coach);
         model.addAttribute("stats", stats);
-        return "coach/details";
+        return "coaches/details";
     }
     private void prepareFormModel(Model model, CoachFormDTO form, String formAction){
         model.addAttribute("coachForm", form);

@@ -153,7 +153,7 @@ public class PlayerWebController {
         PlayerStatsDTO stats = performanceService.getPlayerCareerStats(player);
         model.addAttribute("player", player);
         model.addAttribute("stats", stats);
-        return "players/detail";
+        return "players/details";
     }
     @GetMapping("/free")
     public String showFreePlayers(@RequestParam(required = false) String role, Model model){

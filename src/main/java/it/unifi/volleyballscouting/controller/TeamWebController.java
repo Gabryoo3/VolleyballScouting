@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.UUID;
 
@@ -66,13 +65,13 @@ public class TeamWebController {
             TeamFormDTO form,
             BindingResult br,
             Model model){
-        if(br.hasErrors()){
-            prepareFormModel(model, form, "/teams/" + teamId + "/update");
-            return "teams/form";
-        }
         Team t = teamService.findById(teamId);
         if (t.getCoach() == null || !t.getCoach().getId().equals(userDetails.getId())){
             throw new org.springframework.security.access.AccessDeniedException("Non puoi modificare una squadra che non alleni");
+        }
+        if(br.hasErrors()){
+            prepareFormModel(model, form, "/teams/" + teamId + "/update");
+            return "teams/form";
         }
         teamService.updateTeam(teamId, form);
         return "redirect:/teams/details/" + teamId;
@@ -105,7 +104,7 @@ public class TeamWebController {
         TeamStatsDTO stats = performanceService.getTeamStats(team);
         model.addAttribute("team", team);
         model.addAttribute("stats", stats);
-        return "teams/detail";
+        return "teams/details";
     }
 
     private void prepareFormModel(Model model, TeamFormDTO form, String formAction){
