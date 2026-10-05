@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.PlayerFormDto;
+import it.unifi.volleyballscouting.dto.PlayerFormDTO;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
@@ -17,14 +17,18 @@ import java.util.UUID;
 public class PlayerService {
 
     private final PasswordEncoder passwordEncoder;
+    private final TeamService teamService;
+    private final UserAccountService userAccountService;
 
     public record AssignmentResult(UUID playerId, boolean hasNumberConflict, Integer number){}
 
     private final PlayerRepository playerRepository;
 
-    public PlayerService(PlayerRepository repo, PasswordEncoder passwordEncoder){
+    public PlayerService(PlayerRepository repo, PasswordEncoder passwordEncoder, TeamService teamService, UserAccountService userAccountService){
         this.playerRepository = repo;
         this.passwordEncoder = passwordEncoder;
+        this.teamService = teamService;
+        this.userAccountService = userAccountService;
     }
 
     public List<Player> findAll(){
@@ -72,9 +76,15 @@ public class PlayerService {
     }
 
     @Transactional
-    public String save(PlayerFormDto form, Team team){
+    public String save(PlayerFormDTO form, UUID teamId){
+        if (userAccountService.isUsernameTaken(form.username()))
+            throw new IllegalArgumentException("Lo username inserito è già in uso");
+        if (isNumberAlreadyTaken(teamId, form.number(), null))
+            throw new IllegalArgumentException("Il numero inserito è già assegnato nel team"); //DA SEGNARE COME VOLUTO E NON COME DUPLICATO
+        Team team = teamService.findById(teamId);
         String tempPassword = UUID.randomUUID().toString().substring(0,8);
         String encodedPassword = passwordEncoder.encode(tempPassword);
+
         Player player = new Player(form.surname(), form.name(), form.username(), encodedPassword, form.birthdate(), form.number(), form.role());
         player.setTeam(team);
         player.setPhone(form.phone());
@@ -84,15 +94,16 @@ public class PlayerService {
     }
 
     @Transactional
-    public AssignmentResult addPlayerToTeam(UUID playerId, Team t){
+    public AssignmentResult addPlayerToTeam(UUID playerId, UUID teamId){
         Player p = findById(playerId);
-        boolean conflict = isNumberAlreadyTaken(t.getId(), p.getNumber(), playerId);
+        Team t = teamService.findById(teamId);
+        boolean conflict = isNumberAlreadyTaken(teamId, p.getNumber(), playerId);
         p.setTeam(t);
         return new AssignmentResult(playerId, conflict, p.getNumber());
     }
 
     @Transactional
-    public void updatePlayer(UUID playerId, PlayerFormDto form){
+    public void updatePlayer(UUID playerId, PlayerFormDTO form){
         Player p = findById(playerId);
         p.updateFromDto(form);
     }

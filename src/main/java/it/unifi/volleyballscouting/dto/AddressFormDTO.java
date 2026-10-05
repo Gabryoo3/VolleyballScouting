@@ -9,7 +9,7 @@ import java.io.Serializable;
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Address}
  */
-public record AddressFormDto(
+public record AddressFormDTO(
         @NotBlank(message = "La via non può essere vuota")
         String street,
         @NotBlank(message = "La città non può essere vuota")
@@ -18,12 +18,12 @@ public record AddressFormDto(
         @Size(min = 5, max = 5, message = "Il codice postale deve essere di 5 cifre")
         String zipCode) implements Serializable {
 
-        public static AddressFormDto empty(){
-                return new AddressFormDto("", "", "");
+        public static AddressFormDTO empty(){
+                return new AddressFormDTO("", "", "");
         }
 
-        public static AddressFormDto fromEntity(Team t){
-                return new AddressFormDto(
+        public static AddressFormDTO fromEntity(Team t){
+                return new AddressFormDTO(
                         t.getAddress().getStreet(),
                         t.getAddress().getCity(),
                         t.getAddress().getZipCode()

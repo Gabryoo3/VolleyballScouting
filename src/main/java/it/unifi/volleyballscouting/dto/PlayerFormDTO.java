@@ -10,7 +10,7 @@ import java.time.LocalDate;
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Player}
  */
-public record PlayerFormDto(
+public record PlayerFormDTO(
         @NotBlank(message = "Il nome è necessario")
         String name,
         @NotBlank(message = "Il cognome è necessario")
@@ -32,8 +32,8 @@ public record PlayerFormDto(
         @Email(message = "L'email non è valida")
         String email
 ) implements Serializable {
-    public static PlayerFormDto fromEntity(Player p){
-        return new PlayerFormDto(
+    public static PlayerFormDTO fromEntity(Player p){
+        return new PlayerFormDTO(
                 p.getName(),
                 p.getSurname(),
                 p.getUsername(),
@@ -45,7 +45,7 @@ public record PlayerFormDto(
         );
     }
 
-    public static PlayerFormDto empty(){
-        return new PlayerFormDto(null,null,null,null,null,null,null,null);
+    public static PlayerFormDTO empty(){
+        return new PlayerFormDTO(null,null,null,null,null,null,null,null);
     }
 }

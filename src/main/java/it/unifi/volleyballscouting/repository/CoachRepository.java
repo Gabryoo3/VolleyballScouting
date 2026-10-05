@@ -9,4 +9,6 @@ import java.util.UUID;
 
 public interface CoachRepository extends JpaRepository<Coach, UUID> {
     Optional<Coach> findByUsername(String username);
+
+    boolean existsByUsernameIgnoreCase(String username);
 }

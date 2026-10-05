@@ -1,7 +1,7 @@
 package it.unifi.volleyballscouting.model;
 
 
-import it.unifi.volleyballscouting.dto.PlayerFormDto;
+import it.unifi.volleyballscouting.dto.PlayerFormDTO;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -110,7 +110,7 @@ public class Player extends BaseModel{
 
     public void setEmail(String email) {this.email = email;}
 
-    public void updateFromDto(PlayerFormDto form){
+    public void updateFromDto(PlayerFormDTO form){
         this.name = form.name();
         this.surname = form.surname();
         this.username = form.username();

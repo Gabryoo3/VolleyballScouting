@@ -3,11 +3,11 @@ package it.unifi.volleyballscouting.service;
 import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.CoachRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
+import jakarta.validation.constraints.NotBlank;
 import org.springframework.stereotype.Service;
-import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
 
+
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -25,5 +25,7 @@ public class CoachService {
         Coach c = coachRepository.findById(coachId).orElseThrow(() -> new IllegalArgumentException("Coach non trovato"));
         return c.getTeam();
     }
+
+    //TODO: SAVE
 
 }

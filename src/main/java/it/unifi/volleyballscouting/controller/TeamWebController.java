@@ -1,7 +1,6 @@
 package it.unifi.volleyballscouting.controller;
 
-import it.unifi.volleyballscouting.dto.TeamFormDto;
-import it.unifi.volleyballscouting.model.Coach;
+import it.unifi.volleyballscouting.dto.TeamFormDTO;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.CoachService;
@@ -37,14 +36,14 @@ public class TeamWebController {
             return "redirect:/teams/details/" + existingTeam.getId();
         }
 
-        prepareFormModel(model, TeamFormDto.empty(), "/teams/create");
+        prepareFormModel(model, TeamFormDTO.empty(), "/teams/create");
         return "teams/form";
     }
 
     @PostMapping("/create")
     public String CreateTeam(
             @Valid @ModelAttribute("teamForm")
-            TeamFormDto form,
+            TeamFormDTO form,
             BindingResult br,
             @AuthenticationPrincipal AppUserDetails userDetails,
             Model model
@@ -65,7 +64,7 @@ public class TeamWebController {
     @GetMapping("/{teamId}/edit")
     public String showEditForm(@PathVariable UUID teamId, Model model){
         Team t = teamService.findById(teamId);
-        prepareFormModel(model, TeamFormDto.fromEntity(t), "/teams/" + teamId + "/update");
+        prepareFormModel(model, TeamFormDTO.fromEntity(t), "/teams/" + teamId + "/update");
         return "teams/form";
     }
 
@@ -73,7 +72,7 @@ public class TeamWebController {
     public String editTeam(
             @PathVariable UUID teamId,
             @Valid @ModelAttribute("teamForm")
-            TeamFormDto form,
+            TeamFormDTO form,
             BindingResult br,
             Model model){
         if(br.hasErrors()){
@@ -114,7 +113,7 @@ public class TeamWebController {
         return "teams/detail";
     }
 
-    private void prepareFormModel(Model model, TeamFormDto form, String formAction){
+    private void prepareFormModel(Model model, TeamFormDTO form, String formAction){
         model.addAttribute("teamForm", form);
         model.addAttribute("formAction", formAction);
     }

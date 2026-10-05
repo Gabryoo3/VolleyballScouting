@@ -22,18 +22,26 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
     List<Match> findByAddressCityContaining(String addressCity);
 
     // find by team, winning or losing matches
-    @Query("SELECT DISTINCT m FROM Match m WHERE m.teamHome = :team OR m.teamGuest = :team")
-    List<Match> findByTeam(@Param("team")Team t);
+    @Query("SELECT DISTINCT m FROM Match m WHERE " +
+            "(m.teamHome.id = :teamId OR m.teamGuest.id = :teamId)" +
+            "ORDER BY m.matchDateTime DESC")
+    List<Match> findByTeam(@Param("teamId")UUID teamId);
+
     @Query("SELECT m FROM Match m WHERE" +
-    "(m.teamHome = :team AND m.homeScore > m.guestScore) OR"+
-    "(m.teamGuest = :team AND m.guestScore > m.homeScore)")
-    List<Match> findByTeamWins(@Param("team")Team t);
+    "(m.teamHome.id = :teamId AND m.homeScore > m.guestScore) OR"+
+    "(m.teamGuest.id = :teamId AND m.guestScore > m.homeScore)" +
+    "ORDER BY m.matchDateTime DESC")
+    List<Match> findByTeamWins(@Param("teamId")UUID teamId);
+
     @Query("SELECT m FROM Match m WHERE" +
-            "(m.teamHome = :team AND m.homeScore < m.guestScore) OR"+
-            "(m.teamGuest = :team AND m.guestScore < m.homeScore)")
-    List<Match> findByTeamLosses(@Param("team")Team t);
+            "(m.teamHome.id = :teamId AND m.homeScore < m.guestScore) OR"+
+            "(m.teamGuest.id = :teamId AND m.guestScore < m.homeScore)" +
+            "ORDER BY m.matchDateTime DESC")
+    List<Match> findByTeamLosses(@Param("teamId")UUID teamId);
+
     @Query("SELECT m FROM Match m WHERE"+
-            "(m.teamHome = :team1 AND m.teamGuest = :team2) OR"+
-            "(m.teamGuest = :team1 AND m.teamHome = :team2)")
-    List<Match> findByTeam1vsTeam2(@Param("team1") Team t1, @Param("team2") Team t2);
+            "(m.teamHome.id = :team1Id AND m.teamGuest.id = :team2Id) OR"+
+            "(m.teamGuest.id = :team1Id AND m.teamHome.id = :team2Id)" +
+            "ORDER BY m.matchDateTime DESC")
+    List<Match> findByTeam1vsTeam2(@Param("team1Id") UUID teamId1, @Param("team2Id") UUID teamId2);
 }

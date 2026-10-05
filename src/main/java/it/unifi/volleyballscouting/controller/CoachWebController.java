@@ -1,9 +1,6 @@
 package it.unifi.volleyballscouting.controller;
 
-import it.unifi.volleyballscouting.dto.CoachFormDto;
-import it.unifi.volleyballscouting.dto.PlayerFormDto;
-import it.unifi.volleyballscouting.model.Player;
-import it.unifi.volleyballscouting.model.PlayerRole;
+import it.unifi.volleyballscouting.dto.CoachFormDTO;
 import it.unifi.volleyballscouting.repository.CoachRepository;
 import it.unifi.volleyballscouting.repository.PlayerRepository;
 import it.unifi.volleyballscouting.service.CoachService;
@@ -37,18 +34,18 @@ public class CoachWebController {
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        prepareFormModel(model, CoachFormDto.empty());
+        prepareFormModel(model, CoachFormDTO.empty());
         return "coaches/form";
     }
     @PostMapping("/register")
-    public String creatCoach(@Validated(OnCreate.class) @ModelAttribute("coachForm") CoachFormDto form,
+    public String creatCoach(@Validated(OnCreate.class) @ModelAttribute("coachForm") CoachFormDTO form,
                              BindingResult br, Model model, RedirectAttributes ra){
         if (br.hasErrors()){
             prepareFormModel(model, form);
             return "coaches/form";
         }
         if(cr.findByUsername(form.username()).isPresent() ||
-                pr.findByUsername(form.username()).isPresent()){
+                pr.findByUsernameIgnoreCase(form.username()).isPresent()){
             br.rejectValue("username", "duplicate", "L'username è già in uso");
             prepareFormModel(model, form);
             return "players/form";
@@ -72,7 +69,7 @@ public class CoachWebController {
     }
 
 
-    private void prepareFormModel(Model model, CoachFormDto form){
+    private void prepareFormModel(Model model, CoachFormDTO form){
         model.addAttribute("coachForm", form);
     }
 
