@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.TeamFormDTO;
+import it.unifi.volleyballscouting.dto.TeamFormDto;
 import it.unifi.volleyballscouting.model.Address;
 import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
@@ -39,11 +39,8 @@ public class TeamService {
         return teamRepo.findByNameContainingIgnoreCaseAndAddressCity(name, city);
     }
     @Transactional
-    public Team save (TeamFormDTO form, UUID coachId){
+    public Team save (TeamFormDto form, UUID coachId){
         Coach coach = coachService.findById(coachId);
-        if (coach.getTeam() != null){
-            throw new IllegalStateException("Questo allenatore ha già una squadra");
-        }
         Address ad = new Address(
                 form.address().street(),
                 form.address().city(),
@@ -51,11 +48,11 @@ public class TeamService {
         );
         Team team = new Team (form.name(), ad, coach);
         Team saved = teamRepo.save(team);
-        coach.assignTeam(saved);
+        coach.setTeam(saved);
         return saved;
     }
     @Transactional
-    public void updateTeam(UUID teamId, TeamFormDTO form){
+    public void updateTeam(UUID teamId, TeamFormDto form){
         Team t = findById(teamId);
         t.updateFromDto(form);
     }

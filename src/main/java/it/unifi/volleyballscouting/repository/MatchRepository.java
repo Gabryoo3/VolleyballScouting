@@ -36,11 +36,4 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
             "(m.teamHome = :team1 AND m.teamGuest = :team2) OR"+
             "(m.teamGuest = :team1 AND m.teamHome = :team2)")
     List<Match> findByTeam1vsTeam2(@Param("team1") Team t1, @Param("team2") Team t2);
-    //counting wins and loses for a team
-    @Query("SELECT COUNT(m) FROM Match m WHERE"+
-    "(m.teamHome = :team AND m.homeScore=3) OR (m.teamGuest = :team AND m.guestScore = 3)")
-    long countWins(@Param("team") Team t);
-    @Query("SELECT COUNT(m) FROM Match m WHERE"+
-            "(m.teamHome = :team AND m.guestScore=3) OR (m.teamGuest = :team AND m.homeScore = 3)")
-    long countLoses(@Param("team") Team t);
 }

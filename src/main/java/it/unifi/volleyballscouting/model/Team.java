@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
-import it.unifi.volleyballscouting.dto.TeamFormDTO;
+import it.unifi.volleyballscouting.dto.TeamFormDto;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -43,7 +43,7 @@ public class Team extends BaseModel{
     }
 
 
-    public void updateFromDto(TeamFormDTO form){
+    public void updateFromDto(TeamFormDto form){
         this.name = form.name();
         if (form.address() != null){
             if (this.address == null){

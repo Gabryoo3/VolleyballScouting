@@ -11,23 +11,23 @@ import java.io.Serializable;
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Team}
  */
-public record TeamFormDTO(
+public record TeamFormDto(
         @Size(message = "Il nome deve contenere dai 5 ai 99 caratteri", min = 5, max = 99)
         @NotBlank(message = "Il nome non può essere vuoto")
         String name,
         @Valid
         @NotNull(message = "L'indirizzo è necessario")
-        AddressFormDTO address
+        AddressFormDto address
         ) implements Serializable {
 
-        public static TeamFormDTO empty(){
-                return new TeamFormDTO("", AddressFormDTO.empty());
+        public static TeamFormDto empty(){
+                return new TeamFormDto("", AddressFormDto.empty());
         }
 
-        public static TeamFormDTO fromEntity(Team t){
-                return new TeamFormDTO(
+        public static TeamFormDto fromEntity(Team t){
+                return new TeamFormDto(
                         t.getName(),
-                        AddressFormDTO.fromEntity(t)
+                        AddressFormDto.fromEntity(t)
                 );
         }
 }

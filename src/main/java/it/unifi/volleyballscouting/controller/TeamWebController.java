@@ -1,10 +1,9 @@
 package it.unifi.volleyballscouting.controller;
 
-import it.unifi.volleyballscouting.dto.TeamFormDTO;
-import it.unifi.volleyballscouting.dto.TeamStatsDTO;
+import it.unifi.volleyballscouting.dto.TeamFormDto;
+import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.security.AppUserDetails;
-import it.unifi.volleyballscouting.service.PerformanceService;
 import it.unifi.volleyballscouting.service.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,22 +20,20 @@ import java.util.UUID;
 public class TeamWebController {
 
     private final TeamService teamService;
-    private final PerformanceService performanceService;
 
-    public TeamWebController(TeamService ts, PerformanceService performanceService){
+    public TeamWebController(TeamService ts){
         this.teamService = ts;
-        this.performanceService = performanceService;
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        prepareFormModel(model, TeamFormDTO.empty(), "/teams/create");
+        prepareFormModel(model, TeamFormDto.empty(), "/teams/create");
         return "teams/form";
     }
     @PostMapping("/create")
     public String CreateTeam(
             @Valid @ModelAttribute("teamForm")
-            TeamFormDTO form,
+            TeamFormDto form,
             BindingResult br,
             @AuthenticationPrincipal AppUserDetails userDetails,
             Model model
@@ -49,31 +46,24 @@ public class TeamWebController {
         return "redirect:/teams";
     }
     @GetMapping("/{teamId}/edit")
-    public String showEditForm(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable UUID teamId, Model model){
+    public String showEditForm(@PathVariable UUID teamId, Model model){
         Team t = teamService.findById(teamId);
-        if (t.getCoach() == null || !t.getCoach().getId().equals(userDetails.getId())){
-            throw new org.springframework.security.access.AccessDeniedException("Non puoi modificare una squadra che non alleni");
-        }
-        prepareFormModel(model, TeamFormDTO.fromEntity(t), "/teams/" + teamId + "/update");
+        prepareFormModel(model, TeamFormDto.fromEntity(t), "/teams/" + teamId + "/update");
         return "teams/form";
     }
     @PostMapping("/{teamId}/update")
     public String editTeam(
-            @AuthenticationPrincipal AppUserDetails userDetails,
             @PathVariable UUID teamId,
             @Valid @ModelAttribute("teamForm")
-            TeamFormDTO form,
+            TeamFormDto form,
             BindingResult br,
             Model model){
-        Team t = teamService.findById(teamId);
-        if (t.getCoach() == null || !t.getCoach().getId().equals(userDetails.getId())){
-            throw new org.springframework.security.access.AccessDeniedException("Non puoi modificare una squadra che non alleni");
-        }
         if(br.hasErrors()){
             prepareFormModel(model, form, "/teams/" + teamId + "/update");
             return "teams/form";
         }
         teamService.updateTeam(teamId, form);
+        // FIX: prima era "redirect:/teams" + teamId (mancava lo "/") -> ora /teams/details/{id}
         return "redirect:/teams/details/" + teamId;
     }
 
@@ -101,14 +91,14 @@ public class TeamWebController {
     @GetMapping("/details/{teamId}")
     public String showTeamDetails(@PathVariable UUID teamId, Model model){
         Team team = teamService.findById(teamId);
-        TeamStatsDTO stats = performanceService.getTeamStats(team);
+        //TODO: add Performances via the service
         model.addAttribute("team", team);
-        model.addAttribute("stats", stats);
-        return "teams/details";
+        return "teams/detail";
     }
 
-    private void prepareFormModel(Model model, TeamFormDTO form, String formAction){
+    private void prepareFormModel(Model model, TeamFormDto form, String formAction){
         model.addAttribute("teamForm", form);
         model.addAttribute("formAction", formAction);
     }
+
 }

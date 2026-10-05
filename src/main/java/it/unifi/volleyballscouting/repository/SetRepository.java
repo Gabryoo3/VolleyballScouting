@@ -13,8 +13,8 @@ public interface SetRepository extends JpaRepository<GameSet, UUID> {
     List<GameSet> findSetsByMatchIdOrderBySetNumberAsc(UUID MatchId);
     //find bad sets, where the team makes under a certain threshold
     @Query("SELECT s FROM GameSet s WHERE "+
-            "(s.match.teamHome = :team AND s.teamHomePoints < :scoreThreshold) OR "+
-            "(s.match.teamGuest = :team AND s.teamGuestPoints < :scoreThreshold )")
+            "(s.match.teamHome = :team AND s.teamHomePoints < :scoreTreshold) OR "+
+            "(s.match.teamGuest = :team AND s.teamGuestPoints < :scoreTreshold )")
     List<GameSet> findBadSetsForTeam(@Param("team") Team t, @Param("scoreThreshold") int scoreThreshold);
     //find tied sets where the total points are above a certain minimum (like, 25-23 sets, 26-24 and so on)
     @Query("SELECT s FROM GameSet s WHERE (s.match.teamHome = :team OR s.match.teamGuest = :team )"+
