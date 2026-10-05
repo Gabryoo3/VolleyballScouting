@@ -5,6 +5,7 @@ import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.TeamService;
+import it.unifi.volleyballscouting.service.CoachService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -20,28 +21,56 @@ import java.util.UUID;
 public class TeamWebController {
 
     private final TeamService teamService;
+    private final CoachService coachService;
 
-    public TeamWebController(TeamService ts){
+    public TeamWebController(TeamService ts, CoachService cs){
         this.teamService = ts;
+        this.coachService = cs;
     }
 
     @GetMapping("/new")
-    public String showCreateForm(Model model){
+    public String showCreateForm(@AuthenticationPrincipal AppUserDetails userDetails, Model model){
+        // 1. Se l'utente non è un Coach (es. è un Admin puro), non può creare una squadra per se stesso
+        if (!userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COACH"))) {
+            return "redirect:/teams";
+        }
+
+        // 2. Se il Coach ha già una squadra associata, lo rimandiamo al dettaglio della sua squadra
+        Team existingTeam = coachService.getCoachTeam(userDetails.getId());
+        if (existingTeam != null) {
+            return "redirect:/teams/details/" + existingTeam.getId();
+        }
+
         prepareFormModel(model, TeamFormDto.empty(), "/teams/create");
         return "teams/form";
     }
+
     @PostMapping("/create")
     public String CreateTeam(
-            @Valid @ModelAttribute("teamForm")
-            TeamFormDto form,
+            @Valid @ModelAttribute("teamForm") TeamFormDto form,
             BindingResult br,
             @AuthenticationPrincipal AppUserDetails userDetails,
             Model model
     ){
+        // Impedisce all'Admin di chiamare l'endpoint legando a sé la squadra
+        if (!userDetails.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_COACH"))) {
+            br.reject("notCoach", "Solo un allenatore accreditato può registrare una squadra.");
+            prepareFormModel(model, form, "/teams/create");
+            return "teams/form";
+        }
+
+        // Verifica che il Coach non abbia già una squadra
+        if (coachService.getCoachTeam(userDetails.getId()) != null) {
+            br.reject("alreadyHasTeam", "Hai già una squadra associata.");
+            prepareFormModel(model, form, "/teams/create");
+            return "teams/form";
+        }
+
         if (br.hasErrors()) {
             prepareFormModel(model, form, "/teams/create");
             return "teams/form";
         }
+
         teamService.save(form, userDetails.getId());
         return "redirect:/teams";
     }
