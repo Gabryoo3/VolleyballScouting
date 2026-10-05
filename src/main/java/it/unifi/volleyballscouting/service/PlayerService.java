@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.PlayerFormDto;
+import it.unifi.volleyballscouting.dto.PlayerFormDTO;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
@@ -72,7 +72,7 @@ public class PlayerService {
     }
 
     @Transactional
-    public String save(PlayerFormDto form, Team team){
+    public String save(PlayerFormDTO form, Team team){
         String tempPassword = UUID.randomUUID().toString().substring(0,8);
         String encodedPassword = passwordEncoder.encode(tempPassword);
         Player player = new Player(form.surname(), form.name(), form.username(), encodedPassword, form.birthdate(), form.number(), form.role());
@@ -92,7 +92,7 @@ public class PlayerService {
     }
 
     @Transactional
-    public void updatePlayer(UUID playerId, PlayerFormDto form){
+    public void updatePlayer(UUID playerId, PlayerFormDTO form){
         Player p = findById(playerId);
         p.updateFromDto(form);
     }

@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.dto.CoachFormDTO;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -26,11 +27,12 @@ public class Coach extends BaseModel {
     protected Coach() {
     }
 
-    public Coach(String name, String surname, String username, String password) {
+    public Coach(String name, String surname, String username, String password, LocalDate birthdate) {
         this.name = name;
         this.surname = surname;
         this.username = username;
         this.password = password;
+        this.birthdate = birthdate;
         setCreatedAt(LocalDateTime.now());
     }
 
@@ -101,6 +103,15 @@ public class Coach extends BaseModel {
     public void assignTeam(Team team){
         this.setTeam(team);
         team.setCoach(this);
+    }
+
+    public void updateFromDto(CoachFormDTO form){
+        this.name = form.name();
+        this.surname = form.surname();
+        this.username = form.username();
+        this.birthdate = form.birthdate();
+        this.phone = form.phone();
+        this.email = form.email();
     }
 
 }
