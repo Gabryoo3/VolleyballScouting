@@ -64,12 +64,13 @@ public class SecurityConfig {
                 .permitAll()
         ).logout(logout -> logout
                 .logoutSuccessUrl("/").permitAll());
-
+        //TODO: URL MAPPING PER REFEREE
         // Configurazione per iframe della console H2
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
         http.csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"));
 
         return http.build();
+
     }
 
     @Bean

@@ -18,15 +18,9 @@ import java.util.Optional;
 @Service
 public class AppUserDetailsService implements UserDetailsService {
 
-    private final CoachRepository coachRepository;
-    private final PlayerRepository playerRepository;
-    private final AdminRepository adminRepository;
     private final UserAccountService userAccountService;
 
-    public AppUserDetailsService(CoachRepository cr, PlayerRepository pr, AdminRepository ar, UserAccountService userAccountService){
-        this.coachRepository = cr;
-        this.playerRepository = pr;
-        this.adminRepository = ar;
+    public AppUserDetailsService(UserAccountService userAccountService){
         this.userAccountService = userAccountService;
     }
 

@@ -8,7 +8,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CoachRepository extends JpaRepository<Coach, UUID> {
-    Optional<Coach> findByUsername(String username);
+    Optional<Coach> findByUsernameIgnoreCase(String username);
 
     boolean existsByUsernameIgnoreCase(String username);
 }

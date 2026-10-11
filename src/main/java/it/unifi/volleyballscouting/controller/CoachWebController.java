@@ -44,7 +44,7 @@ public class CoachWebController {
             prepareFormModel(model, form);
             return "coaches/form";
         }
-        if(cr.findByUsername(form.username()).isPresent() ||
+        if(cr.findByUsernameIgnoreCase(form.username()).isPresent() ||
                 pr.findByUsernameIgnoreCase(form.username()).isPresent()){
             br.rejectValue("username", "duplicate", "L'username è già in uso");
             prepareFormModel(model, form);

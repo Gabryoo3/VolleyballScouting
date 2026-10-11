@@ -57,11 +57,11 @@ public class DataSeeder implements CommandLineRunner {
             Admin admin = new Admin("Brambilla", "Fumagalli", adminUsername, passwordEncoder.encode(adminPassword));
             adminRepository.save(admin);
         }
-        if (coachRepository.findByUsername("coach").isEmpty()) {
+        if (coachRepository.findByUsernameIgnoreCase("coach").isEmpty()) {
 
         Address address = new Address("Via dello Sport 10", "Firenze", "50100");
 
-        Coach coach = new Coach("Mario", "Rossi", "coach", passwordEncoder.encode("coach123"));
+        Coach coach = new Coach("Mario", "Rossi", "coach", passwordEncoder.encode("coach123"), LocalDate.EPOCH);
         coach.setEmail("coach@demo.it");
         coach.setBirthdate(LocalDate.EPOCH);
         coachRepository.save(coach);
