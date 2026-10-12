@@ -12,16 +12,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-
+@Transactional(readOnly = true)
 @Service
 public class MatchService {
 
     private final MatchRepository matchRepository;
-    private final TeamRepository teamRepository;
+    private final TeamService teamService;
 
-    public MatchService(MatchRepository repo, TeamRepository teamRepository){
+    public MatchService(MatchRepository repo, TeamService ts){
         this.matchRepository = repo;
-        this.teamRepository = teamRepository;
+        this.teamService = ts;
     }
 
     public Match findById(UUID id){

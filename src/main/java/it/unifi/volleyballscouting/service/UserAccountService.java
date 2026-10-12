@@ -31,7 +31,7 @@ public class UserAccountService {
     public Optional<UserAccount> findByUsername(String username){
         if (username == null || username.isBlank()) return Optional.empty();
 
-        Optional<Admin> adminOpt = adminRepository.findByUsername(username);
+        Optional<Admin> adminOpt = adminRepository.findByUsernameIgnoreCase(username);
         if(adminOpt.isPresent()){
             Admin a = adminOpt.get();
             return Optional.of(

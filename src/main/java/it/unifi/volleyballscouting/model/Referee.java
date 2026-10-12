@@ -12,15 +12,13 @@ public class Referee extends BaseModel{
     private String name;
     @Column(nullable = false)
     private String surname;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
     private LocalDate birthdate;
-    @Column(nullable = false)
     private String phone;
-    @Column(nullable = false)
     private String email;
 
     public Referee(String name, String surname, String username, String password, LocalDate birthdate) {

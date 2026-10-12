@@ -2,11 +2,13 @@ package it.unifi.volleyballscouting.service;
 
 import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.repository.RefereeRepository;
-import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 import java.util.UUID;
-
+@Transactional (readOnly = true)
 @Service
 public class RefereeService {
     private final RefereeRepository refereeRepo;
@@ -17,7 +19,7 @@ public class RefereeService {
 
     public List<Referee> findAll() { return refereeRepo.findAll();}
 
-    public List<Referee> findBySurname(String surname) { return refereeRepo.findBySurname(surname)};
+    public List<Referee> findBySurname(String surname) { return refereeRepo.findBySurname(surname);}
 
     public Referee findById(UUID id){
         return refereeRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Arbirtro specificato non trovato"));

@@ -11,5 +11,5 @@ public interface AdminRepository extends JpaRepository<Admin, UUID> {
     Optional<Admin> findByUsername(String username);
     boolean existsByUsernameIgnoreCase(String username);
 
-    Optional<UserAccount> findByUsernameIgnoreCase(String username);
+    Optional<Admin> findByUsernameIgnoreCase(String username);
 }
