@@ -12,18 +12,17 @@ import org.hibernate.validator.constraints.Range;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * DTO for {@link it.unifi.volleyballscouting.model.Match}
  */
 public record MatchFormDTO(
         @NotNull(message = "Il team di casa non può essere vuoto")
-        Team teamHome,
+        UUID teamHomeId,
         @NotNull(message = "Il team ospite non può essere vuoto")
-        Team teamGuest,
-        Referee r1,
-        @NotNull(message = "La partita deve avere un indirizzo")
-        Address address,
+        UUID teamGuestId,
+        UUID refereeId,
         @NotNull(message = "La partita deve avere una data")
         @Future(message = "La partita deve essere assegnata nel futuro", groups = OnCreate.class)
         LocalDateTime matchDateTime)
@@ -32,8 +31,7 @@ public record MatchFormDTO(
           return new MatchFormDTO(
                   m.getTeamHome(),
                   m.getTeamGuest(),
-                  m.getR1(),
-                  m.getAddress(),
+                  m.getReferee(),
                   m.getMatchDateTime()
           );
         }

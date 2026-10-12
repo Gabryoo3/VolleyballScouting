@@ -10,9 +10,10 @@ import it.unifi.volleyballscouting.repository.CoachRepository;
 import it.unifi.volleyballscouting.repository.PlayerRepository;
 import it.unifi.volleyballscouting.repository.RefereeRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
-
+@Transactional(readOnly = true)
 @Service
 public class UserAccountService {
 

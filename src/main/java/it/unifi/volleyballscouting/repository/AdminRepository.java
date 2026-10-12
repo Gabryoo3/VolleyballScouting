@@ -1,6 +1,5 @@
 package it.unifi.volleyballscouting.repository;
 
-import it.unifi.volleyballscouting.dto.UserAccount;
 import it.unifi.volleyballscouting.model.Admin;
 import org.springframework.data.jpa.repository.JpaRepository;
 

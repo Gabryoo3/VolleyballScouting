@@ -51,9 +51,9 @@ public class Match extends BaseModel{
 
     public void setTeamGuest(Team teamGuest) {this.teamGuest = teamGuest;}
 
-    public Referee getR1() {return referee;}
+    public Referee getReferee() {return referee;}
 
-    public void setR1(Referee r) {this.referee = r;}
+    public void setReferee(Referee r) {this.referee = r;}
 
 
     public Address getAddress() {return address;}
