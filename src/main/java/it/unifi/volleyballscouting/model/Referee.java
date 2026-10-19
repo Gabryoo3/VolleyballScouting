@@ -1,12 +1,15 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.config.Account;
+import it.unifi.volleyballscouting.dto.RefereeFormDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
-public class Referee extends BaseModel{
+public class Referee extends BaseModel implements Account{
     //attributes
     @Column(nullable = false)
     private String name;
@@ -15,15 +18,19 @@ public class Referee extends BaseModel{
     @Column(nullable = false, unique = true)
     private String username;
     @Column(nullable = false)
+    private String password;
+    @Column(nullable = false)
     private LocalDate birthdate;
     private String phone;
     private String email;
 
-    public Referee(String name, String surname, String username, LocalDate birthdate) {
+    public Referee(String name, String surname, String username,String password, LocalDate birthdate) {
         this.name = name;
         this.surname = surname;
         this.username = username;
+        this.password = password;
         this.birthdate = birthdate;
+        setCreatedAt(LocalDateTime.now());
     }
 
     protected Referee(){};
@@ -42,6 +49,10 @@ public class Referee extends BaseModel{
     public String getUsername() { return username; }
 
     public void setUsername(String username) { this.username = username; }
+
+    public String getPassword() { return password; }
+
+    public void setPassword(String password) { this.password = password; }
 
     public LocalDate getBirthdate() { return birthdate; }
 

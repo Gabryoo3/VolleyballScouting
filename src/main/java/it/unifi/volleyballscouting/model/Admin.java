@@ -1,10 +1,11 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.config.Account;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 
 @Entity
-public class Admin extends BaseModel{
+public class Admin extends BaseModel implements Account {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)

@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.dto;
 
+import it.unifi.volleyballscouting.model.Referee;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
@@ -26,4 +27,15 @@ public record RefereeFormDTO(
         @Email
         String email
 ) implements Serializable {
+public static RefereeFormDTO fromEntity(Referee r){
+        return new RefereeFormDTO(
+                r.getName(),
+                r.getSurname(),
+                r.getUsername(),
+                r.getBirthdate(),
+                r.getPhone(),
+                r.getEmail()
+        );
+}
+public static RefereeFormDTO empty() {return new RefereeFormDTO(null,null,null,null,null,null);}
 }
