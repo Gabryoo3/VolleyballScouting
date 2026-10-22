@@ -22,6 +22,7 @@ public record MatchFormDTO(
         UUID teamHomeId,
         @NotNull(message = "Il team ospite non può essere vuoto")
         UUID teamGuestId,
+        @NotNull(message = "L'arbitro deve essere assegnato")
         UUID refereeId,
         @NotNull(message = "La partita deve avere una data")
         @Future(message = "La partita deve essere assegnata nel futuro", groups = OnCreate.class)
@@ -29,9 +30,9 @@ public record MatchFormDTO(
         implements Serializable {
         public static MatchFormDTO fromEntity(Match m){
           return new MatchFormDTO(
-                  m.getTeamHome(),
-                  m.getTeamGuest(),
-                  m.getReferee(),
+                  m.getTeamHome().getId(),
+                  m.getTeamGuest().getId(),
+                  m.getReferee().getId(),
                   m.getMatchDateTime()
           );
         }
