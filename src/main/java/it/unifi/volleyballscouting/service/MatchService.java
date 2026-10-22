@@ -2,6 +2,7 @@ package it.unifi.volleyballscouting.service;
 
 import it.unifi.volleyballscouting.dto.MatchFormDTO;
 import it.unifi.volleyballscouting.model.Match;
+import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.MatchRepository;
 import it.unifi.volleyballscouting.repository.TeamRepository;
@@ -18,10 +19,12 @@ public class MatchService {
 
     private final MatchRepository matchRepository;
     private final TeamService teamService;
+    private final RefereeService refereeService;
 
-    public MatchService(MatchRepository repo, TeamService ts){
+    public MatchService(MatchRepository repo, TeamService ts, RefereeService refereeService){
         this.matchRepository = repo;
         this.teamService = ts;
+        this.refereeService = refereeService;
     }
 
     public Match findById(UUID id){
@@ -60,9 +63,22 @@ public class MatchService {
         return matchRepository.findByTeam1vsTeam2(team1Id, team2Id);
     }
 
+    public boolean refereeDoubleMatch(UUID refereeId, LocalDateTime time) { return matchRepository.existsByRefereeIdAndMatchDateTime(refereeId, time); }
+    public boolean teamDoubleMatch(UUID teamId, LocalDateTime time) { return matchRepository.existsByTeamIdAndMatchDateTime(teamId, time); }
+    //TODO: check if it works
+
     @Transactional
-    public void save(MatchFormDTO form)
-        //TODO: SAVE
+    public Match save(MatchFormDTO form){
+        if (form.teamHomeId().equals(form.teamGuestId()))
+            throw new IllegalArgumentException("Non si può impostare una squadra contro se stessa");
+        Team home = teamService.findById(form.teamHomeId());
+        Team guest = teamService.findById(form.teamGuestId());
+        Referee r = refereeService.findById(form.refereeId());
+
+        Match match = new Match(home, guest, form.matchDateTime(), r);
+        return matchRepository.save(match);
+    }
+
 
 
 }

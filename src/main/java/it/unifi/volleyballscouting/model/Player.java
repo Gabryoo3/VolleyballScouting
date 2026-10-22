@@ -1,6 +1,7 @@
 package it.unifi.volleyballscouting.model;
 
 
+import it.unifi.volleyballscouting.config.Account;
 import it.unifi.volleyballscouting.dto.PlayerFormDTO;
 import jakarta.persistence.*;
 
@@ -8,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-public class Player extends BaseModel{
+public class Player extends BaseModel implements Account {
     //attributes
     @Column(nullable = false)
     private String name;

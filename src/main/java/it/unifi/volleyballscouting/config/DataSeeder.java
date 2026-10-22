@@ -65,7 +65,7 @@ public class DataSeeder implements CommandLineRunner {
         coach.setEmail("coach@demo.it");
         coach.setBirthdate(LocalDate.EPOCH);
         coachRepository.save(coach);
-
+        Referee ref = new Referee("Alberto", "Sordi", "alsordi", LocalDate.of(1990, 3, 10));
         Team team = new Team("Firenze Volley", address, coach);
         teamRepository.save(team);
 

@@ -1,12 +1,13 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.config.Account;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-public class Coach extends BaseModel {
+public class Coach extends BaseModel implements Account {
     @Column(nullable = false)
     private String name;
     @Column(nullable = false)
