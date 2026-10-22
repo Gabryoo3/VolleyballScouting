@@ -5,7 +5,6 @@ import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.MatchRepository;
-import it.unifi.volleyballscouting.repository.TeamRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

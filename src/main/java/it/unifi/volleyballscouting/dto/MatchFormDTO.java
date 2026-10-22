@@ -1,15 +1,9 @@
 package it.unifi.volleyballscouting.dto;
 
-import it.unifi.volleyballscouting.model.Address;
 import it.unifi.volleyballscouting.model.Match;
-import it.unifi.volleyballscouting.model.Referee;
-import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.validation.OnCreate;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import org.hibernate.validator.constraints.Range;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -36,6 +30,7 @@ public record MatchFormDTO(
                   m.getMatchDateTime()
           );
         }
+        public static MatchFormDTO empty(){return new MatchFormDTO(null, null, null, null);}
 
 
 }

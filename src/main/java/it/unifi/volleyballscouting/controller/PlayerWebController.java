@@ -3,8 +3,6 @@ import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
-import it.unifi.volleyballscouting.repository.CoachRepository;
-import it.unifi.volleyballscouting.repository.PlayerRepository;
 import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.CoachService;
 import it.unifi.volleyballscouting.service.PerformanceService;
@@ -74,8 +72,12 @@ public class PlayerWebController {
         return "redirect:/players/list";
     }
     @GetMapping("/{playerId}/edit")
-    public String showEditForm(@PathVariable UUID playerId, Model model){
-        Player p = playerService.findById(playerId);
+    public String showEditForm(@PathVariable UUID playerId,
+                               @AuthenticationPrincipal AppUserDetails userDetails,
+                               Model model){
+        Team t = coachService.getCoachTeam(userDetails.getId());
+        UUID teamId = (t != null) ? t.getId() : null;
+        Player p = playerService.findOwnedBy(playerId,teamId);
         prepareFormModel(model, PlayerFormDTO.fromEntity(p), "/players/" + playerId + "/update");
         return "players/form";
     }
@@ -90,6 +92,12 @@ public class PlayerWebController {
             prepareFormModel(model, form, "/players/" + playerId + "/update");
             return "players/form";
         }
+
+        if(userAccountService.isUsernameTaken(form.username())){
+            br.rejectValue("username", "duplicate", "L'username è già in uso");
+            prepareFormModel(model, form, "/players/" + playerId + "/update" );
+            return "players/form";
+        }
         Team t = coachService.getCoachTeam(userDetails.getId());
         if (t == null) {
             br.reject("noTeam", "Devi prima creare o essere associato a una squadra per modificare i giocatori.");
@@ -102,7 +110,7 @@ public class PlayerWebController {
             prepareFormModel(model, form, "/players/" + playerId + "/update");
             return "players/form";
         }
-        playerService.updatePlayer(playerId, form);
+        playerService.updatePlayer(t.getId(), playerId, form);
         return "redirect:/players/details/" + playerId;
     }
     // GET: show list of players

@@ -5,6 +5,7 @@ import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.PlayerRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -103,9 +104,17 @@ public class PlayerService {
     }
 
     @Transactional
-    public void updatePlayer(UUID playerId, PlayerFormDTO form){
-        Player p = findById(playerId);
+    public void updatePlayer(UUID teamId, UUID playerId, PlayerFormDTO form){
+        Player p = findOwnedBy(playerId, teamId);
         p.updateFromDto(form);
+    }
+
+    @Transactional
+    public Player findOwnedBy(UUID playerId, UUID teamId) {
+        Player p = findById(playerId);
+        if (p.getTeam() == null || !p.getTeam().getId().equals(teamId))
+            throw new AccessDeniedException("Il giocatore non appartiene alla tua squadra");
+        return p;
     }
 
     public boolean isNumberAlreadyTaken(UUID teamId, Integer number, UUID playerId){
