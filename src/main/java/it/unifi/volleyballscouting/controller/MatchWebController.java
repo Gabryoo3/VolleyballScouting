@@ -3,9 +3,9 @@ package it.unifi.volleyballscouting.controller;
 import it.unifi.volleyballscouting.dto.MatchFormDTO;
 import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.MatchService;
-import it.unifi.volleyballscouting.service.UserAccountService;
+import it.unifi.volleyballscouting.service.RefereeService;
+import it.unifi.volleyballscouting.service.TeamService;
 import it.unifi.volleyballscouting.validation.OnCreate;
-import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,17 +22,20 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MatchWebController {
 
     private final MatchService matchService;
-    private final UserAccountService userAccountService;
+    private final TeamService teamService;
+    private final RefereeService refereeService;
 
-    public MatchWebController(MatchService ms, UserAccountService uas) {
+
+    public MatchWebController(MatchService ms, TeamService teamService, RefereeService refereeService) {
         this.matchService = ms;
-        this.userAccountService = uas;
+        this.teamService = teamService;
+        this.refereeService = refereeService;
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
         prepareFormModel(model, MatchFormDTO.empty(), "/matches/create");
-        return "players/form";
+        return "matches/form";
     }
     @PostMapping("/create")
     public String createMatch(@AuthenticationPrincipal AppUserDetails userDetails,
@@ -42,12 +45,23 @@ public class MatchWebController {
             prepareFormModel(model, form, "/matches/create");
             return "/matches/form";
         }
+        try{
+            matchService.save(form);
+        }catch (IllegalArgumentException e){
+            br.reject("matchRules" , e.getMessage());
+            prepareFormModel(model, form, "/matches/create");
+            return "/matches/form";
+        }
+        redirectAttributes.addFlashAttribute("successMessage", "Match creato con successo!");
+        return "redirect:/matches/list";
     }
 
 
     private void prepareFormModel(Model model, MatchFormDTO form, String formAction) {
         model.addAttribute("matchForm", form);
         model.addAttribute("formAction", formAction);
+        model.addAttribute("teams", teamService.findAll());
+        model.addAttribute("referee", refereeService.findAll());
     }
 }
 

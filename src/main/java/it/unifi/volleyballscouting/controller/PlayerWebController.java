@@ -92,12 +92,7 @@ public class PlayerWebController {
             prepareFormModel(model, form, "/players/" + playerId + "/update");
             return "players/form";
         }
-
-        if(userAccountService.isUsernameTaken(form.username())){
-            br.rejectValue("username", "duplicate", "L'username è già in uso");
-            prepareFormModel(model, form, "/players/" + playerId + "/update" );
-            return "players/form";
-        }
+        // it controls the username in service
         Team t = coachService.getCoachTeam(userDetails.getId());
         if (t == null) {
             br.reject("noTeam", "Devi prima creare o essere associato a una squadra per modificare i giocatori.");
@@ -110,7 +105,13 @@ public class PlayerWebController {
             prepareFormModel(model, form, "/players/" + playerId + "/update");
             return "players/form";
         }
-        playerService.updatePlayer(t.getId(), playerId, form);
+        try {
+            playerService.updatePlayer(t.getId(), playerId, form);
+        } catch (IllegalArgumentException e) {
+                br.rejectValue("username", "duplicate", e.getMessage());
+                prepareFormModel(model, form, "/players/" + playerId + "/update" );
+                return "players/form";
+        }
         return "redirect:/players/details/" + playerId;
     }
     // GET: show list of players

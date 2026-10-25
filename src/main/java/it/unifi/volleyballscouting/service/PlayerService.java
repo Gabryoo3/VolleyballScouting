@@ -106,6 +106,8 @@ public class PlayerService {
     @Transactional
     public void updatePlayer(UUID teamId, UUID playerId, PlayerFormDTO form){
         Player p = findOwnedBy(playerId, teamId);
+        if (!p.getUsername().equalsIgnoreCase(form.username()) && userAccountService.isUsernameTaken(form.username()))
+            throw new IllegalArgumentException("L'username inserito è già in uso");
         p.updateFromDto(form);
     }
 

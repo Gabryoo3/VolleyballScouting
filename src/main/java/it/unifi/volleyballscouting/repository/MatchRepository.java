@@ -47,6 +47,6 @@ public interface MatchRepository extends JpaRepository<Match, UUID> {
     List<Match> findByTeam1vsTeam2(@Param("team1Id") UUID teamId1, @Param("team2Id") UUID teamId2);
 
 
-    boolean existsByRefereeIdAndMatchDateTime(UUID RefereeId, LocalDateTime time);
-    boolean existsByTeamIdAndMatchDateTime(UUID teamId, LocalDateTime time);
+    boolean existsByrefereeIdAndMatchDateTimeAfterAndMatchDateTimeBefore(UUID refereeId, LocalDateTime after, LocalDateTime before);
+    boolean existsByteamIdAndMatchDateTimeAfterAndMatchDateTimeBefore(UUID teamId, LocalDateTime after, LocalDateTime before);
 }

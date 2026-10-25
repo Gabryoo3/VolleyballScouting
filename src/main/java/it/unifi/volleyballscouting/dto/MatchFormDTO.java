@@ -4,6 +4,8 @@ import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.validation.OnCreate;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,6 +22,7 @@ public record MatchFormDTO(
         UUID refereeId,
         @NotNull(message = "La partita deve avere una data")
         @Future(message = "La partita deve essere assegnata nel futuro", groups = OnCreate.class)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         LocalDateTime matchDateTime)
         implements Serializable {
         public static MatchFormDTO fromEntity(Match m){
