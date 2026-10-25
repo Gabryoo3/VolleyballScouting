@@ -1,21 +1,19 @@
 package it.unifi.volleyballscouting.controller;
 
 import it.unifi.volleyballscouting.dto.MatchFormDTO;
-import it.unifi.volleyballscouting.security.AppUserDetails;
+import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.service.MatchService;
 import it.unifi.volleyballscouting.service.RefereeService;
 import it.unifi.volleyballscouting.service.TeamService;
 import it.unifi.volleyballscouting.validation.OnCreate;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/matches")
@@ -38,9 +36,9 @@ public class MatchWebController {
         return "matches/form";
     }
     @PostMapping("/create")
-    public String createMatch(@AuthenticationPrincipal AppUserDetails userDetails,
-                              @Validated(OnCreate.class) @ModelAttribute("matchForm") MatchFormDTO form, BindingResult br, Model model,
-                              RedirectAttributes redirectAttributes){
+    public String createMatch(  @Validated(OnCreate.class)
+                                @ModelAttribute("matchForm") MatchFormDTO form, BindingResult br, Model model,
+                                RedirectAttributes redirectAttributes){
         if(br.hasErrors()) {
             prepareFormModel(model, form, "/matches/create");
             return "/matches/form";
@@ -55,6 +53,33 @@ public class MatchWebController {
         redirectAttributes.addFlashAttribute("successMessage", "Match creato con successo!");
         return "redirect:/matches/list";
     }
+    @GetMapping("/{matchId}/edit")
+    public String showEditForm (@PathVariable UUID matchId,
+                                Model model){
+        Match m = matchService.findById(matchId);
+        prepareFormModel(model, MatchFormDTO.fromEntity(m), "/matches/" + matchId + "/recreate");
+        return "matches/form";
+    }
+    @PostMapping("/{matchId/recreate")
+    public String updateMatch(@PathVariable UUID matchId,
+                              @Validated(OnCreate.class) @ModelAttribute("matchForm") MatchFormDTO form,
+                              BindingResult br, Model model,
+                              RedirectAttributes redirectAttributes){
+        if(br.hasErrors()){
+            prepareFormModel(model, form, "/matches/" + matchId + "/update");
+            return "/players/form";
+        }
+        try{
+            Match created = matchService.recreate(matchId, form);
+            redirectAttributes.addFlashAttribute("successMessage", "La partita è stata ricreata");
+            return "redirect:/matches/details" + created.getId();
+        }catch(IllegalArgumentException e){
+            br.reject("matchRules", e.getMessage());
+            prepareFormModel(model, form, "/matches/" + matchId + "/recreate");
+            return "matches/form";
+        }
+        //TODO: make routes and list of matches
+    }
 
 
     private void prepareFormModel(Model model, MatchFormDTO form, String formAction) {
@@ -62,6 +87,7 @@ public class MatchWebController {
         model.addAttribute("formAction", formAction);
         model.addAttribute("teams", teamService.findAll());
         model.addAttribute("referee", refereeService.findAll());
+        //Important: String formAction is needed for telling to which url data must be sent. Or we should have created two form pages
     }
 }
 

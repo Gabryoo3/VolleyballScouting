@@ -66,6 +66,14 @@ public class MatchService {
         return matchRepository.findByTeam1vsTeam2(team1Id, team2Id);
     }
 
+    boolean existsRefereeDoubleMatch(UUID refereeId, LocalDateTime start, LocalDateTime end){
+        return matchRepository.existsByRefereeIdAndMatchDateTimeAfterAndMatchDateTimeBefore(refereeId, start, end);
+    }
+    boolean existsTeamDoubleMatch(UUID teamId, LocalDateTime start, LocalDateTime end){
+        return matchRepository.existsByTeamIdAndMatchDateTimeAfterAndMatchDateTimeBefore(teamId, start, end);
+    }
+
+
     //TODO: check if it works
 
     @Transactional
@@ -74,13 +82,13 @@ public class MatchService {
             throw new IllegalArgumentException("Non si può impostare una squadra contro se stessa");
         LocalDateTime windowRefereeStart = form.matchDateTime().minus(MATCH_DURATION);
         LocalDateTime windowRefereeEnd = form.matchDateTime().plus(MATCH_DURATION);
-        if(matchRepository.existsByrefereeIdAndMatchDateTimeAfterAndMatchDateTimeBefore(form.refereeId(), windowRefereeStart, windowRefereeEnd))
+        if(existsRefereeDoubleMatch(form.refereeId(), windowRefereeStart, windowRefereeEnd))
             throw new IllegalArgumentException("L'arbitro ha già una partita nella fascia oraria");
         LocalDateTime windowTeamStart = form.matchDateTime().minus(TEAM_REST);
         LocalDateTime windowTeamEnd = form.matchDateTime().plus(TEAM_REST);
-        if(matchRepository.existsByteamIdAndMatchDateTimeAfterAndMatchDateTimeBefore(form.teamHomeId(), windowTeamStart, windowTeamEnd))
+        if(existsTeamDoubleMatch(form.teamHomeId(), windowTeamStart, windowTeamEnd))
             throw new IllegalArgumentException("La squadra ha già una partita nella fascia oraria");
-        if(matchRepository.existsByteamIdAndMatchDateTimeAfterAndMatchDateTimeBefore(form.teamGuestId(), windowTeamStart, windowTeamEnd))
+        if(existsTeamDoubleMatch(form.teamGuestId(), windowTeamStart, windowTeamEnd))
             throw new IllegalArgumentException("La squadra ha già una partita nella fascia oraria");
 
         Team home = teamService.findById(form.teamHomeId());
@@ -89,6 +97,20 @@ public class MatchService {
 
         Match match = new Match(home, guest, form.matchDateTime(), r);
         return matchRepository.save(match);
+    }
+    @Transactional
+    public void delete(UUID matchId){
+        Match m = findById(matchId);
+        if (!m.getSets().isEmpty()){
+            throw new IllegalArgumentException("La partita è già iniziata");
+        }
+        matchRepository.delete(m);
+    }
+    @Transactional
+    public Match recreate(UUID oldMatch, MatchFormDTO form){
+        delete(oldMatch);
+        matchRepository.flush();
+        return save(form);
     }
 
 

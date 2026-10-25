@@ -103,6 +103,14 @@ public class PlayerService {
         return new AssignmentResult(playerId, conflict, p.getNumber());
     }
 
+    public Player findOwnedBy(UUID playerId, UUID teamId) {
+        Player p = findById(playerId);
+        if (p.getTeam() == null || !p.getTeam().getId().equals(teamId))
+            throw new AccessDeniedException("Il giocatore non appartiene alla tua squadra");
+        return p;
+    }
+
+
     @Transactional
     public void updatePlayer(UUID teamId, UUID playerId, PlayerFormDTO form){
         Player p = findOwnedBy(playerId, teamId);
@@ -111,13 +119,6 @@ public class PlayerService {
         p.updateFromDto(form);
     }
 
-    @Transactional
-    public Player findOwnedBy(UUID playerId, UUID teamId) {
-        Player p = findById(playerId);
-        if (p.getTeam() == null || !p.getTeam().getId().equals(teamId))
-            throw new AccessDeniedException("Il giocatore non appartiene alla tua squadra");
-        return p;
-    }
 
     public boolean isNumberAlreadyTaken(UUID teamId, Integer number, UUID playerId){
         if(teamId == null || number == null) {

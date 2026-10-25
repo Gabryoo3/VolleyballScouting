@@ -42,7 +42,8 @@ public class PlayerWebController {
     }
     @PostMapping("/create")
     public String createPlayer(@AuthenticationPrincipal AppUserDetails userDetails,
-                               @Valid @ModelAttribute("playerForm") PlayerFormDTO form, BindingResult br, Model model,
+                               @Valid @ModelAttribute("playerForm") PlayerFormDTO form,
+                               BindingResult br, Model model,
                                RedirectAttributes redirectAttributes) {
 
         if(br.hasErrors()) {
@@ -66,15 +67,22 @@ public class PlayerWebController {
             prepareFormModel(model, form, "/players/create");
             return "players/form";
         }
-        String tempPassword = playerService.save(form, t.getId());
+        String tempPassword;
+        try {
+            tempPassword = playerService.save(form, t.getId());
+        }catch (IllegalArgumentException e){
+            br.reject("playerRules", e.getMessage());
+            prepareFormModel(model, form, "/players/create");
+            return "players/form";
+        }
         redirectAttributes.addFlashAttribute("tempPassword", tempPassword);
         redirectAttributes.addFlashAttribute("successMessage", "Giocatore creato con successo!");
         return "redirect:/players/list";
     }
     @GetMapping("/{playerId}/edit")
     public String showEditForm(@PathVariable UUID playerId,
-                               @AuthenticationPrincipal AppUserDetails userDetails,
-                               Model model){
+                                @AuthenticationPrincipal AppUserDetails userDetails,
+                                Model model){
         Team t = coachService.getCoachTeam(userDetails.getId());
         UUID teamId = (t != null) ? t.getId() : null;
         Player p = playerService.findOwnedBy(playerId,teamId);
@@ -85,7 +93,7 @@ public class PlayerWebController {
     public String editPlayer(@AuthenticationPrincipal AppUserDetails userDetails,
                             @PathVariable UUID playerId,
                             @Valid @ModelAttribute("playerForm")
-                                 PlayerFormDTO form,
+                            PlayerFormDTO form,
                             BindingResult br,
                             Model model){
         if(br.hasErrors()) {
