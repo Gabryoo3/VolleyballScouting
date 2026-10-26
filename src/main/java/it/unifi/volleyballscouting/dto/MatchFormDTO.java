@@ -1,14 +1,10 @@
 package it.unifi.volleyballscouting.dto;
 
-import it.unifi.volleyballscouting.model.Address;
 import it.unifi.volleyballscouting.model.Match;
-import it.unifi.volleyballscouting.model.Referee;
-import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.validation.OnCreate;
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
-import org.hibernate.validator.constraints.Range;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -26,6 +22,7 @@ public record MatchFormDTO(
         UUID refereeId,
         @NotNull(message = "La partita deve avere una data")
         @Future(message = "La partita deve essere assegnata nel futuro", groups = OnCreate.class)
+        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
         LocalDateTime matchDateTime)
         implements Serializable {
         public static MatchFormDTO fromEntity(Match m){
@@ -36,6 +33,7 @@ public record MatchFormDTO(
                   m.getMatchDateTime()
           );
         }
+        public static MatchFormDTO empty(){return new MatchFormDTO(null, null, null, null);}
 
 
 }
