@@ -38,33 +38,6 @@ public class MatchService {
         return matchRepository.findAll(Sort.by("matchDateTime").descending());
     }
 
-    public List<Match> findByMatchDateTimeAfterNow(LocalDateTime now){
-        return matchRepository.findByMatchDateTimeAfterOrderByMatchDateTimeAsc(now);
-    }
-
-    public List<Match> findByMatchDateTimeBeforeNow(LocalDateTime now){
-        return matchRepository.findByMatchDateTimeBeforeOrderByMatchDateTimeDesc(now);
-    }
-
-    public List<Match> findByCity(String city){
-        return matchRepository.findByAddressCityContaining(city);
-    }
-
-    public List <Match> findByMatchDateTimeBetween(LocalDateTime start, LocalDateTime end){
-        return matchRepository.findByMatchDateTimeBetween(start, end);
-    }
-    public List<Match> findByTeamId(UUID teamId){
-        return matchRepository.findByTeam(teamId);
-    }
-    public List<Match> findByTeamWins(UUID teamId){
-        return matchRepository.findByTeamWins(teamId);
-    }
-    public List<Match> findByTeamLosses(UUID teamId){
-        return matchRepository.findByTeamLosses(teamId);
-    }
-    public List<Match> findByTeam1vsTeam2(UUID team1Id, UUID team2Id){
-        return matchRepository.findByTeam1vsTeam2(team1Id, team2Id);
-    }
 
     boolean existsRefereeDoubleMatch(UUID refereeId, LocalDateTime start, LocalDateTime end){
         return matchRepository.existsByRefereeIdAndMatchDateTimeAfterAndMatchDateTimeBefore(refereeId, start, end);

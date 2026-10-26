@@ -13,6 +13,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -79,6 +82,25 @@ public class MatchWebController {
             return "matches/form";
         }
         //TODO: make routes and list of matches
+    }
+    @GetMapping("/list")
+    public String listMatches(
+        @RequestParam(required = false) UUID team1,
+        @RequestParam(required = false) UUID team2,
+        @RequestParam(required = false) String when, //used for filtering matches before or after certain date
+        @RequestParam(required = false) LocalDateTime matchDate,
+        Model model){
+        List<Match> matchList;
+        if(matchDate != null){
+            if("upcoming".equals(when)){
+                if (team1 != null && team2 != null){
+                    matchList = matchService.findByTeam1vsTeam2AfterDate(team1, team2, matchDate);
+                }
+                else if (team1 != null){
+                }
+            }
+        }
+
     }
 
 
