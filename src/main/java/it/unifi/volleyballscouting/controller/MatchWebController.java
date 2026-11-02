@@ -2,10 +2,12 @@ package it.unifi.volleyballscouting.controller;
 
 import it.unifi.volleyballscouting.dto.MatchFormDTO;
 import it.unifi.volleyballscouting.model.Match;
+import it.unifi.volleyballscouting.query.MatchQuery;
 import it.unifi.volleyballscouting.service.MatchService;
 import it.unifi.volleyballscouting.service.RefereeService;
 import it.unifi.volleyballscouting.service.TeamService;
 import it.unifi.volleyballscouting.validation.OnCreate;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -85,22 +87,17 @@ public class MatchWebController {
     }
     @GetMapping("/list")
     public String listMatches(
-        @RequestParam(required = false) UUID team1,
-        @RequestParam(required = false) UUID team2,
-        @RequestParam(required = false) String when, //used for filtering matches before or after certain date
-        @RequestParam(required = false) LocalDateTime matchDate,
-        Model model){
-        List<Match> matchList;
-        if(matchDate != null){
-            if("upcoming".equals(when)){
-                if (team1 != null && team2 != null){
-                    matchList = matchService.findByTeam1vsTeam2AfterDate(team1, team2, matchDate);
-                }
-                else if (team1 != null){
-                }
-            }
-        }
-
+            @RequestParam(required = false) UUID team1,
+            @RequestParam(required = false) UUID team2,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)LocalDate to,
+            @RequestParam(required = false) String city,
+            Model model) {
+        MatchQuery query = new MatchQuery.Builder()
+                .team1Id(team1).team2Id(team2).from(from).to(to).city(city).build();
+        model.addAttribute("matches", matchService.search(query));
+        model.addAttribute("teams", teamService.findAll());
+        return "matches/list";
     }
 
 
@@ -109,7 +106,7 @@ public class MatchWebController {
         model.addAttribute("formAction", formAction);
         model.addAttribute("teams", teamService.findAll());
         model.addAttribute("referee", refereeService.findAll());
-        //Important: String formAction is needed for telling to which url data must be sent. Or we should have created two form pages
+        //Important: String formAction is needed for telling to which url data must be sent. Or we have to create two form pages
     }
 }
 

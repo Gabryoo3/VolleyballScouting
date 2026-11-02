@@ -4,6 +4,7 @@ import it.unifi.volleyballscouting.dto.MatchFormDTO;
 import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.model.Team;
+import it.unifi.volleyballscouting.query.MatchQuery;
 import it.unifi.volleyballscouting.repository.MatchRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,9 @@ public class MatchService {
         return matchRepository.findAll(Sort.by("matchDateTime").descending());
     }
 
+    public List<Match> search(MatchQuery query) {
+        return matchRepository.findAll(query.toSpecification(), Sort.by("matchDateTime").descending());
+    }
 
     boolean existsRefereeDoubleMatch(UUID refereeId, LocalDateTime start, LocalDateTime end){
         return matchRepository.existsByRefereeIdAndMatchDateTimeAfterAndMatchDateTimeBefore(refereeId, start, end);
