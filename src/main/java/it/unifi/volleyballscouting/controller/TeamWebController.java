@@ -1,6 +1,7 @@
 package it.unifi.volleyballscouting.controller;
 
 import it.unifi.volleyballscouting.dto.TeamFormDTO;
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.CoachService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.UUID;
@@ -41,11 +43,12 @@ public class TeamWebController {
     }
 
     @PostMapping("/create")
-    public String CreateTeam(
+    public String createTeam(
             @Valid @ModelAttribute("teamForm")
             TeamFormDTO form,
             BindingResult br,
             @AuthenticationPrincipal AppUserDetails userDetails,
+            RedirectAttributes ra,
             Model model
     ){
         // Verifica di sicurezza aggiuntiva per evitare duplicati
@@ -57,13 +60,21 @@ public class TeamWebController {
             prepareFormModel(model, form, "/teams/create");
             return "teams/form";
         }
-        teamService.save(form, userDetails.getId());
+        try {
+            teamService.save(form, userDetails.getId());
+        }
+        catch(BusinessRuleException e){
+            br.reject("teamRules", e.getMessage());
+            prepareFormModel(model, form, "/teams/create");
+            return "teams/form";
+            }
+        ra.addFlashAttribute("successMessage", "Team creato con successo!");
         return "redirect:/teams";
-    }
+        }
 
     @GetMapping("/{teamId}/edit")
-    public String showEditForm(@PathVariable UUID teamId, Model model){
-        Team t = teamService.findById(teamId);
+    public String showEditForm(@PathVariable UUID teamId, @AuthenticationPrincipal AppUserDetails userDetails, Model model){
+        Team t = teamService.findOwnedBy(teamId, userDetails.getId());
         prepareFormModel(model, TeamFormDTO.fromEntity(t), "/teams/" + teamId + "/update");
         return "teams/form";
     }
@@ -74,12 +85,21 @@ public class TeamWebController {
             @Valid @ModelAttribute("teamForm")
             TeamFormDTO form,
             BindingResult br,
+            @AuthenticationPrincipal AppUserDetails userDetails,
+            RedirectAttributes ra,
             Model model){
         if(br.hasErrors()){
             prepareFormModel(model, form, "/teams/" + teamId + "/update");
             return "teams/form";
         }
-        teamService.updateTeam(teamId, form);
+        try {
+            teamService.updateTeam(teamId, userDetails.getId(), form);
+        }catch (BusinessRuleException e){
+            br.reject("teamRules", e.getMessage());
+            prepareFormModel(model, form, "/teams/" + teamId + "/update");
+            return "teams/form";
+        }
+        ra.addFlashAttribute("successMessage", "Team modificato correttamente!");
         return "redirect:/teams/details/" + teamId;
     }
 

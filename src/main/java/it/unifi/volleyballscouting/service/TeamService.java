@@ -1,13 +1,15 @@
 package it.unifi.volleyballscouting.service;
 
 import it.unifi.volleyballscouting.dto.TeamFormDTO;
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
+import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
 import it.unifi.volleyballscouting.model.Address;
 import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.repository.TeamRepository;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -24,7 +26,7 @@ public class TeamService {
     public List<Team> findAll(){ return teamRepo.findAll();}
 
     public Team findById(UUID id){
-        return teamRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Team specificato non trovato"));
+        return teamRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Team specificato non trovato"));
     }
 
     public List<Team> findByName(String name){
@@ -38,8 +40,19 @@ public class TeamService {
     public List<Team> findByNameAndCity(String name, String city){
         return teamRepo.findByNameContainingIgnoreCaseAndAddressCity(name, city);
     }
+
+    public Team findOwnedBy(UUID teamId, UUID coachId){
+        Team t = findById(teamId);
+        if(t.getCoach() == null || !t.getCoach().getId().equals(coachId)){
+            throw new AccessDeniedException("Non puoi modificare questo team");
+        }
+        return t;
+    }
     @Transactional
     public Team save (TeamFormDTO form, UUID coachId){
+        if(teamRepo.existsTeamByName(form.name())){
+            throw new BusinessRuleException("Questo nome esiste già tra i team");
+        }
         Coach coach = coachService.findById(coachId);
         Address ad = new Address(
                 form.address().street(),
@@ -52,8 +65,14 @@ public class TeamService {
         return saved;
     }
     @Transactional
-    public void updateTeam(UUID teamId, TeamFormDTO form){
+    public void updateTeam(UUID teamId, UUID coachId, TeamFormDTO form){
+        Team own = coachService.getCoachTeam(teamId);
+        if (own == null || !own.getId().equals(teamId))
+            throw new AccessDeniedException("Non puoi modificare questo team");
         Team t = findById(teamId);
+        if (teamRepo.existsTeamByNameAndIdNot(form.name(), teamId)){
+            throw new BusinessRuleException("Il nome del team inserito esiste già");
+        }
         t.updateFromDto(form);
     }
 

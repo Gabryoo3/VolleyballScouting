@@ -50,9 +50,6 @@ public class MatchService {
         return matchRepository.existsByTeamIdAndMatchDateTimeAfterAndMatchDateTimeBefore(teamId, start, end);
     }
 
-
-    //TODO: check if it works
-
     @Transactional
     public Match save(MatchFormDTO form){
         if (form.teamHomeId().equals(form.teamGuestId()))
@@ -80,6 +77,8 @@ public class MatchService {
         Match m = findById(matchId);
         if (!m.getSets().isEmpty()){
             throw new IllegalArgumentException("La partita è già iniziata");
+        }else if (m.getMatchDateTime().isBefore(LocalDateTime.now())){
+            throw new IllegalArgumentException("Non si può cancellare un match concluso o già avviato");
         }
         matchRepository.delete(m);
     }

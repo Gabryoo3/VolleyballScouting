@@ -1,6 +1,8 @@
 package it.unifi.volleyballscouting.service;
 
 import it.unifi.volleyballscouting.dto.RefereeFormDTO;
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
+import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
 import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.repository.RefereeRepository;
 
@@ -28,13 +30,13 @@ public class RefereeService {
     public List<Referee> findBySurname(String surname) { return refereeRepo.findBySurname(surname);}
 
     public Referee findById(UUID id){
-        return refereeRepo.findById(id).orElseThrow(() -> new IllegalArgumentException("Arbitro specificato non trovato"));
+        return refereeRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Arbitro specificato non trovato"));
     }
 
     @Transactional
     public String save(RefereeFormDTO form){
         if(userAccountService.isUsernameTaken(form.username()))
-            throw new IllegalArgumentException("Lo username inserito è già in uso");
+            throw new BusinessRuleException("Lo username inserito è già in uso");
         String tempPassword = UUID.randomUUID().toString().substring(0,8);
         String encodedPassword = passwordEncoder.encode(tempPassword);
 

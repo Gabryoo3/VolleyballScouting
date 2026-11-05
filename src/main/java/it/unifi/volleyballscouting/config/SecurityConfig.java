@@ -1,12 +1,9 @@
 package it.unifi.volleyballscouting.config;
 
-import it.unifi.volleyballscouting.model.Admin;
 import it.unifi.volleyballscouting.security.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
@@ -34,21 +31,14 @@ public class SecurityConfig {
                 .requestMatchers("/h2-console/**").hasRole("ADMIN")
 
                 // ==========================================
-                // 1. CONSULTAZIONE PUBBLICA CAMPIONATO (Ospite / Giocatore)
-                // ==========================================
-                .requestMatchers(HttpMethod.GET, "/teams", "/teams/list", "/teams/details/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/players/list", "/players/details/**", "/players/free").permitAll()
-                .requestMatchers(HttpMethod.GET, "/matches", "/matches/list", "/matches/details/**").permitAll()
-
-                // ==========================================
-                // 2. AMMINISTRATORE (Gestione Campionato e Referti)
+                // 1. AMMINISTRATORE (Gestione Campionato e Referti)
                 // ==========================================
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/matches/new", "/matches/create").hasRole("ADMIN")
-                .requestMatchers("/matches/*/edit", "/matches/*/update").hasRole("ADMIN")
+                .requestMatchers("/matches/*/edit", "/matches/*/recreate", "/matches/*/delete").hasRole("ADMIN")
 
                 // ==========================================
-                // 3. ALLENATORE (Rosa Giocatori e Live Scouting)
+                // 2. ALLENATORE (Rosa Giocatori e Live Scouting)
                 // ==========================================
                 .requestMatchers("/players/new", "/players/create").hasRole("COACH")
                 .requestMatchers("/players/*/edit", "/players/*/update").hasRole("COACH")
@@ -56,10 +46,17 @@ public class SecurityConfig {
                 .requestMatchers("/teams/*/edit", "/teams/*/update").hasRole("COACH")
                 .requestMatchers("/matches/*/scout/**").hasRole("COACH")
                 // ==========================================
-                // 4. ARBITRO (Gestione dei match)
+                // 3. ARBITRO (Gestione dei match)
                 // =========================================
                 .requestMatchers("/matches/*/play", "/matches/*/score/**", "/matches/*/sets/**").hasRole("REFEREE")
                 .requestMatchers("/referee/**").hasRole("REFEREE")
+
+                // ==========================================
+                // 4. CONSULTAZIONE PUBBLICA CAMPIONATO (Ospite / Giocatore)
+                // ==========================================
+                .requestMatchers(HttpMethod.GET, "/teams", "/teams/list", "/teams/details/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/players/list", "/players/details/**", "/players/free").permitAll()
+                .requestMatchers(HttpMethod.GET, "/matches", "/matches/list", "/matches/*/details").permitAll()
 
                 // Qualsiasi altra richiesta richiede autenticazione
                 .anyRequest().authenticated()
