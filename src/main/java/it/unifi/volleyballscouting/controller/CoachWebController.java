@@ -1,76 +1,91 @@
 package it.unifi.volleyballscouting.controller;
 
 import it.unifi.volleyballscouting.dto.CoachFormDTO;
-import it.unifi.volleyballscouting.repository.CoachRepository;
-import it.unifi.volleyballscouting.repository.PlayerRepository;
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
+import it.unifi.volleyballscouting.model.Coach;
+import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.CoachService;
-import it.unifi.volleyballscouting.service.TeamService;
+
 import it.unifi.volleyballscouting.validation.OnCreate;
+import it.unifi.volleyballscouting.validation.OnUpdate;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.time.LocalDate;
-import java.time.Period;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/coaches")
 public class CoachWebController {
 
     private final CoachService coachService;
-    private final TeamService teamService;
-    private final CoachRepository cr;
-    private final PlayerRepository pr;
 
-    public CoachWebController(CoachService cs, TeamService ts, CoachRepository cr, PlayerRepository pr){
+    public CoachWebController(CoachService cs){
         this.coachService = cs;
-        this.teamService = ts;
-        this.cr = cr;
-        this.pr = pr;
     }
 
     @GetMapping("/new")
     public String showCreateForm(Model model){
-        prepareFormModel(model, CoachFormDTO.empty());
+        prepareFormModel(model, CoachFormDTO.empty(), "/coaches/register");
         return "coaches/form";
     }
     @PostMapping("/register")
-    public String creatCoach(@Validated(OnCreate.class) @ModelAttribute("coachForm") CoachFormDTO form,
+    public String registerCoach(@Validated(OnCreate.class) @ModelAttribute("coachForm") CoachFormDTO form,
                              BindingResult br, Model model, RedirectAttributes ra){
+        if (form.password() != null && !form.password().equals(form.confirmPassword())){
+            br.rejectValue("confirmPassword", "mismatch", "Le password non corrispondono");
+            prepareFormModel(model, form, "/coaches/register");
+            return "coaches/form";
+        }
         if (br.hasErrors()){
-            prepareFormModel(model, form);
+            prepareFormModel(model, form,"/coaches/register");
             return "coaches/form";
         }
-        if(cr.findByUsernameIgnoreCase(form.username()).isPresent() ||
-                pr.findByUsernameIgnoreCase(form.username()).isPresent()){
-            br.rejectValue("username", "duplicate", "L'username è già in uso");
-            prepareFormModel(model, form);
-            return "players/form";
-        }
-        if (form.birthdate() != null){
-           LocalDate birth = form.birthdate();
-           if(Period.between(birth, LocalDate.now()).getYears() < 18) {
-               br.rejectValue("birthdate", "underage", "L'allenatore deve essere maggiorenne");
-               prepareFormModel(model, form);
-               return "coaches/form";
-           }
-        }
-        if (!form.password().equals(form.confirmPassword())) {
-            br.rejectValue("password", "mismatch", "Le password non corrispondono");
-            prepareFormModel(model, form);
+        try{
+            coachService.save(form);
+        }catch(BusinessRuleException e){
+            br.reject("coachRules", e.getMessage());
+            prepareFormModel(model,form,"/coaches/register");
             return "coaches/form";
         }
-        //TODO: complete CoachService with the needed methods, like save
+        ra.addFlashAttribute("successMessage", "Registrazione completata!");
+        return "redirect:/login";
+    }
+    @GetMapping("/{coachId}/edit")
+    public String showEditForm(@PathVariable UUID coachId, @AuthenticationPrincipal AppUserDetails userDetails, Model model){
 
-        return "no";
+        Coach c = coachService.findOwnedBy(coachId, userDetails.getId());
+        prepareFormModel(model, CoachFormDTO.fromEntity(c), "/coaches/" + coachId + "/update");
+        return "coaches/form";
+    }
+    @PostMapping("/{coachId}/update")
+    public String updateCoach(@AuthenticationPrincipal AppUserDetails userDetails,
+                              @PathVariable UUID coachId,
+    @Validated(OnUpdate.class) @ModelAttribute("coachForm") CoachFormDTO form,
+                              BindingResult br, Model model,
+                              RedirectAttributes ra){
+        if(br.hasErrors()){
+            prepareFormModel(model, form, "/coaches/" + coachId + "/update");
+            return "coaches/form";
+        }
+        try{
+            coachService.updateCoach(coachId, userDetails.getId(), form);
+        }catch(BusinessRuleException e){
+            br.reject("coachRules", e.getMessage());
+            prepareFormModel(model, form, "/coaches/" + coachId + "/update");
+            return "coaches/form";
+        }
+        ra.addFlashAttribute("successMessage", "Allenatore modificato con successo!");
+        return "redirect:/coaches/" + coachId + "/details";
     }
 
 
-    private void prepareFormModel(Model model, CoachFormDTO form){
+    private void prepareFormModel(Model model, CoachFormDTO form, String formAction){
         model.addAttribute("coachForm", form);
+        model.addAttribute("formAction", formAction);
     }
 
 }

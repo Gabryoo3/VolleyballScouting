@@ -49,7 +49,7 @@ public class MatchWebController {
         }
         try{
             matchService.save(form);
-        }catch (IllegalArgumentException e){
+        }catch (BusinessRuleException e){
             br.reject("matchRules" , e.getMessage());
             prepareFormModel(model, form, "/matches/create");
             return "matches/form";
@@ -68,21 +68,21 @@ public class MatchWebController {
     public String recreateMatch(@PathVariable UUID matchId,
                               @Validated(OnCreate.class) @ModelAttribute("matchForm") MatchFormDTO form,
                               BindingResult br, Model model,
-                              RedirectAttributes redirectAttributes){
-        if(br.hasErrors()){
+                              RedirectAttributes redirectAttributes) {
+        Match created;
+        if (br.hasErrors()) {
             prepareFormModel(model, form, "/matches/" + matchId + "/recreate");
             return "matches/form";
         }
-        try{
-            Match created = matchService.recreate(matchId, form);
-            redirectAttributes.addFlashAttribute("successMessage", "La partita è stata ricreata");
-            return "redirect:/matches/details/" + created.getId();
-        }catch(BusinessRuleException e){
+        try {
+            created = matchService.recreate(matchId, form);
+        } catch (BusinessRuleException e) {
             br.reject("matchRules", e.getMessage());
             prepareFormModel(model, form, "/matches/" + matchId + "/recreate");
             return "matches/form";
         }
-        //TODO: make routes and list of matches
+        redirectAttributes.addFlashAttribute("successMessage", "La partita è stata ricreata");
+        return "redirect:/matches/" + created.getId() + "/details";
     }
     @GetMapping("/list")
     public String listMatches(
@@ -108,10 +108,10 @@ public class MatchWebController {
     public String deleteMatch(@PathVariable UUID matchId, RedirectAttributes ra){
         try{
             matchService.delete(matchId);
-            ra.addFlashAttribute("successMessage", "Partita cancellata");
-        }catch(IllegalArgumentException e){
+        }catch(BusinessRuleException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());
         }
+        ra.addFlashAttribute("successMessage", "Partita cancellata");
         return "redirect:/matches/list";
     }
 

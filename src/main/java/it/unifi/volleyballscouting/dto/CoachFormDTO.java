@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.dto;
 
+import it.unifi.volleyballscouting.model.Coach;
 import it.unifi.volleyballscouting.validation.OnCreate;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -24,7 +25,7 @@ public record CoachFormDTO(@NotBlank(message = "Il nome è obbligatorio")
                             String password,
                             @NotBlank(message = "La conferma password è obbligatoria", groups = OnCreate.class)
                             String confirmPassword,
-                            @NotNull(message = "La data di nascita è obbligatoria")
+                            @NotNull(message = "La data di nascita è obbligatoria", groups = OnCreate.class)
                             @DateTimeFormat(pattern = "yyyy-MM-dd")
                             LocalDate birthdate,
                             String phone,
@@ -32,5 +33,8 @@ public record CoachFormDTO(@NotBlank(message = "Il nome è obbligatorio")
                             String email) implements Serializable {
     public static CoachFormDTO empty(){
         return new CoachFormDTO("", "", "", "","",null,"", "");
+    }
+    public static CoachFormDTO fromEntity(Coach c){return new CoachFormDTO(
+            c.getName(), c.getSurname(), c.getUsername(), "", "", c.getBirthdate(), c.getPhone(), c.getEmail());
     }
 }

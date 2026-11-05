@@ -1,6 +1,7 @@
 package it.unifi.volleyballscouting.model;
 
 import it.unifi.volleyballscouting.config.Account;
+import it.unifi.volleyballscouting.dto.CoachFormDTO;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
@@ -103,6 +104,14 @@ public class Coach extends BaseModel implements Account {
     public void assignTeam(Team team){
         this.setTeam(team);
         team.setCoach(this);
+    }
+
+    public void updateFromDto(CoachFormDTO form){
+        this.name = form.name();
+        this.surname = form.surname();
+        this.username = form.username();
+        this.phone = form.phone();
+        this.email = form.email();
     }
 
 }

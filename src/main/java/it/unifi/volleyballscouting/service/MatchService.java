@@ -1,6 +1,8 @@
 package it.unifi.volleyballscouting.service;
 
 import it.unifi.volleyballscouting.dto.MatchFormDTO;
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
+import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
 import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.model.Team;
@@ -32,7 +34,7 @@ public class MatchService {
     }
 
     public Match findById(UUID id){
-        return matchRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Partita non trovata"));
+        return matchRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Partita non trovata"));
     }
 
     public List<Match> findAll(){
@@ -53,17 +55,17 @@ public class MatchService {
     @Transactional
     public Match save(MatchFormDTO form){
         if (form.teamHomeId().equals(form.teamGuestId()))
-            throw new IllegalArgumentException("Non si può impostare una squadra contro se stessa");
+            throw new BusinessRuleException("Non si può impostare una squadra contro se stessa");
         LocalDateTime windowRefereeStart = form.matchDateTime().minus(MATCH_DURATION);
         LocalDateTime windowRefereeEnd = form.matchDateTime().plus(MATCH_DURATION);
         if(existsRefereeDoubleMatch(form.refereeId(), windowRefereeStart, windowRefereeEnd))
-            throw new IllegalArgumentException("L'arbitro ha già una partita nella fascia oraria");
+            throw new BusinessRuleException("L'arbitro ha già una partita nella fascia oraria");
         LocalDateTime windowTeamStart = form.matchDateTime().minus(TEAM_REST);
         LocalDateTime windowTeamEnd = form.matchDateTime().plus(TEAM_REST);
         if(existsTeamDoubleMatch(form.teamHomeId(), windowTeamStart, windowTeamEnd))
-            throw new IllegalArgumentException("La squadra ha già una partita nella fascia oraria");
+            throw new BusinessRuleException("La squadra ha già una partita nella fascia oraria");
         if(existsTeamDoubleMatch(form.teamGuestId(), windowTeamStart, windowTeamEnd))
-            throw new IllegalArgumentException("La squadra ha già una partita nella fascia oraria");
+            throw new BusinessRuleException("La squadra ha già una partita nella fascia oraria");
 
         Team home = teamService.findById(form.teamHomeId());
         Team guest = teamService.findById(form.teamGuestId());
@@ -76,9 +78,9 @@ public class MatchService {
     public void delete(UUID matchId){
         Match m = findById(matchId);
         if (!m.getSets().isEmpty()){
-            throw new IllegalArgumentException("La partita è già iniziata");
+            throw new BusinessRuleException("La partita è già iniziata");
         }else if (m.getMatchDateTime().isBefore(LocalDateTime.now())){
-            throw new IllegalArgumentException("Non si può cancellare un match concluso o già avviato");
+            throw new BusinessRuleException("Non si può cancellare un match concluso o già avviato");
         }
         matchRepository.delete(m);
     }

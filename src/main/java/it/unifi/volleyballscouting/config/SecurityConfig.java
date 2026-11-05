@@ -45,6 +45,8 @@ public class SecurityConfig {
                 .requestMatchers("/teams/new", "/teams/create").hasRole("COACH")
                 .requestMatchers("/teams/*/edit", "/teams/*/update").hasRole("COACH")
                 .requestMatchers("/matches/*/scout/**").hasRole("COACH")
+                .requestMatchers("/coaches/*/edit", "/coaches/*/update").hasRole("COACH")
+
                 // ==========================================
                 // 3. ARBITRO (Gestione dei match)
                 // =========================================
@@ -57,6 +59,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/teams", "/teams/list", "/teams/details/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/players/list", "/players/details/**", "/players/free").permitAll()
                 .requestMatchers(HttpMethod.GET, "/matches", "/matches/list", "/matches/*/details").permitAll()
+                .requestMatchers("/coaches/new", "/coaches/register").permitAll()
 
                 // Qualsiasi altra richiesta richiede autenticazione
                 .anyRequest().authenticated()
