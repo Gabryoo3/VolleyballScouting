@@ -1,10 +1,7 @@
 package it.unifi.volleyballscouting.config;
 
 import it.unifi.volleyballscouting.model.*;
-import it.unifi.volleyballscouting.repository.AdminRepository;
-import it.unifi.volleyballscouting.repository.CoachRepository;
-import it.unifi.volleyballscouting.repository.PlayerRepository;
-import it.unifi.volleyballscouting.repository.TeamRepository;
+import it.unifi.volleyballscouting.repository.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -32,6 +29,7 @@ public class DataSeeder implements CommandLineRunner {
     private final AdminRepository adminRepository;
     private final String adminUsername;
     private final String adminPassword;
+    private final RefereeRepository refereeRepository;
 
     public DataSeeder(CoachRepository coachRepository,
                       TeamRepository teamRepository,
@@ -39,8 +37,8 @@ public class DataSeeder implements CommandLineRunner {
                       PasswordEncoder passwordEncoder,
                       AdminRepository adminRepository,
                       @Value("${app.admin.username}") String adminUsername,
-                      @Value("${app.admin.password}") String adminPassword
-                      ) {
+                      @Value("${app.admin.password}") String adminPassword,
+                      RefereeRepository refereeRepository) {
         this.coachRepository = coachRepository;
         this.teamRepository = teamRepository;
         this.playerRepository = playerRepository;
@@ -48,6 +46,7 @@ public class DataSeeder implements CommandLineRunner {
         this.adminRepository = adminRepository;
         this.adminUsername = adminUsername;
         this.adminPassword = adminPassword;
+        this.refereeRepository = refereeRepository;
     }
 
     @Override
@@ -65,7 +64,8 @@ public class DataSeeder implements CommandLineRunner {
         coach.setEmail("coach@demo.it");
         coach.setBirthdate(LocalDate.EPOCH);
         coachRepository.save(coach);
-        Referee ref = new Referee("Alberto", "Sordi", "alsordi", "test1234", LocalDate.of(1990, 3, 10));
+        Referee ref = new Referee("Alberto", "Sordi", "alsordi", passwordEncoder.encode("test1234"), LocalDate.of(1990, 3, 10));
+        refereeRepository.save(ref);
         Team team = new Team("Firenze Volley", address, coach);
         teamRepository.save(team);
 

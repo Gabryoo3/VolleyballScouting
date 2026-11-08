@@ -35,7 +35,7 @@ public class TeamWebController {
         Team existingTeam = coachService.getCoachTeam(userDetails.getId());
         if (existingTeam != null) {
             // Se ce l'ha già, lo rimanda alla pagina della sua squadra
-            return "redirect:/teams/details/" + existingTeam.getId();
+            return "redirect:/teams/"+ existingTeam.getId()+ "/details" ;
         }
 
         prepareFormModel(model, TeamFormDTO.empty(), "/teams/create");
@@ -100,7 +100,7 @@ public class TeamWebController {
             return "teams/form";
         }
         ra.addFlashAttribute("successMessage", "Team modificato correttamente!");
-        return "redirect:/teams/details/" + teamId;
+        return "redirect:/teams/" + teamId +"/details/";
     }
 
     @GetMapping
@@ -125,7 +125,7 @@ public class TeamWebController {
         return "teams/list";
     }
 
-    @GetMapping("/details/{teamId}")
+    @GetMapping("/{teamId}/details")
     public String showTeamDetails(@PathVariable UUID teamId, Model model){
         Team team = teamService.findById(teamId);
         //TODO: add Performances via the service

@@ -121,7 +121,7 @@ public class PlayerWebController {
                 prepareFormModel(model, form, "/players/" + playerId + "/update" );
                 return "players/form";
         }
-        return "redirect:/players/details/" + playerId;
+        return "redirect:/players/" + playerId + "/details/";
     }
     // GET: show list of players
     @GetMapping("/list")
@@ -164,7 +164,7 @@ public class PlayerWebController {
         return "players/list";
     }
 
-    @GetMapping("/details/{playerId}")
+    @GetMapping("/{playerId}/details/")
     public String showPlayerDetails(@PathVariable UUID playerId, Model model){
         Player player = playerService.findById(playerId);
         PlayerStatsDTO stats = performanceService.getPlayerCareerStats(player);

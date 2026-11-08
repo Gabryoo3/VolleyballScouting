@@ -56,8 +56,8 @@ public class SecurityConfig {
                 // ==========================================
                 // 4. CONSULTAZIONE PUBBLICA CAMPIONATO (Ospite / Giocatore)
                 // ==========================================
-                .requestMatchers(HttpMethod.GET, "/teams", "/teams/list", "/teams/details/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/players/list", "/players/details/**", "/players/free").permitAll()
+                .requestMatchers(HttpMethod.GET, "/teams", "/teams/list", "/teams/*/details").permitAll()
+                .requestMatchers(HttpMethod.GET, "/players/list", "/players/*/details", "/players/free").permitAll()
                 .requestMatchers(HttpMethod.GET, "/matches", "/matches/list", "/matches/*/details").permitAll()
                 .requestMatchers("/coaches/new", "/coaches/register").permitAll()
 

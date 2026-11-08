@@ -102,7 +102,7 @@ public class MatchWebController {
     public String matchDetails(@PathVariable UUID matchId, Model model){
         Match match = matchService.findById(matchId);
         model.addAttribute("match", match);
-        return "matches/details";
+        return "matches/detail";
     }
     @PostMapping("/{matchId}/delete")
     public String deleteMatch(@PathVariable UUID matchId, RedirectAttributes ra){
