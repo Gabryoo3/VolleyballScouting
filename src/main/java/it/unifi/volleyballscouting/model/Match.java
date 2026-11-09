@@ -1,7 +1,9 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import jakarta.persistence.*;
 
+import java.sql.BatchUpdateException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ public class Match extends BaseModel{
     // Hibernate la trattava come "basic collection" -> MappingException.
     // Relazione 1-a-molti con Set, che possiede la FK match_id (lato proprietario).
     @OneToMany(mappedBy = "match", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("setNumber ASC")
     private List<GameSet> gameSets = new ArrayList<>();
     protected Match(){}
 
@@ -64,23 +67,50 @@ public class Match extends BaseModel{
 
     public void setMatchDateTime(LocalDateTime matchDateTime) {this.matchDateTime = matchDateTime;}
 
-    public Integer getHomeScore() {return homeScore;}
-
-    public void setHomeScore(Integer homeScore) {this.homeScore = homeScore;}
-
-    public Integer getGuestScore() {return guestScore;}
-
-    public void setGuestScore(Integer guestScore) {this.guestScore = guestScore;}
-
     public List<GameSet> getSets() {return gameSets;}
 
+    //Functionality methods
+
+    public void start(){
+        if(!gameSets.isEmpty()) throw new BusinessRuleException("La partita è già avviata");
+        gameSets.add(new GameSet(this, 1));
+    }
+    public GameSet currentSet(){
+        return gameSets.isEmpty() ? null : gameSets.getLast();
+    }
+
+    public void recountSetsWon(){
+        homeScore = 0;
+        guestScore = 0;
+
+        for (GameSet g : gameSets){
+            if(g.isFinished()){
+                if(g.getTeamHomePoints() > g.getTeamGuestPoints())
+                    homeScore++;
+                else
+                    guestScore++;
+            }
+        }
+    }
+
+    public void closeCurrentSet(int homePoints, int guestPoints){
+        if (isFinished()) throw new BusinessRuleException("La partita è già conclusa");
+        GameSet set = currentSet();
+        if (set==null) throw new BusinessRuleException("La partita non è ancora iniziata");
+        set.setTeamHomePoints(homePoints);
+        set.setTeamGuestPoints(guestPoints);
+        if (!set.isFinished()) throw new BusinessRuleException("Punteggio non valido per concludere il set");
+        recountSetsWon();
+        if(!isFinished()) gameSets.add(new GameSet(this, set.getSetNumber() +1 ));
+    }
+
     @Transient
-        public Team getWinner(){
-        if(homeScore > guestScore)
-            return teamHome;
-        else if (homeScore < guestScore)
-            return teamGuest;
-        return null;
+    public Team getWinner(){
+    if(homeScore > guestScore)
+        return teamHome;
+    else if (homeScore < guestScore)
+        return teamGuest;
+    return null;
     }
     @Transient
     public boolean isFinished(){

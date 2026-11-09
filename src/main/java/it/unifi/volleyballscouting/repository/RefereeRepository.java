@@ -11,6 +11,6 @@ import java.util.UUID;
 public interface RefereeRepository extends JpaRepository<Referee, UUID> {
     Optional<Referee> findByUsernameIgnoreCase(String username);
 
-    List<Referee> findBySurnameIgnoreCase(String surname);
+    List<Referee> findBySurnameContainingIgnoreCase(String surname);
     boolean existsByUsernameIgnoreCase(String username);
 }

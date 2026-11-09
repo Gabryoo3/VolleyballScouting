@@ -5,7 +5,6 @@ import it.unifi.volleyballscouting.dto.RefereeFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.service.RefereeService;
-import it.unifi.volleyballscouting.service.UserAccountService;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

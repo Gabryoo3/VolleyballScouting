@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -79,8 +80,9 @@ public class GameSet extends BaseModel{
     @Transient
     public boolean isFinished(){
         int maxPoints = (setNumber == 5) ? 15 : 25;
-        int diff = Math.abs(teamHomePoints - teamGuestPoints);
-        return (teamHomePoints >= maxPoints || teamGuestPoints >= maxPoints) && diff >=2;
+        int winner = Math.max(teamHomePoints, teamGuestPoints);
+        int loser = Math.max(teamHomePoints, teamGuestPoints);
+        return winner == Math.max(maxPoints, loser+2);
     }
 
     @Transient
@@ -99,4 +101,5 @@ public class GameSet extends BaseModel{
     public String toString(){
         return getDisplayName();
     }
+
 }

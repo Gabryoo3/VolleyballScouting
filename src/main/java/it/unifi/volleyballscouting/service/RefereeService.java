@@ -27,7 +27,7 @@ public class RefereeService {
 
     public List<Referee> findAll() { return refereeRepo.findAll();}
 
-    public List<Referee> findBySurname(String surname) { return refereeRepo.findBySurnameIgnoreCase(surname);}
+    public List<Referee> findBySurname(String surname) { return refereeRepo.findBySurnameContainingIgnoreCase(surname);}
 
     public Referee findById(UUID id){
         return refereeRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Arbitro specificato non trovato"));
@@ -56,7 +56,7 @@ public class RefereeService {
     @Transactional
     public void updateReferee(UUID refereeId, RefereeFormDTO form){
         Referee r = findById(refereeId);
-        if (!r.getUsername().equals(form.username()) && userAccountService.isUsernameTaken(form.username()))
+        if (!r.getUsername().equalsIgnoreCase(form.username()) && userAccountService.isUsernameTaken(form.username()))
             throw new BusinessRuleException("Lo username inserito è già in uso");
         r.updateFromDto(form);
     }
