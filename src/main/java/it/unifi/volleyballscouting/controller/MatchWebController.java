@@ -64,6 +64,9 @@ public class MatchWebController {
         prepareFormModel(model, MatchFormDTO.fromEntity(m), "/matches/" + matchId + "/recreate");
         return "matches/form";
     }
+
+    //recreating instead of editing because it would have needed to edit all queries to exclude the editing match from
+    //the searching of other matches in the time range for referees and teams
     @PostMapping("/{matchId}/recreate")
     public String recreateMatch(@PathVariable UUID matchId,
                               @Validated(OnCreate.class) @ModelAttribute("matchForm") MatchFormDTO form,
@@ -110,6 +113,7 @@ public class MatchWebController {
             matchService.delete(matchId);
         }catch(BusinessRuleException e){
             ra.addFlashAttribute("errorMessage", e.getMessage());
+            return "redirect:/matches/list";
         }
         ra.addFlashAttribute("successMessage", "Partita cancellata");
         return "redirect:/matches/list";

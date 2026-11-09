@@ -81,8 +81,8 @@ public class PlayerWebController {
         return "redirect:/players/list";
     }
     @GetMapping("/{playerId}/edit")
-    public String showEditForm(@PathVariable UUID playerId,
-                                @AuthenticationPrincipal AppUserDetails userDetails,
+    public String showEditForm(@AuthenticationPrincipal AppUserDetails userDetails,
+                                @PathVariable UUID playerId,
                                 Model model){
         Team t = coachService.getCoachTeam(userDetails.getId());
         UUID teamId = (t != null) ? t.getId() : null;
@@ -121,7 +121,7 @@ public class PlayerWebController {
                 prepareFormModel(model, form, "/players/" + playerId + "/update" );
                 return "players/form";
         }
-        return "redirect:/players/" + playerId + "/details/";
+        return "redirect:/players/" + playerId + "/details";
     }
     // GET: show list of players
     @GetMapping("/list")
@@ -164,7 +164,7 @@ public class PlayerWebController {
         return "players/list";
     }
 
-    @GetMapping("/{playerId}/details/")
+    @GetMapping("/{playerId}/details")
     public String showPlayerDetails(@PathVariable UUID playerId, Model model){
         Player player = playerService.findById(playerId);
         PlayerStatsDTO stats = performanceService.getPlayerCareerStats(player);

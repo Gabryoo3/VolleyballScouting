@@ -100,7 +100,7 @@ public class TeamWebController {
             return "teams/form";
         }
         ra.addFlashAttribute("successMessage", "Team modificato correttamente!");
-        return "redirect:/teams/" + teamId +"/details/";
+        return "redirect:/teams/" + teamId +"/details";
     }
 
     @GetMapping
