@@ -3,12 +3,14 @@ package it.unifi.volleyballscouting.service;
 import it.unifi.volleyballscouting.dto.MatchFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
+import it.unifi.volleyballscouting.model.GameSet;
 import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.query.MatchQuery;
 import it.unifi.volleyballscouting.repository.MatchRepository;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,7 @@ public class MatchService {
 
     private static final Duration MATCH_DURATION = Duration.ofHours(3);
     private static final Duration TEAM_REST = Duration.ofHours(4);
+    private static final Duration START_MATCH = Duration.ofHours(1);
 
     private final MatchRepository matchRepository;
     private final TeamService teamService;
@@ -45,11 +48,39 @@ public class MatchService {
         return matchRepository.findAll(query.toSpecification(), Sort.by("matchDateTime").descending());
     }
 
+    public List<Match> findAssignedTo(UUID refereeId){
+        return matchRepository.findByRefereeIdOrderByMatchDateTimeAsc(refereeId);
+    }
+
     boolean existsRefereeDoubleMatch(UUID refereeId, LocalDateTime start, LocalDateTime end){
         return matchRepository.existsByRefereeIdAndMatchDateTimeAfterAndMatchDateTimeBefore(refereeId, start, end);
     }
     boolean existsTeamDoubleMatch(UUID teamId, LocalDateTime start, LocalDateTime end){
         return matchRepository.existsByTeamIdAndMatchDateTimeAfterAndMatchDateTimeBefore(teamId, start, end);
+    }
+
+    public Match findRefereedBy (UUID matchId, UUID refereeId){
+        Match m = findById(matchId);
+        if (!m.getReferee().getId().equals(refereeId))
+            throw new AccessDeniedException("Non sei l'arbitro di questa partita");
+        return m;
+    }
+
+    @Transactional
+    public void start(UUID matchId, UUID refereeId){
+        Match m = findRefereedBy(matchId, refereeId);
+        if (LocalDateTime.now().isBefore(m.getMatchDateTime().plus(START_MATCH)))
+            throw new BusinessRuleException("È ancora troppo presto per avviare la partita");
+        m.start();
+    }
+
+    @Transactional
+    public void closeSet(UUID matchId, UUID refereeId, int setNumber, int home, int guest){
+        Match m = findRefereedBy(matchId, refereeId);
+        GameSet current = m.getCurrentSet();
+        if (current == null || current.getSetNumber() != setNumber)
+            throw new BusinessRuleException("Il set indicato non è quello in corso");
+        m.closeCurrentSet(home,guest);
     }
 
     @Transactional
@@ -90,7 +121,4 @@ public class MatchService {
         matchRepository.flush();
         return save(form);
     }
-
-
-
 }

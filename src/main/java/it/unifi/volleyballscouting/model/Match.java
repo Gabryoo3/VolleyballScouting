@@ -3,7 +3,6 @@ package it.unifi.volleyballscouting.model;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import jakarta.persistence.*;
 
-import java.sql.BatchUpdateException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,7 +74,7 @@ public class Match extends BaseModel{
         if(!gameSets.isEmpty()) throw new BusinessRuleException("La partita è già avviata");
         gameSets.add(new GameSet(this, 1));
     }
-    public GameSet currentSet(){
+    public GameSet getCurrentSet(){
         return gameSets.isEmpty() ? null : gameSets.getLast();
     }
 
@@ -95,7 +94,7 @@ public class Match extends BaseModel{
 
     public void closeCurrentSet(int homePoints, int guestPoints){
         if (isFinished()) throw new BusinessRuleException("La partita è già conclusa");
-        GameSet set = currentSet();
+        GameSet set = getCurrentSet();
         if (set==null) throw new BusinessRuleException("La partita non è ancora iniziata");
         set.setTeamHomePoints(homePoints);
         set.setTeamGuestPoints(guestPoints);
