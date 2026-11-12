@@ -14,4 +14,3 @@ public record GameSetDTO(
       public static GameSetDTO empty() { return new GameSetDTO(null, null);}
 }
 
-//TODO: matchPlayWebController
