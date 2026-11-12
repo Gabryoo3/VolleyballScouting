@@ -90,8 +90,7 @@ public class RefereeWebController {
     }
     @GetMapping("/{refereeId}/details")
     public String showRefereeDetails(@PathVariable UUID refereeId, Model model){
-        Referee r = refereeService.findById(refereeId);
-        model.addAttribute("referee", r);
+        model.addAttribute("referee", refereeService.getDetails(refereeId));
         return "referees/detail";
     }
 

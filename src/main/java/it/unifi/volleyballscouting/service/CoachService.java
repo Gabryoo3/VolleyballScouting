@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
+import it.unifi.volleyballscouting.dto.details.CoachDetailsDTO;
 import it.unifi.volleyballscouting.dto.forms.CoachFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
@@ -40,6 +41,10 @@ public class CoachService {
         return findById(coachId);
 
     }
+
+	public CoachDetailsDTO getDetails (UUID coachId, boolean owner, boolean showFullDetails){
+		return CoachDetailsDTO.revealDetails(findById(coachId), owner, showFullDetails);
+	}
 
     @Transactional
     public Coach save(CoachFormDTO form){

@@ -82,6 +82,14 @@ public class CoachWebController {
         return "redirect:/coaches/" + coachId + "/details";
     }
 
+	@GetMapping("/{coachId}/details")
+	public String coachDetails(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable UUID coachId, Model model){
+		boolean loggedIn = userDetails != null;
+		boolean owner = loggedIn && userDetails.getId().equals(coachId);
+		model.addAttribute("coach", coachService.getDetails(coachId, owner, loggedIn));
+		return "coaches/detail";
+	}
+
 
     private void prepareFormModel(Model model, CoachFormDTO form, String formAction){
         model.addAttribute("coachForm", form);

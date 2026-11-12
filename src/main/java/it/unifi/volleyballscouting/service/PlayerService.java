@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
+import it.unifi.volleyballscouting.dto.details.PlayerDetailsDTO;
 import it.unifi.volleyballscouting.dto.forms.PlayerFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
@@ -77,6 +78,10 @@ public class PlayerService {
     public List<Player> findByTeamIdIsNullAndRole(PlayerRole role){
         return playerRepository.findByTeamIdIsNullAndRole(role);
     }
+
+	public PlayerDetailsDTO getDetails(UUID playerId, boolean editable, boolean showContacts){
+		return PlayerDetailsDTO.revealDetails(findById(playerId), editable, showContacts);
+	}
 
     @Transactional
     public String save(PlayerFormDTO form, UUID teamId){

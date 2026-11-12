@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
+import it.unifi.volleyballscouting.dto.details.RefereeDetailsDTO;
 import it.unifi.volleyballscouting.dto.forms.RefereeFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
@@ -38,6 +39,10 @@ public class RefereeService {
         return findById(refereeId);
     }
 
+	public RefereeDetailsDTO getDetails(UUID refereeId){
+		return RefereeDetailsDTO.fullDetails(findById(refereeId));
+	}
+
     @Transactional
     public String save(RefereeFormDTO form){
         if(userAccountService.isUsernameTaken(form.username()))
@@ -60,4 +65,5 @@ public class RefereeService {
             throw new BusinessRuleException("Lo username inserito è già in uso");
         r.updateFromDto(form);
     }
+
 }
