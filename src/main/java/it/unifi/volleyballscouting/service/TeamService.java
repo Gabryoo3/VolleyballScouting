@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
+import it.unifi.volleyballscouting.dto.details.TeamDetailsDTO;
 import it.unifi.volleyballscouting.dto.forms.TeamFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
@@ -48,6 +49,12 @@ public class TeamService {
         }
         return t;
     }
+
+	public TeamDetailsDTO getDetails (UUID teamId, UUID viewerId){
+		Team t = findById(teamId);
+		boolean editable = t.getCoach() != null && t.getCoach().getId().equals(viewerId);
+		return TeamDetailsDTO.showDetails(t, editable);
+	}
     @Transactional
     public Team save (TeamFormDTO form, UUID coachId){
         if(teamRepo.existsTeamByName(form.name())){

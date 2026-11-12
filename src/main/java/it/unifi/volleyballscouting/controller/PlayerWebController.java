@@ -169,7 +169,7 @@ public class PlayerWebController {
         Player player = playerService.findById(playerId);
 		Team t = player.getTeam();
 		boolean loggedIn = userDetails != null;
-		boolean editable = userDetails != null && userDetails.getId().equals(t.getCoach().getId());
+		boolean editable = userDetails != null && t != null && t.getCoach() != null && userDetails.getId().equals(t.getCoach().getId());
         PlayerStatsDTO stats = performanceService.getPlayerCareerStats(player);
         model.addAttribute("player",playerService.getDetails(playerId, editable, loggedIn));
         model.addAttribute("stats", stats);

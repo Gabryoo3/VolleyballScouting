@@ -25,6 +25,7 @@ public class PerformanceService {
     }
 
     //Aggregated Queries
+	//TODO: change all the object to the uuids
 
     public PlayerStatsDTO getPlayerCareerStats(Player player){
         return perfRepo.getPlayerCareerStats(player).orElseGet(() -> PlayerStatsDTO.empty(player.getId()));

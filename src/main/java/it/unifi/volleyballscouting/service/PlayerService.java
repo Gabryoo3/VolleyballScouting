@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
+import it.unifi.volleyballscouting.dto.PlayerRosterDTO;
 import it.unifi.volleyballscouting.dto.details.PlayerDetailsDTO;
 import it.unifi.volleyballscouting.dto.forms.PlayerFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
@@ -81,6 +82,10 @@ public class PlayerService {
 
 	public PlayerDetailsDTO getDetails(UUID playerId, boolean editable, boolean showContacts){
 		return PlayerDetailsDTO.revealDetails(findById(playerId), editable, showContacts);
+	}
+
+	public List<PlayerRosterDTO> getRoster(UUID teamId){
+		return playerRepository.findByTeamIdOrderByNumberAsc(teamId).stream().map(PlayerRosterDTO::of).toList(); //stream reads value one by one
 	}
 
     @Transactional
