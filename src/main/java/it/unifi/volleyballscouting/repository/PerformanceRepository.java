@@ -1,7 +1,7 @@
 package it.unifi.volleyballscouting.repository;
 
-import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
-import it.unifi.volleyballscouting.dto.TeamStatsDTO;
+import it.unifi.volleyballscouting.dto.stats.PlayerStatsDTO;
+import it.unifi.volleyballscouting.dto.stats.TeamStatsDTO;
 import it.unifi.volleyballscouting.model.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

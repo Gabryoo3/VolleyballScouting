@@ -1,7 +1,7 @@
 package it.unifi.volleyballscouting.model;
 
 import it.unifi.volleyballscouting.config.Account;
-import it.unifi.volleyballscouting.dto.RefereeFormDTO;
+import it.unifi.volleyballscouting.dto.forms.RefereeFormDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 

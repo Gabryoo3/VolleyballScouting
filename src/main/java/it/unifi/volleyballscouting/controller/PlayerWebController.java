@@ -1,5 +1,5 @@
 package it.unifi.volleyballscouting.controller;
-import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
+import it.unifi.volleyballscouting.dto.stats.PlayerStatsDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import it.unifi.volleyballscouting.dto.PlayerFormDTO;
+import it.unifi.volleyballscouting.dto.forms.PlayerFormDTO;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.UUID;

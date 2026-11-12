@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.controller;
 
-import it.unifi.volleyballscouting.dto.MatchFormDTO;
+import it.unifi.volleyballscouting.dto.forms.MatchFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.query.MatchQuery;

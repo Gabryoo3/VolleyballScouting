@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.CoachFormDTO;
+import it.unifi.volleyballscouting.dto.forms.CoachFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
 import it.unifi.volleyballscouting.model.Coach;
@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Optional;
 import java.util.UUID;
 @Transactional(readOnly=true)
 @Service

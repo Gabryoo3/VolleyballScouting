@@ -1,7 +1,7 @@
 package it.unifi.volleyballscouting.controller;
 
 
-import it.unifi.volleyballscouting.dto.RefereeFormDTO;
+import it.unifi.volleyballscouting.dto.forms.RefereeFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.service.RefereeService;

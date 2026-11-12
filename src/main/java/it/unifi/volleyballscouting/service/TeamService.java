@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.TeamFormDTO;
+import it.unifi.volleyballscouting.dto.forms.TeamFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
 import it.unifi.volleyballscouting.model.Address;

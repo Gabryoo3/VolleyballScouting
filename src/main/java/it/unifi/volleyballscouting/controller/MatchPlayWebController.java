@@ -1,8 +1,7 @@
 package it.unifi.volleyballscouting.controller;
 
-import it.unifi.volleyballscouting.dto.GameSetDTO;
+import it.unifi.volleyballscouting.dto.stats.GameSetDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
-import it.unifi.volleyballscouting.model.GameSet;
 import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.MatchService;
@@ -24,7 +23,7 @@ public class MatchPlayWebController {
         this.matchService = ms;
     }
 
-    @GetMapping("/referee/matches")
+    @GetMapping("/referees/matches")
     public String refereeMatches(@AuthenticationPrincipal AppUserDetails user, Model model){
         model.addAttribute("matches", matchService.findAssignedTo(user.getId()));
         return "referee/matches"; //the route is already covered by SecurityConfig, no need of double check
@@ -61,8 +60,8 @@ public class MatchPlayWebController {
             prepareFormModel(model, matchId, userDetails.getId(), form);
             return "referee/play";
         }
-        ra.addFlashAttribute("successMessage", "Set " + setNumber + "chiuso");
-        return "redirect:/matches" + matchId + "/play";
+        ra.addFlashAttribute("successMessage", "Set " + setNumber + " chiuso");
+        return "redirect:/matches/" + matchId + "/play";
     }
 
     private void prepareFormModel(Model model, UUID matchId, UUID refereeId, GameSetDTO form) {

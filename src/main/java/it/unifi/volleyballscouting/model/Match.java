@@ -57,6 +57,9 @@ public class Match extends BaseModel{
 
     public void setReferee(Referee r) {this.referee = r;}
 
+    public Integer getHomeScore() { return homeScore; }
+
+    public Integer getGuestScore() { return guestScore; }
 
     public Address getAddress() {return address;}
 

@@ -1,9 +1,8 @@
-package it.unifi.volleyballscouting.dto;
+package it.unifi.volleyballscouting.dto.forms;
 
 import it.unifi.volleyballscouting.model.Referee;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.format.annotation.DateTimeFormat;
 

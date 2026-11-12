@@ -2,7 +2,7 @@ package it.unifi.volleyballscouting.model;
 
 
 import it.unifi.volleyballscouting.config.Account;
-import it.unifi.volleyballscouting.dto.PlayerFormDTO;
+import it.unifi.volleyballscouting.dto.forms.PlayerFormDTO;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;

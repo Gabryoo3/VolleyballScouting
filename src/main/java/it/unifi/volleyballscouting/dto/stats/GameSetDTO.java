@@ -1,4 +1,4 @@
-package it.unifi.volleyballscouting.dto;
+package it.unifi.volleyballscouting.dto.stats;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;

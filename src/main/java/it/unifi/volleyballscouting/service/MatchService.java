@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.MatchFormDTO;
+import it.unifi.volleyballscouting.dto.forms.MatchFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
 import it.unifi.volleyballscouting.model.GameSet;
@@ -24,7 +24,7 @@ public class MatchService {
 
     private static final Duration MATCH_DURATION = Duration.ofHours(3);
     private static final Duration TEAM_REST = Duration.ofHours(4);
-    private static final Duration START_MATCH = Duration.ofHours(1);
+    private static final Duration MATCH_WINDOW = Duration.ofHours(1);
 
     private final MatchRepository matchRepository;
     private final TeamService teamService;
@@ -68,9 +68,12 @@ public class MatchService {
 
     @Transactional
     public void start(UUID matchId, UUID refereeId){
+        LocalDateTime now = LocalDateTime.now();
         Match m = findRefereedBy(matchId, refereeId);
-        if (LocalDateTime.now().isBefore(m.getMatchDateTime().plus(START_MATCH)))
+        if (now.isBefore(m.getMatchDateTime()))
             throw new BusinessRuleException("È ancora troppo presto per avviare la partita");
+        if(now.isAfter(m.getMatchDateTime().plus(MATCH_WINDOW)))
+            throw new BusinessRuleException("Il tempo massimo per avviare la partita è scaduto");
         m.start();
     }
 
@@ -108,11 +111,8 @@ public class MatchService {
     @Transactional
     public void delete(UUID matchId){
         Match m = findById(matchId);
-        if (!m.getSets().isEmpty()){
+        if (!m.getSets().isEmpty())
             throw new BusinessRuleException("La partita è già iniziata");
-        }else if (m.getMatchDateTime().isBefore(LocalDateTime.now())){
-            throw new BusinessRuleException("Non si può cancellare un match concluso o già avviato");
-        }
         matchRepository.delete(m);
     }
     @Transactional

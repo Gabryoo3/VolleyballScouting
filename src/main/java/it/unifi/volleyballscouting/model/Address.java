@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
-import it.unifi.volleyballscouting.dto.AddressFormDTO;
+import it.unifi.volleyballscouting.dto.forms.AddressFormDTO;
 import jakarta.persistence.*;
 
 import java.io.Serializable;

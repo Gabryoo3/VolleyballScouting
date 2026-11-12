@@ -1,7 +1,7 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
-import it.unifi.volleyballscouting.dto.TeamStatsDTO;
+import it.unifi.volleyballscouting.dto.stats.PlayerStatsDTO;
+import it.unifi.volleyballscouting.dto.stats.TeamStatsDTO;
 import it.unifi.volleyballscouting.model.*;
 import it.unifi.volleyballscouting.query.PerformanceQuery;
 import it.unifi.volleyballscouting.repository.PerformanceRepository;

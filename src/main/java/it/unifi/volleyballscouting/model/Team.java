@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
-import it.unifi.volleyballscouting.dto.TeamFormDTO;
+import it.unifi.volleyballscouting.dto.forms.TeamFormDTO;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

@@ -1,6 +1,6 @@
 package it.unifi.volleyballscouting.controller;
 
-import it.unifi.volleyballscouting.dto.TeamFormDTO;
+import it.unifi.volleyballscouting.dto.forms.TeamFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.security.AppUserDetails;

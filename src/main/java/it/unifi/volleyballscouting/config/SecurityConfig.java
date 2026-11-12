@@ -52,6 +52,7 @@ public class SecurityConfig {
                 // 3. ARBITRO (Gestione dei match)
                 // =========================================
                 .requestMatchers("/matches/*/play", "/matches/*/score/**", "/matches/*/sets/**").hasRole("REFEREE")
+                .requestMatchers("/referees/**").hasRole("REFEREE")
 
                 // ==========================================
                 // 4. CONSULTAZIONE PUBBLICA CAMPIONATO (Ospite / Giocatore)
@@ -60,8 +61,6 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/players/list", "/players/*/details", "/players/free").permitAll()
                 .requestMatchers(HttpMethod.GET, "/matches", "/matches/list", "/matches/*/details").permitAll()
                 .requestMatchers("/coaches/new", "/coaches/register").permitAll()
-                .requestMatchers(HttpMethod.GET, "/referees/*/details").permitAll()
-
                 // Qualsiasi altra richiesta richiede autenticazione
                 .anyRequest().authenticated()
         ).formLogin(form -> form
