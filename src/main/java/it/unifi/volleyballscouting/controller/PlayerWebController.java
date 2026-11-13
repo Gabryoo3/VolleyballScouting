@@ -166,12 +166,10 @@ public class PlayerWebController {
 
     @GetMapping("/{playerId}/details")
     public String showPlayerDetails(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable UUID playerId, Model model){
-        Player player = playerService.findById(playerId);
-		Team t = player.getTeam();
 		boolean loggedIn = userDetails != null;
-		boolean editable = userDetails != null && t != null && t.getCoach() != null && userDetails.getId().equals(t.getCoach().getId());
-        PlayerStatsDTO stats = performanceService.getPlayerCareerStats(player);
-        model.addAttribute("player",playerService.getDetails(playerId, editable, loggedIn));
+		UUID viewerId = loggedIn ? userDetails.getId() : null;
+        PlayerStatsDTO stats = performanceService.getPlayerCareerStats(playerId);
+	    model.addAttribute("player",playerService.getDetails(playerId, viewerId, loggedIn));
         model.addAttribute("stats", stats);
         return "players/detail";
     }

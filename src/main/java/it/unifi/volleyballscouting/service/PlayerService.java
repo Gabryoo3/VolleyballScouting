@@ -80,8 +80,11 @@ public class PlayerService {
         return playerRepository.findByTeamIdIsNullAndRole(role);
     }
 
-	public PlayerDetailsDTO getDetails(UUID playerId, boolean editable, boolean showContacts){
-		return PlayerDetailsDTO.revealDetails(findById(playerId), editable, showContacts);
+	public PlayerDetailsDTO getDetails(UUID playerId, UUID viewerId, boolean showContacts){
+		Player p = findById(playerId);
+		Team t = p.getTeam();
+		boolean editable = viewerId != null && t != null && t.getCoach() != null && viewerId.equals(t.getCoach().getId());
+		return PlayerDetailsDTO.revealDetails(p, editable, showContacts);
 	}
 
 	public List<PlayerRosterDTO> getRoster(UUID teamId){

@@ -9,15 +9,18 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PerformanceService {
 
     private final PerformanceRepository perfRepo;
+	private final PlayerService playerService;
 
-    public PerformanceService(PerformanceRepository repo){
+	public PerformanceService(PerformanceRepository repo, PlayerService playerService){
         this.perfRepo = repo;
-    }
+		this.playerService = playerService;
+	}
 
     public List<Performance> findFiltered(PerformanceQuery q){
         return perfRepo.findAll(q.toSpecification());
@@ -27,28 +30,28 @@ public class PerformanceService {
     //Aggregated Queries
 	//TODO: change all the object to the uuids
 
-    public PlayerStatsDTO getPlayerCareerStats(Player player){
-        return perfRepo.getPlayerCareerStats(player).orElseGet(() -> PlayerStatsDTO.empty(player.getId()));
+    public PlayerStatsDTO getPlayerCareerStats(UUID playerId){
+        return perfRepo.getPlayerCareerStats(playerId).orElseGet(() -> PlayerStatsDTO.empty(playerId));
     }
 
-    public PlayerStatsDTO getPlayerMatchStats(Player player, Match match){
-        return perfRepo.getPlayerMatchStats(player, match).orElseGet(() -> PlayerStatsDTO.empty(player.getId()));
+    public PlayerStatsDTO getPlayerMatchStats(UUID playerId, UUID matchId){
+        return perfRepo.getPlayerMatchStats(playerId, matchId).orElseGet(() -> PlayerStatsDTO.empty(playerId));
     }
 
-    public Performance getPlayerSetPerformance(Player player, GameSet gameSet){
-        return perfRepo.findByPlayerIdAndGameSetId(player.getId(), gameSet.getId()).orElseThrow(() -> new EntityNotFoundException("Il giocatore non ha giocato nel set selezionato"));
+    public Performance getPlayerSetPerformance(UUID playerId, UUID gameSetId){
+        return perfRepo.findByPlayerIdAndGameSetId(playerId, gameSetId).orElseThrow(() -> new EntityNotFoundException("Il giocatore non ha giocato nel set selezionato"));
     }
 
-    public TeamStatsDTO getTeamMatchStats(Team team, Match match){
-        return perfRepo.getTeamMatchStats(team , match).orElseGet(() -> TeamStatsDTO.empty(team.getId()));
+    public TeamStatsDTO getTeamMatchStats(UUID teamId, UUID matchId){
+        return perfRepo.getTeamMatchStats(teamId , matchId).orElseGet(() -> TeamStatsDTO.empty(teamId));
     }
 
-    public TeamStatsDTO getTeamStats(Team team){
-        return perfRepo.getTeamGlobalStats(team).orElseGet(() -> TeamStatsDTO.empty(team.getId()));
+    public TeamStatsDTO getTeamStats(UUID teamId){
+        return perfRepo.getTeamGlobalStats(teamId).orElseGet(() -> TeamStatsDTO.empty(teamId));
     }
 
-    public List<TeamStatsDTO> getBothTeamMatchStats(Match match){
-        return perfRepo.getBothTeamsStatsForMatch(match);
+    public List<TeamStatsDTO> getBothTeamMatchStats(UUID matchId){
+        return perfRepo.getBothTeamsStatsForMatch(matchId);
     }
 }
 
