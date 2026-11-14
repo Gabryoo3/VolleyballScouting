@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.dto.scouting.ScoutRowDTO;
 import jakarta.persistence.*;
 
 @Entity
@@ -42,21 +43,6 @@ public class Performance{
 
     //methods
 
-    //live adding
-    public void addDigGood()     { this.digGood++; }
-    public void addDigError()    { this.digError++; }
-    public void addAttackPoint() { this.attackPoint++; }
-    public void addAttackInPlay(){ this.attackInPlay++; }
-    public void addAttackError() { this.attackError++; }
-    public void addServePoint()  { this.servePoint++; }
-    public void addServeInPlay() { this.serveInPlay++; }
-    public void addServeError()  { this.serveError++; }
-    public void addBlockPoint()  { this.blockPoint++; }
-    public void addBlockInPlay() { this.blockInPlay++; }
-    public void addBlockError()  { this.blockError++; }
-    public void addReceiveGood() { this.receiveGood++; }
-    public void addReceiveError(){ this.receiveError++; }
-
     //getters-setters
     public PerformanceId getId() { return pId; }
     public Player getPlayer() { return player; }
@@ -95,6 +81,13 @@ public class Performance{
     public void setDigGood(int digGood) {this.digGood = digGood;}
     public int getDigError() {return digError;}
     public void setDigError(int digError) {this.digError = digError;}
+	public void setCounters (ScoutRowDTO r){
+		attackPoint = r.attackPoint(); attackInPlay = r.attackInPlay(); attackError = r.attackError();
+		servePoint = r.servePoint();   serveInPlay = r.serveInPlay();   serveError = r.serveError();
+		blockPoint = r.blockPoint();   blockInPlay = r.blockInPlay();   blockError = r.blockError();
+		receiveGood = r.receiveGood(); receiveError = r.receiveError();
+		digGood = r.digGood();         digError = r.digError();
+	}
 
     //Transients
     @Transient

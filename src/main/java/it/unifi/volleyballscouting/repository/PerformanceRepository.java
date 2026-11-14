@@ -6,6 +6,7 @@ import it.unifi.volleyballscouting.model.Performance;
 import it.unifi.volleyballscouting.model.PerformanceId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -86,6 +87,10 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
 			"FROM Performance p WHERE p.team.id = :teamId " +
 			"GROUP BY p.team.id")
 	Optional<TeamStatsDTO> getTeamGlobalStats(@Param("teamId") UUID teamId);
-
 	Optional<Performance> findByPlayerIdAndGameSetId(UUID playerId, UUID gameSetId);
+
+	//needed for sending errors. In this case, there won't be PerformanceId violation
+	@Modifying
+	@Query ("DELETE FROM Performance p WHERE p.team.id = :teamId and p.gameSet.id = :setId")
+	void deleteByTeamAndSet(@Param("teamId") UUID teamId, @Param("setId") UUID setId);
 }
