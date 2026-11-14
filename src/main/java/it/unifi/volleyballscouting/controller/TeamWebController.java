@@ -126,10 +126,9 @@ public class TeamWebController {
     }
 
     @GetMapping("/{teamId}/details")
-    public String showTeamDetails(@PathVariable UUID teamId, Model model){
-        Team team = teamService.findById(teamId);
-        //TODO: add Performances via the service
-        model.addAttribute("team", team);
+    public String showTeamDetails(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable UUID teamId, Model model){
+		UUID viewerId = userDetails != null ? userDetails.getId() : null;
+        model.addAttribute("team", teamService.getDetails(teamId, viewerId));
         return "teams/detail";
     }
 

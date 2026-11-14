@@ -2,24 +2,25 @@ package it.unifi.volleyballscouting.service;
 
 import it.unifi.volleyballscouting.dto.stats.PlayerStatsDTO;
 import it.unifi.volleyballscouting.dto.stats.TeamStatsDTO;
+import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
 import it.unifi.volleyballscouting.model.*;
 import it.unifi.volleyballscouting.query.PerformanceQuery;
 import it.unifi.volleyballscouting.repository.PerformanceRepository;
-import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
 
+
 @Service
+@Transactional(readOnly = true)
 public class PerformanceService {
 
     private final PerformanceRepository perfRepo;
-	private final PlayerService playerService;
 
-	public PerformanceService(PerformanceRepository repo, PlayerService playerService){
+	public PerformanceService(PerformanceRepository repo){
         this.perfRepo = repo;
-		this.playerService = playerService;
 	}
 
     public List<Performance> findFiltered(PerformanceQuery q){
@@ -38,7 +39,7 @@ public class PerformanceService {
     }
 
     public Performance getPlayerSetPerformance(UUID playerId, UUID gameSetId){
-        return perfRepo.findByPlayerIdAndGameSetId(playerId, gameSetId).orElseThrow(() -> new EntityNotFoundException("Il giocatore non ha giocato nel set selezionato"));
+        return perfRepo.findByPlayerIdAndGameSetId(playerId, gameSetId).orElseThrow(() -> new ResourceNotFoundException("Il giocatore non ha giocato nel set selezionato"));
     }
 
     public TeamStatsDTO getTeamMatchStats(UUID teamId, UUID matchId){

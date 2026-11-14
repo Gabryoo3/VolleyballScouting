@@ -47,7 +47,7 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
 
 	// Statistiche di una squadra in una partita
 	@Query("SELECT new it.unifi.volleyballscouting.dto.stats.TeamStatsDTO(" +
-			"p.player.team.id, " +
+			"p.team.id, " +
 			"COALESCE(SUM(p.digGood), 0L), COALESCE(SUM(p.digError), 0L), " +
 			"COALESCE(SUM(p.attackPoint), 0L), COALESCE(SUM(p.attackInPlay), 0L), COALESCE(SUM(p.attackError), 0L), " +
 			"COALESCE(SUM(p.servePoint), 0L), COALESCE(SUM(p.serveInPlay), 0L), COALESCE(SUM(p.serveError), 0L), " +
@@ -55,13 +55,13 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
 			"COALESCE(SUM(p.receiveGood), 0L), COALESCE(SUM(p.receiveError), 0L), " +
 			"COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
 			"COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L)) " +
-			"FROM Performance p WHERE p.player.team.id = :teamId AND p.gameSet.match.id = :matchId " +
-			"GROUP BY p.player.team.id")
+			"FROM Performance p WHERE p.team.id = :teamId AND p.gameSet.match.id = :matchId " +
+			"GROUP BY p.team.id")
 	Optional<TeamStatsDTO> getTeamMatchStats(@Param("teamId") UUID teamId, @Param("matchId") UUID matchId);
 
 	// Statistiche di entrambe le squadre in una partita
 	@Query("SELECT new it.unifi.volleyballscouting.dto.stats.TeamStatsDTO(" +
-			"p.player.team.id, " +
+			"p.team.id, " +
 			"COALESCE(SUM(p.digGood), 0L), COALESCE(SUM(p.digError), 0L), " +
 			"COALESCE(SUM(p.attackPoint), 0L), COALESCE(SUM(p.attackInPlay), 0L), COALESCE(SUM(p.attackError), 0L), " +
 			"COALESCE(SUM(p.servePoint), 0L), COALESCE(SUM(p.serveInPlay), 0L), COALESCE(SUM(p.serveError), 0L), " +
@@ -70,12 +70,12 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
 			"COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
 			"COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L)) " +
 			"FROM Performance p WHERE p.gameSet.match.id = :matchId " +
-			"GROUP BY p.player.team.id")
+			"GROUP BY p.team.id")
 	List<TeamStatsDTO> getBothTeamsStatsForMatch(@Param("matchId") UUID matchId);
 
 	// Statistiche globali di una squadra
 	@Query("SELECT new it.unifi.volleyballscouting.dto.stats.TeamStatsDTO(" +
-			"p.player.team.id, " +
+			"p.team.id, " +
 			"COALESCE(SUM(p.digGood), 0L), COALESCE(SUM(p.digError), 0L), " +
 			"COALESCE(SUM(p.attackPoint), 0L), COALESCE(SUM(p.attackInPlay), 0L), COALESCE(SUM(p.attackError), 0L), " +
 			"COALESCE(SUM(p.servePoint), 0L), COALESCE(SUM(p.serveInPlay), 0L), COALESCE(SUM(p.serveError), 0L), " +
@@ -83,8 +83,8 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
 			"COALESCE(SUM(p.receiveGood), 0L), COALESCE(SUM(p.receiveError), 0L), " +
 			"COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
 			"COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L)) " +
-			"FROM Performance p WHERE p.player.team.id = :teamId " +
-			"GROUP BY p.player.team.id")
+			"FROM Performance p WHERE p.team.id = :teamId " +
+			"GROUP BY p.team.id")
 	Optional<TeamStatsDTO> getTeamGlobalStats(@Param("teamId") UUID teamId);
 
 	Optional<Performance> findByPlayerIdAndGameSetId(UUID playerId, UUID gameSetId);

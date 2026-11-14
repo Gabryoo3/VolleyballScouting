@@ -11,13 +11,17 @@ public class Performance{
 
     @MapsId("playerId")
     @ManyToOne(optional = false)
-    @JoinColumn(name = "player_id")
+    @JoinColumn(name = "player_id", nullable = false)
     private Player player;
 
     @MapsId("setId")
     @ManyToOne(optional = false)
-    @JoinColumn(name = "set_id")
+    @JoinColumn(name = "set_id", nullable = false)
     private GameSet gameSet;
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "team_id", nullable = false)
+	private Team team;
 
     private int attackPoint = 0, attackInPlay = 0, attackError = 0;
     private int servePoint = 0, serveInPlay = 0, serveError = 0;
@@ -28,9 +32,10 @@ public class Performance{
     protected Performance() {}
 
     //constructor
-    public Performance(Player player, GameSet gameSet) {
+    public Performance(Player player, GameSet gameSet, Team team) {
         this.player = player;
         this.gameSet = gameSet;
+		this.team = team;
         if (player != null && gameSet != null && player.getId() != null && gameSet.getId() != null)
             this.pId = new PerformanceId(player.getId(), gameSet.getId());
     }
@@ -58,6 +63,7 @@ public class Performance{
     public void setPlayer(Player player) { this.player = player; }
     public GameSet getGameSet() { return gameSet; }
     public void setGameSet(GameSet gameSet) { this.gameSet = gameSet; }
+	public Team getTeam() { return team; }
 
     public int getAttackPoint() {return attackPoint;}
     public void setAttackPoint(int attackPoint) {this.attackPoint = attackPoint;}

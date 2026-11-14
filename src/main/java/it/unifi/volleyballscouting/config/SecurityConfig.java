@@ -36,7 +36,7 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/matches/new", "/matches/create").hasRole("ADMIN")
                 .requestMatchers("/matches/*/edit", "/matches/*/recreate", "/matches/*/delete").hasRole("ADMIN")
-                .requestMatchers("/referees/new", "/referees/create", "/referees/*/edit", "/referees/*/update").hasRole("ADMIN")
+                .requestMatchers("/referees/new", "/referees/create", "/referees/*/edit", "/referees/*/update", "/referees/list").hasRole("ADMIN")
 
                 // ==========================================
                 // 2. ALLENATORE (Rosa Giocatori e Live Scouting)
@@ -68,7 +68,6 @@ public class SecurityConfig {
                 .permitAll()
         ).logout(logout -> logout
                 .logoutSuccessUrl("/").permitAll());
-        //TODO: URL MAPPING PER REFEREE
         // Configurazione per iframe della console H2
         http.headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin));
         http.csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**"));

@@ -12,7 +12,7 @@ public class PerformanceSpecifications {
         return (root, query, cb) -> cb.equal(root.get("player"), player);
     }
     public static Specification<Performance> forTeam (Team team){
-        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("player").get("team"), team));
+        return ((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("team"), team));
     }
     public static Specification<Performance> forSet(GameSet gameSet){
         return (((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("gameSet"), gameSet)));
