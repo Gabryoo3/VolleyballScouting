@@ -79,7 +79,9 @@ public class PerformanceService {
 		GameSet set = m.getSets().stream().filter(s -> s.getSetNumber() == setNumber).findFirst()
 				.orElseThrow(() -> new BusinessRuleException("Il set indicato non esiste "));
 		//in case of a re-send, it deletes the entry and recreates it
-		perfRepo.deleteByTeamAndSet(t.getId(), set.getId());
+		if (perfRepo.existsByTeamIdAndGameSetId(t.getId(), set.getId()))
+			throw new BusinessRuleException("Il risultato è già stato inviato");
+
 		//HashSet is used because it already verifies if in the same send there is a duplication
 		Set<UUID> seen = new HashSet<>();
 		for (ScoutRowDTO row : form.rows()){

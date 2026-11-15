@@ -88,9 +88,5 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
 			"GROUP BY p.team.id")
 	Optional<TeamStatsDTO> getTeamGlobalStats(@Param("teamId") UUID teamId);
 	Optional<Performance> findByPlayerIdAndGameSetId(UUID playerId, UUID gameSetId);
-
-	//needed for sending errors. In this case, there won't be PerformanceId violation
-	@Modifying
-	@Query ("DELETE FROM Performance p WHERE p.team.id = :teamId and p.gameSet.id = :setId")
-	void deleteByTeamAndSet(@Param("teamId") UUID teamId, @Param("setId") UUID setId);
+	boolean existsByTeamIdAndGameSetId(UUID teamId, UUID gameSetId);
 }
