@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.service;
 
+import it.unifi.volleyballscouting.dto.scouting.ScoutPageDTO;
 import it.unifi.volleyballscouting.dto.scouting.ScoutRowDTO;
 import it.unifi.volleyballscouting.dto.scouting.ScoutSetFormDTO;
 import it.unifi.volleyballscouting.dto.stats.PlayerStatsDTO;
@@ -66,19 +67,35 @@ public class PerformanceService {
         return perfRepo.getBothTeamsStatsForMatch(matchId);
     }
 
+	private Team coachTeamIn (Match m, UUID coachId){
+		Team t = coachService.getCoachTeam(coachId);
+		if (t == null)
+			throw new BusinessRuleException("Non hai ancora una squadra assegnata");
+		if (!t.getId().equals(m.getTeamHome().getId()) && !t.getId().equals(m.getTeamGuest().getId()))
+			throw new AccessDeniedException("La tua squadra non gioca questa partita");
+		return t;
+	}
+
+	public ScoutPageDTO getScoutPage(UUID matchId, UUID coachId){
+		Match m = matchService.findById(matchId);
+		Team t = coachTeamIn(m, coachId);
+		GameSet current = m.getCurrentSet();
+		if (current == null)
+			throw new BusinessRuleException("La partita non è ancora iniziata");
+		boolean sent = perfRepo.existsByTeamIdAndGameSetId(t.getId(), current.getId());
+		return new ScoutPageDTO(m.getId(), m.getTeamHome().getName(), m.getTeamGuest().getName(), t.getName(),
+				current.getSetNumber(), sent, playerService.getRoster(t.getId()));
+	}
+
 	@Transactional
 	public void saveSetScouting(UUID matchId, UUID coachId, int setNumber, ScoutSetFormDTO form){
 		Match m = matchService.findById(matchId);
-		Team t = coachService.getCoachTeam(coachId);
-		if (t == null) throw new BusinessRuleException("Non hai una squadra ancora");
-		if (!t.getId().equals(m.getTeamHome().getId()) || !t.getId().equals(m.getTeamGuest().getId()))
-			throw new AccessDeniedException("La tua squadra non gioca questa partita");
-
+		Team t = coachTeamIn(m, coachId);
 		//.stream() allows to work on the list, then it filters for the first SetNumber it finds
 		// (since they are given from the match, no problems in taking other sets) and it takes the first set it matches
 		GameSet set = m.getSets().stream().filter(s -> s.getSetNumber() == setNumber).findFirst()
 				.orElseThrow(() -> new BusinessRuleException("Il set indicato non esiste "));
-		//in case of a re-send, it deletes the entry and recreates it
+		//if there is a resend, an error is displayed
 		if (perfRepo.existsByTeamIdAndGameSetId(t.getId(), set.getId()))
 			throw new BusinessRuleException("Il risultato è già stato inviato");
 
@@ -88,8 +105,7 @@ public class PerformanceService {
 			if(row.isEmpty()) continue;
 			if(!seen.add(row.playerId())) throw new BusinessRuleException("Giocatore ripetuto nel set");
 			Player p = playerService.findOwnedBy(row.playerId(), t.getId()); //checks if the player is in the team
-			Performance perf = new Performance(p, set, t);
-			perf.setCounters(row);
+			Performance perf = new Performance(p, set, t, row);
 			perfRepo.save(perf);
 		}
 	}

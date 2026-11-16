@@ -36,8 +36,6 @@ public class SecurityConfig {
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/matches/new", "/matches/create").hasRole("ADMIN")
                 .requestMatchers("/matches/*/edit", "/matches/*/recreate", "/matches/*/delete").hasRole("ADMIN")
-                .requestMatchers("/referees/new", "/referees/create", "/referees/*/edit", "/referees/*/update", "/referees/list").hasRole("ADMIN")
-
                 // ==========================================
                 // 2. ALLENATORE (Rosa Giocatori e Live Scouting)
                 // ==========================================
@@ -53,7 +51,10 @@ public class SecurityConfig {
                 // =========================================
                 .requestMatchers("/matches/*/play", "/matches/*/score/**", "/matches/*/sets/**").hasRole("REFEREE")
 				.requestMatchers("/referees/matches").hasRole("REFEREE")
-                // ==========================================
+				//Eccezione per far quadrare le regole
+				.requestMatchers("/referees/**").hasRole("ADMIN")
+
+				// ==========================================
                 // 4. CONSULTAZIONE PUBBLICA CAMPIONATO (Ospite / Giocatore)
                 // ==========================================
                 .requestMatchers(HttpMethod.GET, "/teams", "/teams/list", "/teams/*/details").permitAll()

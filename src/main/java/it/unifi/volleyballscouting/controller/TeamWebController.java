@@ -1,10 +1,13 @@
 package it.unifi.volleyballscouting.controller;
 
+import it.unifi.volleyballscouting.dto.PlayerRosterDTO;
 import it.unifi.volleyballscouting.dto.forms.TeamFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.CoachService;
+import it.unifi.volleyballscouting.service.PerformanceService;
+import it.unifi.volleyballscouting.service.PlayerService;
 import it.unifi.volleyballscouting.service.TeamService;
 import jakarta.validation.Valid;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,11 +26,15 @@ public class TeamWebController {
 
     private final TeamService teamService;
     private final CoachService coachService; // Aggiunto CoachService
+	private final PlayerService playerService;
+	private final PerformanceService performanceService;
 
-    public TeamWebController(TeamService ts, CoachService cs){
+	public TeamWebController(TeamService ts, CoachService cs, PlayerService playerService, PerformanceService performanceService){
         this.teamService = ts;
         this.coachService = cs;
-    }
+		this.playerService = playerService;
+		this.performanceService = performanceService;
+	}
 
     @GetMapping("/new")
     public String showCreateForm(@AuthenticationPrincipal AppUserDetails userDetails, Model model){
@@ -129,6 +136,8 @@ public class TeamWebController {
     public String showTeamDetails(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable UUID teamId, Model model){
 		UUID viewerId = userDetails != null ? userDetails.getId() : null;
         model.addAttribute("team", teamService.getDetails(teamId, viewerId));
+		model.addAttribute("roster", playerService.getRoster(teamId));
+		model.addAttribute("stats", performanceService.getTeamStats(teamId));
         return "teams/detail";
     }
 
