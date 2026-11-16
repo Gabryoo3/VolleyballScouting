@@ -10,8 +10,11 @@ import java.util.Objects;
 public class Address implements Serializable {
 
     //attributes
+	@Column(nullable = false)
     private String street; //don't add "via" or "corso"
+	@Column(nullable = false)
     private String city;
+	@Column(nullable = false)
     private String zipCode;
 
     protected Address() {}

@@ -1,14 +1,18 @@
 package it.unifi.volleyballscouting.controller;
 
+import it.unifi.volleyballscouting.dto.details.MatchDetailsDTO;
 import it.unifi.volleyballscouting.dto.forms.MatchFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Match;
 import it.unifi.volleyballscouting.query.MatchQuery;
+import it.unifi.volleyballscouting.security.AppUserDetails;
 import it.unifi.volleyballscouting.service.MatchService;
+import it.unifi.volleyballscouting.service.PerformanceService;
 import it.unifi.volleyballscouting.service.RefereeService;
 import it.unifi.volleyballscouting.service.TeamService;
 import it.unifi.volleyballscouting.validation.OnCreate;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,13 +30,15 @@ public class MatchWebController {
     private final MatchService matchService;
     private final TeamService teamService;
     private final RefereeService refereeService;
+	private final PerformanceService performanceService;
 
 
-    public MatchWebController(MatchService ms, TeamService teamService, RefereeService refereeService) {
+	public MatchWebController(MatchService ms, TeamService teamService, RefereeService refereeService, PerformanceService performanceService) {
         this.matchService = ms;
         this.teamService = teamService;
         this.refereeService = refereeService;
-    }
+		this.performanceService = performanceService;
+	}
 
     @GetMapping("/new")
     public String showCreateForm(Model model) {
@@ -102,9 +108,14 @@ public class MatchWebController {
         return "matches/list";
     }
     @GetMapping("/{matchId}/details")
-    public String matchDetails(@PathVariable UUID matchId, Model model){
-        Match match = matchService.findById(matchId);
-        model.addAttribute("match", match);
+    public String matchDetails(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable UUID matchId, Model model){
+		UUID viewerId = userDetails != null ? userDetails.getId() : null;
+		MatchDetailsDTO details = matchService.getDetails(matchId, viewerId);
+        model.addAttribute("match", details);
+		if(details.finished()){
+			model.addAttribute("homeStats", performanceService.getTeamMatchStats(details.teamHomeId(), matchId));
+			model.addAttribute("guestStats", performanceService.getTeamMatchStats(details.teamGuestId(), matchId));
+		}
         return "matches/detail";
     }
     @PostMapping("/{matchId}/delete")

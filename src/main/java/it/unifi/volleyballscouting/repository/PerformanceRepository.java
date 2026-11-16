@@ -6,7 +6,6 @@ import it.unifi.volleyballscouting.model.Performance;
 import it.unifi.volleyballscouting.model.PerformanceId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -27,7 +26,7 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
 			"COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
 			"COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L), " +
 			"COUNT(p.player.id)) " +
-			"FROM Performance p WHERE p.player.id = :playerId " +
+			"FROM Performance p WHERE p.player.id = :playerId AND (p.gameSet.match.homeScore = 3 OR p.gameSet.match.guestScore = 3) " +
 			"GROUP BY p.player.id")
 	Optional<PlayerStatsDTO> getPlayerCareerStats(@Param("playerId") UUID playerId);
 
@@ -84,8 +83,8 @@ public interface PerformanceRepository extends JpaRepository<Performance, Perfor
 			"COALESCE(SUM(p.receiveGood), 0L), COALESCE(SUM(p.receiveError), 0L), " +
 			"COALESCE(SUM(p.attackPoint + p.servePoint + p.blockPoint), 0L), " +
 			"COALESCE(SUM(p.attackError + p.serveError + p.blockError + p.digError + p.receiveError), 0L)) " +
-			"FROM Performance p WHERE p.team.id = :teamId " +
-			"GROUP BY p.team.id")
+			"FROM Performance p WHERE p.team.id = :teamId AND (p.gameSet.match.homeScore = 3 OR p.gameSet.match.guestScore = 3)" +
+			" GROUP BY p.team.id")
 	Optional<TeamStatsDTO> getTeamGlobalStats(@Param("teamId") UUID teamId);
 	Optional<Performance> findByPlayerIdAndGameSetId(UUID playerId, UUID gameSetId);
 	boolean existsByTeamIdAndGameSetId(UUID teamId, UUID gameSetId);

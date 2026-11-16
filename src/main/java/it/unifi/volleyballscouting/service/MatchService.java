@@ -1,5 +1,7 @@
 package it.unifi.volleyballscouting.service;
 
+import it.unifi.volleyballscouting.dto.details.MatchDetailsDTO;
+import it.unifi.volleyballscouting.dto.details.SetDetailsDTO;
 import it.unifi.volleyballscouting.dto.forms.MatchFormDTO;
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
@@ -9,6 +11,7 @@ import it.unifi.volleyballscouting.model.Referee;
 import it.unifi.volleyballscouting.model.Team;
 import it.unifi.volleyballscouting.query.MatchQuery;
 import it.unifi.volleyballscouting.repository.MatchRepository;
+import it.unifi.volleyballscouting.repository.PerformanceRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -29,12 +32,14 @@ public class MatchService {
     private final MatchRepository matchRepository;
     private final TeamService teamService;
     private final RefereeService refereeService;
+	private final PerformanceRepository performanceRepository;
 
-    public MatchService(MatchRepository repo, TeamService ts, RefereeService refereeService){
+	public MatchService(MatchRepository repo, TeamService ts, RefereeService refereeService, PerformanceRepository performanceRepository){
         this.matchRepository = repo;
         this.teamService = ts;
         this.refereeService = refereeService;
-    }
+		this.performanceRepository = performanceRepository;
+	}
 
     public Match findById(UUID id){
         return matchRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Partita non trovata"));
@@ -65,6 +70,28 @@ public class MatchService {
             throw new AccessDeniedException("Non sei l'arbitro di questa partita");
         return m;
     }
+
+	public MatchDetailsDTO getDetails(UUID matchId, UUID viewerId){
+		Match m = findById(matchId);
+		Team coachTeam = null;
+		if (viewerId != null) {
+			if (m.getTeamHome().getCoach() != null && viewerId.equals(m.getTeamHome().getCoach().getId()))
+				coachTeam = m.getTeamHome();
+			else if (m.getTeamGuest().getCoach() != null && viewerId.equals(m.getTeamGuest().getCoach().getId()))
+				coachTeam = m.getTeamGuest();
+		}
+
+		boolean isAddress = m.getAddress() != null;
+		boolean started = m.getCurrentSet() != null;
+		boolean finished = m.isFinished();
+		boolean canScout = started && coachTeam != null &&
+				!(finished && performanceRepository.existsByTeamIdAndGameSetId(coachTeam.getId(), m.getCurrentSet().getId())); //repository instead of service because performanceService depends by MatchService, so it will loop
+		List<SetDetailsDTO> sets = m.getSets().stream().filter(GameSet::isFinished).map(s -> new SetDetailsDTO(s.getTeamHomePoints(), s.getTeamGuestPoints(), s.getSetNumber())).toList();
+		return new MatchDetailsDTO(matchId, m.getTeamHome().getId(), m.getTeamHome().getName(), m.getTeamGuest().getId(),
+				m.getTeamGuest().getName(), m.getReferee().getName(), m.getReferee().getSurname(), m.getAddress().getStreet(),
+				m.getAddress().getCity(), m.getAddress().getZipCode(), m.getMatchDateTime(), m.getHomeScore(), m.getGuestScore(),
+				started, finished, sets, canScout);
+	}
 
     @Transactional
     public void start(UUID matchId, UUID refereeId){
