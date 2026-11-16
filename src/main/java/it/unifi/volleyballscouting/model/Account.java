@@ -1,4 +1,4 @@
-package it.unifi.volleyballscouting.config;
+package it.unifi.volleyballscouting.model;
 
 import java.util.UUID;
 

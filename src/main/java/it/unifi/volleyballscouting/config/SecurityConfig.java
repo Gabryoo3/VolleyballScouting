@@ -15,11 +15,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private final AppUserDetailsService userDetailService;
 
-    public SecurityConfig(AppUserDetailsService uds) {
-        this.userDetailService = uds;
-    }
+
+    public SecurityConfig() {}
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
