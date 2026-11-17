@@ -1,6 +1,5 @@
 package it.unifi.volleyballscouting.config;
 
-import it.unifi.volleyballscouting.security.AppUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,10 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-
-
-    public SecurityConfig() {}
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

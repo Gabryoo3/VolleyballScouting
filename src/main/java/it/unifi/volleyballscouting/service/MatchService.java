@@ -81,11 +81,11 @@ public class MatchService {
 				coachTeam = m.getTeamGuest();
 		}
 
-		boolean isAddress = m.getAddress() != null;
 		boolean started = m.getCurrentSet() != null;
 		boolean finished = m.isFinished();
 		boolean canScout = started && coachTeam != null &&
 				!(finished && performanceRepository.existsByTeamIdAndGameSetId(coachTeam.getId(), m.getCurrentSet().getId())); //repository instead of service because performanceService depends by MatchService, so it will loop
+
 		List<SetDetailsDTO> sets = m.getSets().stream().filter(GameSet::isFinished).map(s -> new SetDetailsDTO(s.getTeamHomePoints(), s.getTeamGuestPoints(), s.getSetNumber())).toList();
 		return new MatchDetailsDTO(matchId, m.getTeamHome().getId(), m.getTeamHome().getName(), m.getTeamGuest().getId(),
 				m.getTeamGuest().getName(), m.getReferee().getName(), m.getReferee().getSurname(), m.getAddress().getStreet(),
