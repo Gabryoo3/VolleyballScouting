@@ -101,12 +101,12 @@ public class UserAccountService {
 
 	@Transactional
 	public void changePassword(UUID accountId, String currentPassword, String newPassword, String repeatPassword){
-		Account user = findAccountById(accountId);
 		if (!newPassword.equals(repeatPassword))
 			throw new BusinessRuleException("La nuova password e la ripetuta non coincidono");
+		Account user = findAccountById(accountId);
 		if (!passwordEncoder.matches(currentPassword, user.getPassword()))
 			throw new BusinessRuleException("La password attuale non è corretta");
-		if(!passwordEncoder.matches(newPassword, user.getPassword()))
+		if(passwordEncoder.matches(newPassword, user.getPassword()))
 			throw new BusinessRuleException("La nuova password non può essere uguale alla vecchia");
 		String encoded = passwordEncoder.encode(newPassword);
 		user.setPassword(encoded);
