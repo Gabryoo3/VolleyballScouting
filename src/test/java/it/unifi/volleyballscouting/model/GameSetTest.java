@@ -1,0 +1,13 @@
+package it.unifi.volleyballscouting.model;
+
+import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.Test;
+
+@SpringBootTest
+class GameSetTest {
+
+	@Test
+	void contextLoads() {
+
+	}
+}
