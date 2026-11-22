@@ -11,113 +11,152 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MatchTest {
 
-	private Match startedMatch(){
+	private Match newMatch() {
 		Address homeAddress = new Address("Roma", "Firenze", "50555");
 		Address guestAddress = new Address("Napoli", "Prato", "59100");
 		Coach homeCoach = new Coach("Giulio", "Bianchi", "giubia", "test1234", LocalDate.of(1990, 10, 23));
 		Coach guestCoach = new Coach("Alessio", "Rossini", "aleros", "test1234", LocalDate.of(1984, 3, 15));
-		Referee ref = new Referee("Giulio", "Romanotti", "giuromanref", "test4321", LocalDate.of(1970,5,23));
+		Referee ref = new Referee("Giulio", "Romanotti", "giuromanref", "test4321", LocalDate.of(1970, 5, 23));
 		Team home = new Team("CasaRosa", homeAddress, homeCoach);
-		Team guest = new Team ("Hohahola", guestAddress, guestCoach);
-		Match match = new Match (home, guest, LocalDateTime.now(), ref);
-		match.start();
-		return match;
-
+		Team guest = new Team("Hohahola", guestAddress, guestCoach);
+		return new Match(home, guest, LocalDateTime.now(), ref);
 	}
 
 	@Test
-	void finishMatchAfterThreeWins(){ //move to MatchTest
-		Match m = startedMatch();
-
-		m.closeCurrentSet(25,12);
-		m.closeCurrentSet(25,10);
-		m.closeCurrentSet(25,9);
+	void finishMatchAfterThreeWins() {
+		Match m = newMatch();
+		m.start();
+		m.closeCurrentSet(25, 12);
+		m.closeCurrentSet(25, 10);
+		m.closeCurrentSet(25, 9);
 
 		assertThat(m.isFinished()).isTrue();
 		assertThat(m.getHomeScore()).isEqualTo(3);
 	}
 
 	@Test
-	void correctWinner(){
-		Match m1 = startedMatch();
-		m1.closeCurrentSet(25,23);
-		m1.closeCurrentSet(25,23);
-		m1.closeCurrentSet(25,23);
-		assertThat(m1.getWinner()).isEqualTo(m1.getTeamHome());
-
-		Match m2 = startedMatch();
-		m2.closeCurrentSet(13,25);
-		m2.closeCurrentSet(13,25);
-		m2.closeCurrentSet(13,25);
-
-		assertThat(m2.getWinner()).isEqualTo(m2.getTeamGuest());
-	}
-
-	@Test
-	void finishedLimitsSet() {
-		Match m = startedMatch();
-
-		GameSet g1 = new GameSet(m, 1);
-		g1.setTeamHomePoints(26);
-		g1.setTeamGuestPoints(24);
-
-		assertThat(g1.isFinished()).isTrue();
-
-		m.closeCurrentSet(26, 24);
-
-		GameSet g2 = new GameSet(m, 2);
-		g2.setTeamHomePoints(26);
-		g2.setTeamGuestPoints(27);
-
-		assertThat(g2.isFinished()).isFalse();
-
-		g2.setTeamGuestPoints(28);
-
-		assertThat(g2.isFinished()).isTrue();
-
-		m.closeCurrentSet(26, 28);
-
-		m.closeCurrentSet(25, 23);
+	void matchNotFinishedOver3rdSet() {
+		Match m = newMatch();
+		m.start();
+		m.closeCurrentSet(25, 12);
+		m.closeCurrentSet(25, 10);
 		m.closeCurrentSet(13, 25);
-
-		GameSet g5 = new GameSet(m, 5);
-		g5.setTeamHomePoints(15);
-		g5.setTeamGuestPoints(13);
-
-		assertThat(g5.isFinished()).isTrue();
-		m.closeCurrentSet(15, 13);
-
+		assertThat(m.isFinished()).isFalse();
+		m.closeCurrentSet(25, 14);
 		assertThat(m.isFinished()).isTrue();
 	}
 
 	@Test
-	void limitCase5thSet() {
-		Match m = startedMatch();
+	void getWinnerOnNotFinishedMatch() {
+		Match m = newMatch();
+		m.start();
+
+		m.closeCurrentSet(25, 10);
+		assertThatThrownBy(m::getWinner).isInstanceOf(BusinessRuleException.class);
+	}
+
+	@Test
+	void checkCorrectPointAssignment() {
+		Match m = newMatch();
+		m.start();
+		m.closeCurrentSet(25, 14);
+		GameSet g1 = m.getSets().getFirst();
+		assertThat(g1.getTeamHomePoints()).isEqualTo(25);
+		assertThat(g1.getTeamGuestPoints()).isEqualTo(14);
+	}
+
+	@Test
+	void checkNewSetCorrectlyOpened() {
+		Match m = newMatch();
+		m.start();
+		m.closeCurrentSet(25, 14);
+		assertThat(m.getCurrentSet().getSetNumber()).isEqualTo(2);
+	}
+
+	@Test
+	void correctWinner() {
+		Match m1 = newMatch();
+		m1.start();
+		m1.closeCurrentSet(25, 23);
+		m1.closeCurrentSet(25, 23);
+		m1.closeCurrentSet(25, 23);
+		assertThat(m1.getWinner()).isSameAs(m1.getTeamHome());
+
+		Match m2 = newMatch();
+		m2.start();
+		m2.closeCurrentSet(13, 25);
+		m2.closeCurrentSet(13, 25);
+		m2.closeCurrentSet(13, 25);
+
+		assertThat(m2.getWinner()).isSameAs(m2.getTeamGuest());
+	}
+
+	@Test
+	void matchWith5Sets() {
+		Match m = newMatch();
+		m.start();
 		m.closeCurrentSet(25, 13);
 		m.closeCurrentSet(25, 11);
 		m.closeCurrentSet(14, 25);
 		m.closeCurrentSet(12, 25);
 		assertThat(m.isFinished()).isFalse();
-		GameSet g5 = new GameSet(m, 5);
-		g5.setTeamHomePoints(16);
-		g5.setTeamGuestPoints(15);
-		assertThat(g5.isFinished()).isFalse();
-		g5.setTeamHomePoints(17);
-		assertThat(g5.isFinished()).isTrue();
-
 		m.closeCurrentSet(17, 15);
+		assertThat(m.getCurrentSet().getSetNumber()).isEqualTo(5);
+		assertThat(m.getHomeScore()).isEqualTo(3);
 		assertThat(m.isFinished()).isTrue();
 	}
 
 	@Test
 	void setWithMore25and15on5th() {
-		Match m = startedMatch();
+		Match m = newMatch();
+		m.start();
+
 		assertThatThrownBy(() -> m.closeCurrentSet(26, 14)).isInstanceOf(BusinessRuleException.class);
+		assertThat(m.getCurrentSet().getSetNumber()).isEqualTo(1);
+		assertThat(m.getHomeScore()).isEqualTo(0);
+		assertThat(m.getGuestScore()).isEqualTo(0);
+		assertThat(m.getCurrentSet().getTeamHomePoints()).isEqualTo(0);
+		assertThat(m.getCurrentSet().getTeamGuestPoints()).isEqualTo(0);
+
 		m.closeCurrentSet(25, 13);
 		m.closeCurrentSet(25, 12);
 		m.closeCurrentSet(13, 25);
 		m.closeCurrentSet(14, 25);
 
 		assertThatThrownBy(() -> m.closeCurrentSet(18, 14)).isInstanceOf(BusinessRuleException.class);
+		assertThat(m.getHomeScore()).isEqualTo(2);
+		assertThat(m.getGuestScore()).isEqualTo(2);
+		assertThat(m.getCurrentSet().getSetNumber()).isEqualTo(5);
+		assertThat(m.getCurrentSet().getTeamHomePoints()).isEqualTo(0);
+		assertThat(m.getCurrentSet().getTeamGuestPoints()).isEqualTo(0);
 	}
+
+	@Test
+	void closeSetOnNotStartedMatch() {
+		Match m = newMatch();
+		assertThatThrownBy(() -> m.closeCurrentSet(25, 10)).isInstanceOf(BusinessRuleException.class)
+				.hasMessageContaining("La partita non è ancora iniziata");
+	}
+
+	@Test
+	void startMatchTwice() {
+		Match m = newMatch();
+		m.start();
+		assertThatThrownBy(m::start).isInstanceOf(BusinessRuleException.class)
+				.hasMessageContaining("La partita è già avviata");
+	}
+
+	@Test
+	void closeSetAfterMatchFinished() {
+		Match m = newMatch();
+		m.start();
+		m.closeCurrentSet(25, 13);
+		m.closeCurrentSet(25, 13);
+		m.closeCurrentSet(25, 13);
+		assertThatThrownBy(() -> m.closeCurrentSet(25, 13)).isInstanceOf(BusinessRuleException.class)
+				.hasMessageContaining("La partita è già conclusa");
+		assertThat(m.getHomeScore()).isEqualTo(3);
+		assertThat(m.getGuestScore()).isEqualTo(0);
+	}
+
 }

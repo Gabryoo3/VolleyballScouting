@@ -42,9 +42,6 @@ public class GameSet extends BaseModel{
         return teamGuestPoints;
     }
 
-    public void addTeamGuestPoints(){
-        this.teamGuestPoints++;
-    }
 
     public void setTeamGuestPoints(int teamGuestPoints) {
         this.teamGuestPoints = teamGuestPoints;
@@ -62,20 +59,10 @@ public class GameSet extends BaseModel{
         return teamHomePoints;
     }
 
-    public void addTeamHomePoints(){
-        this.teamHomePoints++;
-    }
-
     public void setTeamHomePoints(int teamHomePoints) {
         this.teamHomePoints = teamHomePoints;
     }
 
-    @Transient
-    public Team getLeading(){
-        if(teamHomePoints > teamGuestPoints) return match.getTeamHome();
-        else if(teamGuestPoints > teamHomePoints) return match.getTeamGuest();
-        return null;
-    }
     @Transient
     public boolean isFinished(){
         int maxPoints = (setNumber == 5) ? 15 : 25;
@@ -89,16 +76,5 @@ public class GameSet extends BaseModel{
         return teamHomePoints + teamGuestPoints;
     }
 
-    @Transient
-    public String getDisplayName(){
-        if(match != null && match.getTeamHome() != null && match.getTeamGuest() != null){
-            return String.format("Set %d (%s vs %s)",setNumber, match.getTeamHome().getName(), match.getTeamGuest().getName());
-        }
-        return "Set " + setNumber;
-    }
-    @Override
-    public String toString(){
-        return getDisplayName();
-    }
 
 }
