@@ -1,6 +1,5 @@
 package it.unifi.volleyballscouting.model;
 
-import it.unifi.volleyballscouting.config.Account;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 

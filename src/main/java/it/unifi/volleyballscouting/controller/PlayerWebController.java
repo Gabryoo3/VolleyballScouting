@@ -1,5 +1,6 @@
 package it.unifi.volleyballscouting.controller;
-import it.unifi.volleyballscouting.dto.PlayerStatsDTO;
+import it.unifi.volleyballscouting.dto.stats.PlayerStatsDTO;
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import it.unifi.volleyballscouting.dto.PlayerFormDTO;
+import it.unifi.volleyballscouting.dto.forms.PlayerFormDTO;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.UUID;
@@ -70,7 +71,7 @@ public class PlayerWebController {
         String tempPassword;
         try {
             tempPassword = playerService.save(form, t.getId());
-        }catch (IllegalArgumentException e){
+        }catch (BusinessRuleException e){
             br.reject("playerRules", e.getMessage());
             prepareFormModel(model, form, "/players/create");
             return "players/form";
@@ -80,8 +81,8 @@ public class PlayerWebController {
         return "redirect:/players/list";
     }
     @GetMapping("/{playerId}/edit")
-    public String showEditForm(@PathVariable UUID playerId,
-                                @AuthenticationPrincipal AppUserDetails userDetails,
+    public String showEditForm(@AuthenticationPrincipal AppUserDetails userDetails,
+                                @PathVariable UUID playerId,
                                 Model model){
         Team t = coachService.getCoachTeam(userDetails.getId());
         UUID teamId = (t != null) ? t.getId() : null;
@@ -96,14 +97,14 @@ public class PlayerWebController {
                             PlayerFormDTO form,
                             BindingResult br,
                             Model model){
-        if(br.hasErrors()) {
-            prepareFormModel(model, form, "/players/" + playerId + "/update");
-            return "players/form";
-        }
         // it controls the username in service
         Team t = coachService.getCoachTeam(userDetails.getId());
         if (t == null) {
             br.reject("noTeam", "Devi prima creare o essere associato a una squadra per modificare i giocatori.");
+            prepareFormModel(model, form, "/players/" + playerId + "/update");
+            return "players/form";
+        }
+        if(br.hasErrors()) {
             prepareFormModel(model, form, "/players/" + playerId + "/update");
             return "players/form";
         }
@@ -115,12 +116,12 @@ public class PlayerWebController {
         }
         try {
             playerService.updatePlayer(t.getId(), playerId, form);
-        } catch (IllegalArgumentException e) {
+        } catch (BusinessRuleException e) {
                 br.rejectValue("username", "duplicate", e.getMessage());
                 prepareFormModel(model, form, "/players/" + playerId + "/update" );
                 return "players/form";
         }
-        return "redirect:/players/details/" + playerId;
+        return "redirect:/players/" + playerId + "/details";
     }
     // GET: show list of players
     @GetMapping("/list")
@@ -163,11 +164,12 @@ public class PlayerWebController {
         return "players/list";
     }
 
-    @GetMapping("/details/{playerId}")
-    public String showPlayerDetails(@PathVariable UUID playerId, Model model){
-        Player player = playerService.findById(playerId);
-        PlayerStatsDTO stats = performanceService.getPlayerCareerStats(player);
-        model.addAttribute("player", player);
+    @GetMapping("/{playerId}/details")
+    public String showPlayerDetails(@AuthenticationPrincipal AppUserDetails userDetails, @PathVariable UUID playerId, Model model){
+		boolean loggedIn = userDetails != null;
+		UUID viewerId = loggedIn ? userDetails.getId() : null;
+        PlayerStatsDTO stats = performanceService.getPlayerCareerStats(playerId);
+	    model.addAttribute("player",playerService.getDetails(playerId, viewerId, loggedIn));
         model.addAttribute("stats", stats);
         return "players/detail";
     }

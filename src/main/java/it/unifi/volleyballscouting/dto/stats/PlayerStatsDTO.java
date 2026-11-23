@@ -1,6 +1,4 @@
-package it.unifi.volleyballscouting.dto;
-
-import it.unifi.volleyballscouting.model.Player;
+package it.unifi.volleyballscouting.dto.stats;
 
 import java.io.Serializable;
 import java.util.UUID;

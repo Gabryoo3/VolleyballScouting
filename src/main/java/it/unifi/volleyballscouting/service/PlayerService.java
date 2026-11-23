@@ -1,6 +1,10 @@
 package it.unifi.volleyballscouting.service;
 
-import it.unifi.volleyballscouting.dto.PlayerFormDTO;
+import it.unifi.volleyballscouting.dto.PlayerRosterDTO;
+import it.unifi.volleyballscouting.dto.details.PlayerDetailsDTO;
+import it.unifi.volleyballscouting.dto.forms.PlayerFormDTO;
+import it.unifi.volleyballscouting.exception.BusinessRuleException;
+import it.unifi.volleyballscouting.exception.ResourceNotFoundException;
 import it.unifi.volleyballscouting.model.Player;
 import it.unifi.volleyballscouting.model.PlayerRole;
 import it.unifi.volleyballscouting.model.Team;
@@ -37,7 +41,7 @@ public class PlayerService {
     }
 
     public Player findById(UUID id){
-        return playerRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Giocatore specificato non trovato"));
+        return playerRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Giocatore non trovato"));
     }
 
     public List<Player> findByTeamId(UUID teamId){
@@ -76,12 +80,23 @@ public class PlayerService {
         return playerRepository.findByTeamIdIsNullAndRole(role);
     }
 
+	public PlayerDetailsDTO getDetails(UUID playerId, UUID viewerId, boolean showContacts){
+		Player p = findById(playerId);
+		Team t = p.getTeam();
+		boolean editable = viewerId != null && t != null && t.getCoach() != null && viewerId.equals(t.getCoach().getId());
+		return PlayerDetailsDTO.revealDetails(p, editable, showContacts);
+	}
+
+	public List<PlayerRosterDTO> getRoster(UUID teamId){
+		return playerRepository.findByTeamIdOrderByNumberAsc(teamId).stream().map(PlayerRosterDTO::of).toList(); //stream reads value one by one
+	}
+
     @Transactional
     public String save(PlayerFormDTO form, UUID teamId){
         if (userAccountService.isUsernameTaken(form.username()))
-            throw new IllegalArgumentException("Lo username inserito è già in uso");
+            throw new BusinessRuleException("Lo username inserito è già in uso");
         if (isNumberAlreadyTaken(teamId, form.number(), null))
-            throw new IllegalArgumentException("Il numero inserito è già assegnato nel team"); //DA SEGNARE COME VOLUTO E NON COME DUPLICATO
+            throw new BusinessRuleException("Il numero inserito è già assegnato nel team"); //DA SEGNARE COME VOLUTO E NON COME DUPLICATO
         Team team = teamService.findById(teamId);
         String tempPassword = UUID.randomUUID().toString().substring(0,8);
         String encodedPassword = passwordEncoder.encode(tempPassword);
@@ -115,7 +130,7 @@ public class PlayerService {
     public void updatePlayer(UUID teamId, UUID playerId, PlayerFormDTO form){
         Player p = findOwnedBy(playerId, teamId);
         if (!p.getUsername().equalsIgnoreCase(form.username()) && userAccountService.isUsernameTaken(form.username()))
-            throw new IllegalArgumentException("L'username inserito è già in uso");
+            throw new BusinessRuleException("L'username inserito è già in uso");
         p.updateFromDto(form);
     }
 

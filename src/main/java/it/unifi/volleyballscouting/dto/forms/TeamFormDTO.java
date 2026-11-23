@@ -1,4 +1,4 @@
-package it.unifi.volleyballscouting.dto;
+package it.unifi.volleyballscouting.dto.forms;
 
 import it.unifi.volleyballscouting.model.Team;
 import jakarta.validation.Valid;

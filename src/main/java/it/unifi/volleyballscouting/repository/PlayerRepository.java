@@ -19,6 +19,7 @@ public interface PlayerRepository extends JpaRepository<Player, UUID> {
     List<Player> findByNumber(int number);
     List<Player> findByRole(PlayerRole role);
     List<Player> findByTeamId (UUID teamId);
+	List<Player> findByTeamIdOrderByNumberAsc(UUID teamId);
     //Local searches
     List<Player> findByTeamIdAndSurnameContainingIgnoreCase(UUID teamID, String surname);
     List<Player> findByTeamIdAndRole(UUID teamID, PlayerRole role);

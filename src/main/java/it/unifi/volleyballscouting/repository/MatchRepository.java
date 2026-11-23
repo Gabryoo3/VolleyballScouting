@@ -19,4 +19,5 @@ public interface MatchRepository extends JpaSpecificationExecutor<Match>, JpaRep
     boolean existsByRefereeIdAndMatchDateTimeAfterAndMatchDateTimeBefore(UUID refereeId, LocalDateTime after, LocalDateTime before);
     @Query("select (count(m) > 0) from Match m where (m.teamHome.id = ?1 or m.teamGuest.id = ?1) and m.matchDateTime > ?2 and m.matchDateTime < ?3")
     boolean existsByTeamIdAndMatchDateTimeAfterAndMatchDateTimeBefore(UUID teamId, LocalDateTime after, LocalDateTime before);
+    List<Match> findByRefereeIdOrderByMatchDateTimeAsc(UUID refereeId);
 }
