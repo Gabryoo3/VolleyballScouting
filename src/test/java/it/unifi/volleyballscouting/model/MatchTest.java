@@ -2,25 +2,13 @@ package it.unifi.volleyballscouting.model;
 
 import it.unifi.volleyballscouting.exception.BusinessRuleException;
 import org.junit.jupiter.api.Test;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import static it.unifi.volleyballscouting.model.TestData.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class MatchTest {
 
-	private Match newMatch() {
-		Address homeAddress = new Address("Roma", "Firenze", "50555");
-		Address guestAddress = new Address("Napoli", "Prato", "59100");
-		Coach homeCoach = new Coach("Giulio", "Bianchi", "giubia", "test1234", LocalDate.of(1990, 10, 23));
-		Coach guestCoach = new Coach("Alessio", "Rossini", "aleros", "test1234", LocalDate.of(1984, 3, 15));
-		Referee ref = new Referee("Giulio", "Romanotti", "giuromanref", "test4321", LocalDate.of(1970, 5, 23));
-		Team home = new Team("CasaRosa", homeAddress, homeCoach);
-		Team guest = new Team("Hohahola", guestAddress, guestCoach);
-		return new Match(home, guest, LocalDateTime.now(), ref);
-	}
 
 	@Test
 	void finishMatchAfterThreeWins() {
