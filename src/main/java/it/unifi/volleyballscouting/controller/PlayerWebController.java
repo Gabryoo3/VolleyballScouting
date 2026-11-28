@@ -173,19 +173,6 @@ public class PlayerWebController {
         model.addAttribute("stats", stats);
         return "players/detail";
     }
-    @GetMapping("/free")
-    public String showFreePlayers(@RequestParam(required = false) String role, Model model){
-        String cleanRole = (role != null && !role.isBlank()) ? role : null;
-        List<Player> players;
-        if(cleanRole != null){
-            players = playerService.findByTeamIdIsNullAndRole(PlayerRole.valueOf(cleanRole));
-        }else{
-            players = playerService.findByTeamIdIsNull();
-        }
-        model.addAttribute("players", players);
-        model.addAttribute("roles", PlayerRole.values());
-        return "players/NoTeamList";
-    }
 
     private void prepareFormModel(Model model, PlayerFormDTO form, String formAction){
         model.addAttribute("playerForm", form);

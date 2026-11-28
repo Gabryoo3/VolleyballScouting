@@ -3,9 +3,7 @@ package it.unifi.volleyballscouting.model;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import static it.unifi.volleyballscouting.model.TestData.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,21 +13,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 // see if there can be a set with more than 25 points, or 15 in 5th set case (done)
 // test some non-finished sets (done)
 public class GameSetTest {
-
-	private Match startedMatch() {
-		Address homeAddress = new Address("Roma", "Firenze", "50555");
-		Address guestAddress = new Address("Napoli", "Prato", "59100");
-		Coach homeCoach = new Coach("Giulio", "Bianchi", "giubia", "test1234", LocalDate.of(1990, 10, 23));
-		Coach guestCoach = new Coach("Alessio", "Rossini", "aleros", "test1234", LocalDate.of(1984, 3, 15));
-		Referee ref = new Referee("Giulio", "Romanotti", "giuromanref", "test4321", LocalDate.of(1970, 5, 23));
-		Team home = new Team("CasaRosa", homeAddress, homeCoach);
-		Team guest = new Team("Hohahola", guestAddress, guestCoach);
-		Match match = new Match(home, guest, LocalDateTime.now(), ref);
-		match.start();
-		return match;
-
-	}
-
 
 	@Test
 	void finishedLimitsSet() {

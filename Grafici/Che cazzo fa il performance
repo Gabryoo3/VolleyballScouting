@@ -1,0 +1,6 @@
+1) Il Get del set chiama SetScoutFormDTO, che contiene il roster dei giocatori e le loro statistiche del set inizializzate.
+2) Il frontend mostra i contatori, salvati tramite un JS con localStorage per non perdere i dati se la pagina dovesse ricaricarsi
+3) A fine set, con il tasto apposito, viene eseguito il post. Il post invia il form. Spring estrapola i dati dal form, assegnando i singoli campi per riga:
+rows[0].playerId=id, rows[0].serveAces etc.., e il form viene assegnato come ScoutSetFormDTO. ScoutPageDTO invece mostra solo info della partita dal punto di vista del coach
+4) Al salvataggio delle performance, il service estrapola le righe dal form ricevuto, crea le performance del corrispondente giocatore e assegna i dati di performance, tramite
+un metodo nel model.

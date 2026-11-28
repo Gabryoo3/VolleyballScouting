@@ -25,8 +25,6 @@ public class PlayerService {
     private final TeamService teamService;
     private final UserAccountService userAccountService;
 
-    public record AssignmentResult(UUID playerId, boolean hasNumberConflict, Integer number){}
-
     private final PlayerRepository playerRepository;
 
     public PlayerService(PlayerRepository repo, PasswordEncoder passwordEncoder, TeamService teamService, UserAccountService userAccountService){
@@ -72,14 +70,6 @@ public class PlayerService {
         return playerRepository.findByTeamIdAndNumber(teamId, num);
     }
 
-    public List<Player> findByTeamIdIsNull(){
-        return playerRepository.findByTeamIdIsNull();
-    }
-
-    public List<Player> findByTeamIdIsNullAndRole(PlayerRole role){
-        return playerRepository.findByTeamIdIsNullAndRole(role);
-    }
-
 	public PlayerDetailsDTO getDetails(UUID playerId, UUID viewerId, boolean showContacts){
 		Player p = findById(playerId);
 		Team t = p.getTeam();
@@ -107,15 +97,6 @@ public class PlayerService {
         player.setEmail(form.email());
         playerRepository.save(player);
         return tempPassword;
-    }
-
-    @Transactional
-    public AssignmentResult addPlayerToTeam(UUID playerId, UUID teamId){
-        Player p = findById(playerId);
-        Team t = teamService.findById(teamId);
-        boolean conflict = isNumberAlreadyTaken(teamId, p.getNumber(), playerId);
-        p.setTeam(t);
-        return new AssignmentResult(playerId, conflict, p.getNumber());
     }
 
     public Player findOwnedBy(UUID playerId, UUID teamId) {
