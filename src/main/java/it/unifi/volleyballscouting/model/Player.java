@@ -25,8 +25,8 @@ public class Player extends BaseModel implements Account {
     private PlayerRole role;
     private String phone;
     private String email;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "team_id")
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "team_id", nullable = false)
     private Team team;
 
 

@@ -15,8 +15,6 @@
                 <span>Elenco e ricerca</span></a>
             <a class="tile" th:href="@{/teams}">Squadre
                 <span>Elenco e ricerca</span></a>
-            <a class="tile" th:href="@{/players/free}">Giocatori svincolati
-                <span>Senza squadra</span></a>
             <a class="tile" sec:authorize="hasRole('COACH')" th:href="@{/players/new}">Aggiungi Giocatore
                 <span>Nuovo giocatore in rosa</span></a>
             <a class="tile" sec:authorize="hasRole('COACH')" th:href="@{/teams/new}">Aggiungi Squadra
