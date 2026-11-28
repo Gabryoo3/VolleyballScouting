@@ -1,9 +1,12 @@
 package it.unifi.volleyballscouting.model;
 
+import it.unifi.volleyballscouting.dto.scouting.ScoutRowDTO;
+import it.unifi.volleyballscouting.dto.scouting.ScoutSetFormDTO;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -27,6 +30,8 @@ public class TestData {
 		Referee ref = assignId(new Referee("Giulio", "Romanotti", "giuromanref", "test4321", LocalDate.of(1970, 5, 23)));
 		Team home = assignId(new Team("CasaRosa", homeAddress, homeCoach));
 		Team guest = assignId( new Team("Hohahola", guestAddress, guestCoach));
+		homeCoach.setTeam(home);
+		guestCoach.setTeam(guest);
 		return assignId( new Match(home, guest, LocalDateTime.now(), ref));
 	}
 
@@ -41,4 +46,11 @@ public class TestData {
 		c.setTeam(t);
 		return c;
 	}
+
+	public static ScoutSetFormDTO formWithRow(Player p1, Player p2) {
+		ScoutRowDTO row1 = new ScoutRowDTO(p1.getId(), 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+		ScoutRowDTO row2 = new ScoutRowDTO(p2.getId(), 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2);
+		return new ScoutSetFormDTO(List.of(row1, row2));
+	}
+
 }

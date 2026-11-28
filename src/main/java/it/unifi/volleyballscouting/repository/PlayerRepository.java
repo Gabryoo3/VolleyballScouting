@@ -24,8 +24,6 @@ public interface PlayerRepository extends JpaRepository<Player, UUID> {
     List<Player> findByTeamIdAndSurnameContainingIgnoreCase(UUID teamID, String surname);
     List<Player> findByTeamIdAndRole(UUID teamID, PlayerRole role);
     Player findByTeamIdAndNumber(UUID teamID, int number);
-    List<Player> findByTeamIdIsNull();
-    List<Player> findByTeamIdIsNullAndRole(PlayerRole role);
     Optional<Player> findByUsernameIgnoreCase(String username);
     boolean existsByTeamIdAndNumber(UUID teamId, Integer number);
     boolean existsByTeamIdAndNumberAndIdNot(UUID teamId, Integer number, UUID playerId);
